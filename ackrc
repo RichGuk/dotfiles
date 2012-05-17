@@ -1,0 +1,18 @@
+# General settings.
+--smart-case
+--follow
+--nogroup
+--sort-files
+
+# Addtional types.
+--type-set=sass=.sass,.scss
+--type-set=haml=.haml
+--type-add=html=.html.erb
+--type-set=markdown=.markdown,.md,.mdown
+# Note, files without extension don't work in Ack lower than 2.
+--type-add=ruby=.haml,.rake,Rakefile,Capfile,Gemfile
+
+# Ignore some stuff.
+--ignore-dir=log
+--ignore-dir=test/coverage
+--ignore-dir=spec/coverage
