@@ -27,6 +27,12 @@ for symlink in $symlinks; do
     link_at="${HOME_DIR}${basedir}/${name}"
   fi
 
+  # We need to manually unlink directories otherwise it'll create symlink within
+  # the directory.
+  if [ -d "$symlink" ] && [ -e "$link_at" ]; then
+    $(unlink "$link_at")
+  fi
+
   $(ln -fs "${symlink}" "${link_at}")
   echo "Created symlink to ${symlink} at ${link_at}"
 done
