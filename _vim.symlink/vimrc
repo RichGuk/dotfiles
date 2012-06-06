@@ -134,6 +134,13 @@ map <leader>rt :!ctags --extra=+f --exclude=.git --exclude=log -R * `rvm gemdir 
 cmap w!! %!sudo tee > /dev/null %
 
 "
+" Misc settings.
+"
+
+" See: http://bit.ly/KcQg0M
+let g:is_posix = 1
+
+"
 " Plugins.
 "
 set runtimepath+=~/.vim/bundle/vundle
