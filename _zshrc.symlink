@@ -1,0 +1,26 @@
+# This attempts to find out the dotfiles location so we can source the zsh
+# directory.
+zmodload zsh/stat
+ZSHRC=$(stat +link "$HOME/.zshrc")
+DOTFILES=$(dirname "$ZSHRC")
+
+ZSH="${DOTFILES}/zsh"
+
+# Add RVM completion if it exists.
+if [ -d "$HOME/.rvm/scripts/zsh/Completion" ]; then
+  fpath=($HOME/.rvm/scripts/zsh/Completion $fpath)
+fi
+
+# Load our main configs.
+for config_file ($ZSH/**/*.zsh) source $config_file
+
+if [ -e "$HOME/.zshrc.local" ]; then
+  source "$HOME/.zshrc.local"
+fi
+
+# Misc options.
+setopt multios
+setopt cdablevarS
+
+PATH=$HOME/Scripts:$PATH
+EDITOR=vim
