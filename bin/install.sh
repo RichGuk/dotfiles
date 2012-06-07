@@ -29,7 +29,12 @@ for symlink in $symlinks; do
   # We need to manually unlink directories otherwise it'll create symlink within
   # the directory.
   if [ -d "$symlink" ] && [ -e "$link_at" ]; then
-    $(unlink "$link_at")
+    # Only keep one backup.
+    if [ -e "${link_at}.backup" ]; then
+      $(rm -rf "${link_at}.backup")
+    fi
+
+    $(mv "$link_at" "${link_at}.backup")
   fi
 
   $(ln -fs "${symlink}" "${link_at}")
