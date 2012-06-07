@@ -3,8 +3,8 @@ unbind %
 unbind '"'
 unbind s
 unbind v
-bind s split-window -h
-bind v split-window -v
+bind v split-window -h
+bind s split-window -v
 
 # Vim style navigation.
 bind h select-pane -L
