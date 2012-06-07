@@ -1,0 +1,32 @@
+# Common options.
+user_interface="alternative"
+fancy_scrolling="yes"
+
+# Playlist.
+playlist_disable_highlight_delay="0"
+playlist_display_mode="columns"
+now_playing_suffix="$/b"
+autocenter_mode="yes"
+centered_cursor="yes"
+song_columns_list_format = "(5)[cyan]{n} (5)[cyan]{l} (30)[red]{a}(30)[green]{b}(30)[yellow]{t}"
+playlist_separate_albums="yes"
+
+# Browser.
+browser_display_mode="columns"
+
+# Media library.
+media_library_left_column="A"
+media_library_disable_two_column_mode="yes"
+media_library_album_format="{{%y} - }%b"
+
+# Search.
+search_engine_display_mode="yes"
+
+# General colours.
+state_line_color = "green"
+state_flags_color = "yellow"
+main_window_color = "white/b"
+progressbar_color = "yellow"
+statusbar_color = "black"
+
+colors_enabled="yes"
