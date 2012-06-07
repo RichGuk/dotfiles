@@ -1,3 +1,6 @@
+# Make sure zsh is our shell.
+set-option -g default-shell /bin/zsh
+
 # Bind split to be similar to Vim (s/v).
 unbind %
 unbind '"'
@@ -51,14 +54,14 @@ set -g mouse-select-window on
 
 # Titles.
 set -g set-titles on
-set -g set-titles-string "tmux (#S):#I #W"
+set -g set-titles-string "(#S):#I #W"
 
 # Setup 256 colour terminal.
 set -g default-terminal "screen-256color"
 
 # Set status bar info.
 set -g status-interval 15
-set -g status-left-length 16
+set -g status-left-length 20
 set -g status-left '#[fg=green]#H (#S)'
 
 set -g status-right-length 50
