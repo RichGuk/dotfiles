@@ -9,3 +9,6 @@ alias l='ls -la'
 alias ll='ls -l'
 
 alias be='bundle exec'
+
+
+projects=$HOME/Projects
