@@ -5,6 +5,7 @@ set nocompatible
 "
 set history=1000
 set spell
+set mouse=a
 
 " Searching.
 set hlsearch
