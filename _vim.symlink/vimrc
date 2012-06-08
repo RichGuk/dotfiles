@@ -80,7 +80,7 @@ hi SpecialKey ctermbg=NONE ctermfg=235 guifg=#424242 gui=NONE
 
 " Highlight long lines.
 if version >= 703
-  highlight ColorColumn ctermbg=lightgrey guibg=#464646
+  highlight ColorColumn ctermbg=233 guibg=#464646
   set cc=+1 tw=80
 endif
 
