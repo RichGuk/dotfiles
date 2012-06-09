@@ -12,7 +12,7 @@
   interactive = auto
 [core]
   excludesfile = ~/.gitignore
-  editor = "mvim -f -c 'au VimLeave * !open -a iTerm'"
+  editor = "vim"
 [apply]
   whitespace = nowarn
 [help]
