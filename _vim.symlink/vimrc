@@ -123,7 +123,7 @@ map <leader>et :tabe <C-R>=expand("%:p:h") . "/" <CR>
 map ,tc :tabclose<CR>
 map ,tn :tabnew<CR>
 map <silent> ,[ :tabprev<CR>
-map <silent> ,>] :tabnext<CR>
+map <silent> ,] :tabnext<CR>
 
 " Toggle list characters.
 map <leader>tc :set invlist<CR>
