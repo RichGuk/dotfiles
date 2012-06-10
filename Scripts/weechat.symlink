@@ -1,0 +1,2 @@
+#!/bin/bash
+ssh carina.27smiles.com -R 23053:0.0.0.0:23053 -t screen -x 2> /dev/null
