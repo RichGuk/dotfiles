@@ -24,3 +24,6 @@ setopt cdablevarS
 
 PATH=$HOME/Scripts:/usr/local/bin:$PATH
 EDITOR=vim
+
+# Load RVM.
+[[ -f $HOME/.rvm/scripts/rvm ]] && source $HOME/.rvm/scripts/rvm
