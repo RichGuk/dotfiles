@@ -61,7 +61,7 @@ set -g default-terminal "screen-256color"
 
 # Set status bar info.
 set -g status-interval 15
-set -g status-left-length 20
+set -g status-left-length 50
 set -g status-left '#[fg=green]#H (#S)'
 
 set -g status-right-length 50
