@@ -1,6 +1,10 @@
 # Make sure zsh is our shell.
 set-option -g default-shell /bin/zsh
 
+# Platform clipboard support, e.g on OSX use this method:
+# https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
+source $HOME/.tmux.clipboard
+
 # Bind split to be similar to Vim (s/v).
 unbind %
 unbind '"'
