@@ -125,6 +125,12 @@ map ,tn :tabnew<CR>
 map <silent> ,[ :tabprev<CR>
 map <silent> ,] :tabnext<CR>
 
+" Resize pane mappings.
+nnoremap <C-h> :vertical resize -5<cr>
+nnoremap <C-j> :resize +5<cr>
+nnoremap <C-k> :resize -5<cr>
+nnoremap <C-l> :vertical resize +5<cr>
+
 " Toggle list characters.
 map <leader>tc :set invlist<CR>
 
