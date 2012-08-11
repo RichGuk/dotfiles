@@ -1,0 +1,60 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'fileutils'
+
+@options = {
+}
+OptionParser.new do |opts|
+  opts.banner = 'Usage: flac2mp3.rb [options] [directory]'
+
+  opts.on('-r', '--recursive', 'Convert flac files in subdirectories too') do |v|
+    @options[:recursive] = v
+  end
+
+  opts.on('-b', '--beets', 'Run beet import on the mp3 folder (do not run with sudo)') do |v|
+    @options[:beets] = v
+  end
+
+end.parse!
+
+
+
+def flac2mp3(d)
+  return unless File.directory?(d)
+
+  Dir[File.join(d, '*')].each do |f|
+    if File.directory?(f)
+      flac2mp3(f) if @options[:recursive]
+
+    elsif File.extname(f) == '.flac'
+      basename = File.basename(f, '.flac')
+      dirname = File.dirname(f)
+
+      # Does the mp3 folder exist?
+       output_dir = File.join(dirname, 'mp3')
+       FileUtils.mkdir(output_dir) unless File.exists?(output_dir)
+
+       # Make sure the output file doesn't exist.
+       if File.exists?("#{File.join(output_dir, basename)}.mp3")
+         puts "#{basename}.mp3: File already exists!"
+         next
+       end
+
+       # Convert all the flac files to mp3 with lame, quality 2 should be OK :)
+       #
+       #flac -cd $fn | lame -V2 - mp3/${fn%.flac}.mp3
+       puts "\n"
+       puts "Converting #{f}"
+       puts %Q{flac -cd "#{f}" | lame -V0 - "#{output_dir}/#{basename}.mp3"}
+       `flac -cd "#{f}" | lame -V0 - "#{output_dir}/#{basename}.mp3"`
+    end
+  end
+
+  # Should we run beets on the mp3 folder now?
+  if @options[:beets]
+    system(%Q{beet import "#{File.join(d, 'mp3')}"}) if File.exists?(File.join(d, 'mp3'))
+  end
+end
+
+flac2mp3(ARGV.first)
