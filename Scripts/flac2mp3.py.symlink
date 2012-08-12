@@ -1,0 +1,70 @@
+#!/usr/bin/env  python2.7
+
+import os
+import argparse
+from mutagen.id3 import ID3, TRCK, TIT2, TPE1, TALB, TDRC, TCON, COMM
+from mutagen.flac import FLAC
+
+parser = argparse.ArgumentParser(description='Convert flac to mp3.')
+parser.add_argument('import_directory', type=str)
+parser.add_argument('-r', '--recursive', action="store_true", default=False,
+                    help='Convert flac files in subdirectories too.')
+parser.add_argument('-b', '--beets', action="store_true", default=False,
+                    help='Run beet import on mp3 directory (do not run with\
+                    sudo).')
+
+args = parser.parse_args()
+
+def flac2mp3(filename, base='.'):
+    """Takes single filename as argument and calls out to flac and lame to
+    convert it, copying over tags with mutagen.
+    """
+    filename_full = os.path.join(base, filename)
+    mp3_dir = os.path.join(base, 'mp3')
+    new_filename = os.path.splitext(filename)[0] + ".mp3"
+    new_filename_full = os.path.join(mp3_dir, new_filename)
+
+    if not os.path.exists(mp3_dir):
+        print "Making directory %s" % mp3_dir
+        os.makedirs(mp3_dir)
+
+    if os.path.exists(new_filename_full):
+        print "%s: File already exists!" % new_filename
+        return
+
+    cmd = 'flac -cd "%s" | lame -V0 - "%s"' % (filename_full, new_filename_full)
+    print ""
+    print "Converting %s" % filename
+    print cmd
+    os.system(cmd)
+
+    if not os.path.exists(new_filename_full):
+        print "%s: Failed to create?" % new_filename
+        return
+
+    # Now attempt to copy the tags over.
+    mp3_tag = ID3()
+    flac = FLAC(filename_full)
+
+    # Add tags
+    mp3_tag.add(TRCK(encoding=3, text=flac['tracknumber']))
+    mp3_tag.add(TIT2(encoding=3, text=flac['title']))
+    mp3_tag.add(TPE1(encoding=3, text=flac['artist']))
+    mp3_tag.add(TALB(encoding=3, text=flac['album']))
+    mp3_tag.add(TDRC(encoding=3, text=flac['date']))
+    mp3_tag.add(TCON(encoding=3, text=flac['genre']))
+    mp3_tag.save(new_filename_full)
+
+if args.recursive:
+    for root, dirs, files in os.walk(args.import_directory):
+        flac_files = [f for f in files if os.path.splitext(f)[1] == '.flac']
+        for f in flac_files:
+            flac2mp3(filename=f, base=root)
+
+        if args.beets and os.path.exists(os.path.join(root, 'mp3')):
+            os.system('beet import "%s"' % os.path.join(root, 'mp3'))
+else:
+    flac_files = [f for f in os.listdir(args.import_directory) if\
+                    os.path.splitext(f)[1] == '.flac']
+    for f in flac_files:
+        flac2mp3(filename=f, base=args.import_directory)
