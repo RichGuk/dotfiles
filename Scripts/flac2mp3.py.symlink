@@ -68,3 +68,6 @@ else:
                     os.path.splitext(f)[1] == '.flac']
     for f in flac_files:
         flac2mp3(filename=f, base=args.import_directory)
+
+    if args.beets and os.path.exists(os.path.join(args.import_directory, 'mp3')):
+        os.system('beet import "%s"' % os.path.join(args.import_directory, 'mp3'))
