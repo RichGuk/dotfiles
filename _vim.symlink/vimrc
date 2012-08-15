@@ -50,6 +50,8 @@ set foldnestmax=5
 set foldlevelstart=-1
 set nofoldenable
 
+set paste
+
 syntax on
 filetype off
 
