@@ -50,8 +50,6 @@ set foldnestmax=5
 set foldlevelstart=-1
 set nofoldenable
 
-set paste
-
 syntax on
 filetype off
 
@@ -138,6 +136,9 @@ nnoremap <C-l> :vertical resize +5<cr>
 
 " Toggle list characters.
 map <leader>tc :set invlist<CR>
+
+" Paste toggle.
+nmap <leader>p :setlocal paste! paste?<cr>
 
 " Refresh ctags.
 map <leader>rt :!ctags --extra=+f --exclude=.git --exclude=log -R * `rvm gemdir \| tail -1`/gems/*<CR><CR>
