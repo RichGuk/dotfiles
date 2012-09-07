@@ -274,3 +274,9 @@ Bundle "garbas/vim-snipmate"
 
 " Needs to be at the end for Vundle.
 filetype plugin indent on
+
+" Source local files.
+let LOCALVIMRC = expand("~/.vimrc.local")
+if filereadable(LOCALVIMRC)
+  exe "source " . LOCALVIMRC
+endif
