@@ -234,7 +234,8 @@ Bundle "wookiehangover/jshint.vim"
 Bundle "Puppet-Syntax-Highlighting"
 
 " Github Gists.
-Bundle "Gist.vim"
+Bundle "mattn/gist-vim"
+Bundle "mattn/webapi-vim"
 
 " Slim templates.
 Bundle "bbommarito/vim-slim"
