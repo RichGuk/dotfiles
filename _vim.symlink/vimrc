@@ -115,7 +115,7 @@ nnoremap <silent> <Leader>w
 
 " Mapping to clear search HL.
 
-map <leader>sc :nohls<CR><C-L>
+map <leader>sc :nohls<CR>
 
 " Mappings to expand the current path (edit, split, vsplit)
 map <leader>ew :e <C-R>=expand("%:p:h") . "/" <CR>
