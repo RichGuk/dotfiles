@@ -10,5 +10,6 @@ alias ll='ls -l'
 
 alias be='bundle exec'
 
+alias -g with_tmux=' -t tmux a'
 
 projects=$HOME/Projects
