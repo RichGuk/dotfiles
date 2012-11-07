@@ -1,8 +1,8 @@
 # This attempts to find out the dotfiles location so we can source the zsh
 # directory.
 zmodload zsh/stat
-ZSHRC=$(stat +link "$HOME/.zshrc")
-DOTFILES=$(dirname "$ZSHRC")
+export ZSHRC=$(stat +link "$HOME/.zshrc")
+export DOTFILES=$(dirname "$ZSHRC")
 
 ZSH="${DOTFILES}/zsh"
 

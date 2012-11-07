@@ -9,6 +9,7 @@ for symlink in $symlinks; do
   # Anything beginning with _ should be renamed to .file (e.g. _vimrc -> .vimrc)
   name=${name/#_/.}
   basedir=$(dirname "$symlink")
+  basedir=${basedir/_/.}
   basedir=${basedir#$DOTFILES_DIR} # Note: includes slash at the beginning.
 
   # Create the required directory structure if one is needed.

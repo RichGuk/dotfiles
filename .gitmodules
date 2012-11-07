@@ -1,6 +1,6 @@
-[submodule "_vim.symlink/bundle/vundle"]
-	path = _vim.symlink/bundle/vundle
-	url = https://github.com/gmarik/vundle.git
 [submodule "Scripts/todo.txt-cli.symlink"]
 	path = Scripts/todo.txt-cli.symlink
 	url = https://github.com/ginatrapani/todo.txt-cli.git
+[submodule "vim/bundle/vundle"]
+	path = vim/bundle/vundle
+	url = https://github.com/gmarik/vundle.git

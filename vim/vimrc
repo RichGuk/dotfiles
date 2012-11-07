@@ -1,3 +1,6 @@
+set rtp^=$DOTFILES/vim
+set rtp+=$DOTFILES/vim/bundle/vundle,$DOTFILES/vim/after
+
 set nocompatible
 
 "
@@ -179,8 +182,7 @@ let g:is_posix = 1
 "
 " Plugins.
 "
-set runtimepath+=~/.vim/bundle/vundle
-call vundle#rc()
+call vundle#rc($DOTFILES . "/vim/bundle")
 
 " Vundle.
  Bundle "gmarik/vundle"

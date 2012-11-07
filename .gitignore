@@ -3,6 +3,6 @@
 .netrwhist
 
 # Vim
-_vim.symlink/bundle/*
-!_vim.symlink/bundle/vundle
+vim/bundle/*
+!vim/bundle/vundle
 .netrwhist
