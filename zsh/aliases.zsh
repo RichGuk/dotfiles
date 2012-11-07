@@ -12,4 +12,6 @@ alias be='bundle exec'
 
 alias -g with_tmux=' -t tmux a'
 
+alias todo='~/Scripts/todo.txt-cli/todo.sh -d ~/.todo.cfg'
+
 projects=$HOME/Projects
