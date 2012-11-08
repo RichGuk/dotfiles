@@ -15,3 +15,7 @@ Host *.27smiles.com
 Host *.stinkyink.com
   IdentityFile ~/.ssh/work
   User rich
+
+Host *github.com
+  IdentityFile ~/.ssh/github
+  User git
