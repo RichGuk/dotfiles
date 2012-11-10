@@ -9,6 +9,8 @@ alias l='ls -la'
 alias ll='ls -l'
 
 alias be='bundle exec'
+alias rspec='nocorrect rspec'
+alias vim='nocorrect vim'
 
 alias -g with_tmux=' -t tmux a'
 
