@@ -22,7 +22,7 @@ fi
 setopt multios
 setopt cdablevarS
 
-PATH=$HOME/Scripts:$HOME/bin:/usr/local/bin:$PATH
+PATH=$HOME/Scripts:$HOME/bin:/usr/local/bin:/usr/local/git/bin:$PATH
 EDITOR=vim
 
 # Load RVM.
