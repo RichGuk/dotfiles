@@ -167,7 +167,7 @@ map <leader>tc :set invlist<CR>
 nmap <leader>p :setlocal paste! paste?<cr>
 
 " Refresh ctags.
-map <leader>rt :!ctags --extra=+f --exclude=.git --exclude=log -R * `rvm gemdir \| tail -1`/gems/*<CR><CR>
+map <leader>rt :!ctags --extra=+f --exclude=.git --exclude=log -R * `bundle show --paths`<CR><CR>
 
 " Save with sudo.
 cmap w!! %!sudo tee > /dev/null %
