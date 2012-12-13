@@ -184,9 +184,6 @@ let g:is_posix = 1
 "
 call vundle#rc($DOTFILES . "/vim/bundle")
 
-" Vundle.
- Bundle "gmarik/vundle"
-
 " Nerd Commenter.
 Bundle "The-NERD-Commenter"
 
