@@ -27,6 +27,6 @@ state_line_color = "green"
 state_flags_color = "yellow"
 main_window_color = "white/b"
 progressbar_color = "yellow"
-statusbar_color = "black"
+statusbar_color = "white"
 
 colors_enabled="yes"
