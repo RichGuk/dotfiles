@@ -1,3 +1,5 @@
+ServerAliveInterval 120
+
 Host cylon.27smiles.com
   IdentityFile ~/.ssh/personal
   IdentityFile ~/.ssh/personal-work
