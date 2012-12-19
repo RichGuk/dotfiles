@@ -2,7 +2,7 @@
   name = Rich Grundy
   email = rich@27smiles.com
 [merge]
-  tool = opendiff
+	tool = fugitive
 [mergetool]
   keepBackup = false
 [color]
@@ -27,3 +27,5 @@
     lg = !"git lg1"
 [push]
 	default = simple
+[mergetool "fugitive"]
+	cmd = vim -f -c \"Gdiff\" \"$MERGED\"
