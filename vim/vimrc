@@ -88,7 +88,7 @@ hi SpecialKey ctermbg=NONE ctermfg=235 guifg=#424242 gui=NONE
 " Improve vimdiff colours.
 hi DiffAdd term=bold ctermfg=0 ctermbg=64
 hi DiffChange term=bold ctermfg=0 ctermbg=240
-hi DiffText term=bold cterm=bold ctermbg=160 ctermfg=25
+hi DiffText term=bold cterm=bold ctermbg=160 ctermfg=255
 
 " Highlight long lines.
 if version >= 703
