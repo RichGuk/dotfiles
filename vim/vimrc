@@ -85,6 +85,11 @@ hi NonText ctermbg=NONE ctermfg=235 guifg=#424242 gui=NONE
 " hidden tab character.
 hi SpecialKey ctermbg=NONE ctermfg=235 guifg=#424242 gui=NONE
 
+" Improve vimdiff colours.
+hi DiffAdd term=bold ctermfg=0 ctermbg=64
+hi DiffChange term=bold ctermfg=0 ctermbg=240
+hi DiffText term=bold cterm=bold ctermbg=160 ctermfg=25
+
 " Highlight long lines.
 if version >= 703
   highlight ColorColumn ctermbg=233 guibg=#464646
