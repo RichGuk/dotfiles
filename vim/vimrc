@@ -247,6 +247,9 @@ Bundle "vim-ruby/vim-ruby"
 " Rails.vim
 Bundle "tpope/vim-rails"
 
+" Vim Haml/SCSS
+Bundle "tpope/vim-haml"
+
 " Less syntax highlighting.
 Bundle "groenewege/vim-less"
 
