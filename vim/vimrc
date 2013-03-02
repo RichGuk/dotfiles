@@ -51,7 +51,7 @@ set wildignore+=*.o,*.obj,.git,*.class
 
 set foldmethod=indent
 set foldnestmax=5
-set foldlevelstart=-1
+set foldlevelstart=99
 set nofoldenable
 
 syntax on
