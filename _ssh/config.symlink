@@ -1,13 +1,14 @@
 ServerAliveInterval 120
 
-Host cylon.27smiles.com
+Host home.27smiles.com
   IdentityFile ~/.ssh/personal
   IdentityFile ~/.ssh/personal-work
   User rich
-  LocalForward 8080 valkyrie.local:8080
-  LocalForward 8081 valkyrie.local:8081
-  LocalForward 8082 valkyrie.local:8082
+  LocalForward 8080 localhost:8080
+  LocalForward 8081 localhost:8081
+  LocalForward 8082 localhost:8082
   LocalForward 8083 192.168.0.1:8080
+  LocalForward 4041 localhost:4041
 
 Host *.27smiles.com
   IdentityFile ~/.ssh/personal
