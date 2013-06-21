@@ -9,6 +9,7 @@ Host home.27smiles.com
   LocalForward 8082 localhost:8082
   LocalForward 8083 192.168.0.1:8080
   LocalForward 4041 localhost:4041
+  LocalForward 8112 harrak.local:8112
 
 Host *.27smiles.com
   IdentityFile ~/.ssh/personal
