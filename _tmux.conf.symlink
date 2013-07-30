@@ -3,10 +3,6 @@ new-session
 # Make sure zsh is our shell.
 set-option -g default-shell /bin/zsh
 
-# Platform clipboard support, e.g on OSX use this method:
-# https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
-source $HOME/.tmux.clipboard
-
 # Bind split to be similar to Vim (s/v).
 unbind %
 unbind '"'
@@ -85,3 +81,12 @@ setw -g window-status-current-fg white
 setw -g window-status-current-bg red
 setw -g window-status-current-attr bright
 set-window-option -g window-status-current-format '#I:#P:#W '
+
+# Setup 'v' to begin selection as in Vim
+unbind -t vi-copy v
+bind-key -t vi-copy v begin-selection
+bind-key -t vi-copy y copy-pipe "reattach-to-user-namespace pbcopy"
+
+# Update default binding of `Enter` to also use copy-pipe
+unbind -t vi-copy Enter
+bind-key -t vi-copy Enter copy-pipe "reattach-to-user-namespace pbcopy"
