@@ -181,6 +181,9 @@ cmap w!! %!sudo tee > /dev/null %
 " Misc settings.
 "
 
+" Line numbers etc in netrw.
+let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
+
 " See: http://bit.ly/KcQg0M
 let g:is_posix = 1
 
