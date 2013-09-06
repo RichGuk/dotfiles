@@ -231,9 +231,6 @@ let g:syntastic_enable_signs=1
 " JShint
 Bundle "wookiehangover/jshint.vim"
 
-" Puppet Syntax Highlighting.
-Bundle "Puppet-Syntax-Highlighting"
-
 " Github Gists.
 Bundle "mattn/gist-vim"
 Bundle "mattn/webapi-vim"
@@ -267,6 +264,8 @@ map <Leader>t :call RunCurrentSpecFile()<CR>
 map <Leader>s :call RunNearestSpec()<CR>
 map <Leader>l :call RunLastSpec()<CR>
 map <Leader>a :call RunAllSpecs()<CR>
+
+Bundle "rodjek/vim-puppet"
 
 " Needs to be at the end for Vundle.
 filetype plugin indent on
