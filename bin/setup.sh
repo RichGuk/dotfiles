@@ -4,7 +4,7 @@
 # and then run the installer.
 #
 # Should be called like so:
-# curl http://git.io/richguk-dotsetup | bash
+# curl -L http://git.io/richguk-dotsetup | bash
 #
 cd $HOME
 git clone https://github.com/RichGuk/dotfiles.git .dotfiles
