@@ -2,3 +2,7 @@
 *.swp
 tags
 .rvmrc
+
+# Zeus related files.
+custom_plan.rb
+zeus.json
