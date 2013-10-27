@@ -99,6 +99,12 @@ endif
 "
 " Mappings and Commands
 "
+
+" Allow us to map Shift + <CR> in vim.
+" See: http://stackoverflow.com/a/12117076
+inoremap <S-CR> <Esc>
+imap ✠ <S-CR>
+
 " Remove trailing whitespace with :RMTWS.
 command! RMTWS :execute '%s/\s\+$//e'
 
