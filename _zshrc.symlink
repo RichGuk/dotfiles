@@ -25,5 +25,5 @@ setopt cdablevarS
 PATH=$HOME/Scripts:$HOME/bin:/usr/local/bin:/usr/local/git/bin:/usr/local/heroku/bin:$PATH
 EDITOR=vim
 
-# Load RVM.
-[[ -f $HOME/.rvm/scripts/rvm ]] && source $HOME/.rvm/scripts/rvm
+# rbenv.
+eval "$(rbenv init -)"
