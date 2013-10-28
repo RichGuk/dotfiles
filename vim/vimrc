@@ -118,6 +118,7 @@ map <Leader>sr :RSspec<CR>
 map <Leader>v :Rview<CR>
 map <Leader>vv :RVview<CR>
 map <Leader>sv :RSview<CR>
+map <Leader>w <C-w>w
 
 " Toggle long lines highlight.
 if version >= 703
