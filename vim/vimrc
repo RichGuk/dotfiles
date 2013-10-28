@@ -3,6 +3,9 @@ set rtp+=$DOTFILES/vim/bundle/vundle,$DOTFILES/vim/after
 
 set nocompatible
 
+syntax on
+filetype off
+
 "
 " General settings.
 set history=1000
@@ -50,9 +53,6 @@ set foldmethod=indent
 set foldnestmax=5
 set foldlevelstart=99
 set nofoldenable
-
-syntax on
-filetype off
 
 "
 " Display settings.
