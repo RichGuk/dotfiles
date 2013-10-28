@@ -159,7 +159,7 @@ nmap <silent> <leader>pw :call DoWindowSwap()<CR>
 map <leader>tc :set invlist<CR>
 
 " Paste toggle.
-nmap <leader>p :setlocal paste! paste?<cr>
+set pastetoggle=<F2>
 
 " Refresh ctags.
 map <leader>rt :!ctags --extra=+f --exclude=.git --exclude=log -R * `bundle show --paths`<CR><CR>
