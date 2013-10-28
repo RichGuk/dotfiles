@@ -5,11 +5,8 @@ set nocompatible
 
 "
 " General settings.
-"
 set history=1000
 set spell
-set mouse=a
-set ttymouse=xterm2 " Make it work in tmux.
 
 " Searching.
 set hlsearch
