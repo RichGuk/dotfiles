@@ -106,6 +106,18 @@ map <Leader>t :call RunCurrentSpecFile()<CR>
 map <Leader>s :call RunNearestSpec()<CR>
 map <Leader>l :call RunLastSpec()<CR>
 map <Leader>a :call RunAllSpecs()<CR>
+map <Leader>m :Rmodel<CR>
+map <Leader>vm :RVmodel<CR>
+map <Leader>sm :RSmodel<CR>
+map <Leader>c :Rcontroller<CR>
+map <Leader>vc :RVcontroller<CR>
+map <Leader>sc :RScontroller<CR>
+map <Leader>r :Rspec<CR>
+map <Leader>vr :RVspec<CR>
+map <Leader>sr :RSspec<CR>
+map <Leader>v :Rview<CR>
+map <Leader>vv :RVview<CR>
+map <Leader>sv :RSview<CR>
 
 " Toggle long lines highlight.
 if version >= 703
