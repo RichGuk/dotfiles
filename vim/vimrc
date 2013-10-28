@@ -120,6 +120,11 @@ map <Leader>vv :RVview<CR>
 map <Leader>sv :RSview<CR>
 map <Leader>w <C-w>w
 
+map <Left> <Nop>
+map <Right> <Nop>
+map <Up> <Nop>
+map <Down> <Nop>
+
 " Toggle long lines highlight.
 if version >= 703
   nnoremap <leader>tl
