@@ -111,15 +111,6 @@ if version >= 703
     \ endif<CR>
 endif
 
-" Toggle trailing whitespace highlight.
-nnoremap <silent> <Leader>w
-            \ :if exists('w:twsm') <Bar>
-            \   silent! call matchdelete(w:twsm) <Bar>
-            \   unlet w:twsm <Bar>
-            \ else <Bar>
-            \   let w:twsm = matchadd('TrailingWhiteSpace', '\s\+$') <Bar>
-            \ endif<CR>
-
 " Mapping to clear search HL.
 
 map <leader>sc :nohls<CR>
