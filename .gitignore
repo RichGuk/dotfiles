@@ -4,5 +4,4 @@
 
 # Vim
 vim/bundle/*
-!vim/bundle/vundle
 .netrwhist
