@@ -3,6 +3,11 @@
 BIN_DIR=$(cd "$(dirname "$0")"; pwd)
 DOTFILES_DIR=$(dirname "$BIN_DIR")
 
+
+if [ ! -e "${DOTFILES_DIR}/vim/bundle/vundle" ]; then
+  git clone https://github.com/gmarik/vundle.git "${DOTFILES_DIR}/vim/bundle/vundle"
+fi
+
 symlinks=$(find $DOTFILES_DIR -name '*.symlink' -print)
 for symlink in $symlinks; do
   name=$(basename "${symlink%.symlink}")
