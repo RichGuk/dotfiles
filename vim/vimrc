@@ -58,11 +58,7 @@ set nofoldenable
 " Display settings.
 "
 set background=dark
-if has("gui_running")
-  colorscheme railscasts2
-else
-  colorscheme railscasts_term
-endif
+colorscheme railscasts_term
 
 set laststatus=2 " Always show status bar.
 set number
