@@ -9,35 +9,27 @@ filetype off
 "
 call vundle#rc($DOTFILES . "/vim/bundle")
 
-Bundle "The-NERD-Commenter"
-Bundle "fugitive.vim"
-Bundle "surround.vim"
-Bundle "mru.vim"
-Bundle "delimitMate.vim"
-Bundle "ervandew/supertab"
-Bundle "Tagbar"
-Bundle "ack.vim"
-Bundle "ctrlp.vim"
-Bundle "Tabular"
-Bundle "Syntastic"
-Bundle "wookiehangover/jshint.vim"
-Bundle "mattn/gist-vim"
-Bundle "mattn/webapi-vim"
-Bundle "bbommarito/vim-slim"
-Bundle "matchit.zip"
-Bundle "vim-ruby/vim-ruby"
-Bundle "tpope/vim-rails"
-Bundle "tpope/vim-haml"
-Bundle "groenewege/vim-less"
-Bundle "MarcWeber/vim-addon-mw-utils"
-Bundle "tomtom/tlib_vim"
-Bundle "honza/snipmate-snippets"
-Bundle "garbas/vim-snipmate"
+Bundle 'gmarik/vundle'
+Bundle 'kien/ctrlp.vim'
+Bundle 'scrooloose/nerdcommenter'
+Bundle 'tpope/vim-fugitive'
+Bundle 'tpope/vim-surround'
+Bundle 'ervandew/supertab'
+Bundle 'godlygeek/tabular'
+Bundle 'scrooloose/syntastic'
+Bundle 'mattn/gist-vim'
+Bundle 'mattn/webapi-vim'
+Bundle 'tpope/vim-rails'
+Bundle 'tpope/vim-haml'
 Bundle 'thoughtbot/vim-rspec'
-Bundle "rodjek/vim-puppet"
+Bundle 'rodjek/vim-puppet'
+Bundle 'mileszs/ack.vim'
 
 syntax on
 filetype plugin indent on
+
+" Run built-in matchit.
+runtime macros/matchit.vim
 
 "
 " Main settings.
