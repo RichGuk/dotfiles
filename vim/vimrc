@@ -172,16 +172,14 @@ endfunction
 "
 " Autocmd stuff.
 "
-if has("autocmd")
-  " For these languages use different tab spacing.
-  au FileType javascript setlocal ts=4 sts=4 sw=4
-  au FileType php setlocal ts=4 sts=4 sw=4
-  au FileType python setlocal ts=4 sts=4 sw=4
 
-  " Jump to last position in file.
-  au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
-    \| exe "normal g'\"" | endif
-endif
+" For these languages use different tab spacing.
+au FileType javascript setlocal ts=4 sts=4 sw=4
+au FileType php setlocal ts=4 sts=4 sw=4
+au FileType python setlocal ts=4 sts=4 sw=4
+
+" Jump to last position in file.
+au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'\"" | endif
 
 " Don't insert comment lead characters when pressing o or O.
 au FileType * set formatoptions-=o
