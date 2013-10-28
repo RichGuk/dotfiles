@@ -2,46 +2,67 @@ set rtp^=$DOTFILES/vim
 set rtp+=$DOTFILES/vim/bundle/vundle,$DOTFILES/vim/after
 
 set nocompatible
-
-syntax on
 filetype off
 
 "
-" General settings.
+" Plugins.
+"
+call vundle#rc($DOTFILES . "/vim/bundle")
+
+Bundle "The-NERD-Commenter"
+Bundle "fugitive.vim"
+Bundle "surround.vim"
+Bundle "mru.vim"
+Bundle "delimitMate.vim"
+Bundle "ervandew/supertab"
+Bundle "Tagbar"
+Bundle "ack.vim"
+Bundle "ctrlp.vim"
+Bundle "Tabular"
+Bundle "Syntastic"
+Bundle "wookiehangover/jshint.vim"
+Bundle "mattn/gist-vim"
+Bundle "mattn/webapi-vim"
+Bundle "bbommarito/vim-slim"
+Bundle "matchit.zip"
+Bundle "vim-ruby/vim-ruby"
+Bundle "tpope/vim-rails"
+Bundle "tpope/vim-haml"
+Bundle "groenewege/vim-less"
+Bundle "MarcWeber/vim-addon-mw-utils"
+Bundle "tomtom/tlib_vim"
+Bundle "honza/snipmate-snippets"
+Bundle "garbas/vim-snipmate"
+Bundle 'thoughtbot/vim-rspec'
+Bundle "rodjek/vim-puppet"
+
+syntax on
+filetype plugin indent on
+
+"
+" Main settings.
+"
 set history=1000
 set spell
 
-" Searching.
 set hlsearch
 set incsearch
 set ignorecase
 set smartcase
 
-" Tags.
-set tags=tags;$HOME
+set pastetoggle=<F2> " Paste toggle.
 
-" Remember last location in file.
-if has("autocmd")
-  au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
-    \| exe "normal g'\"" | endif
-endif
-
-"
-" Formatting settings.
-"
 set backspace=indent,eol,start " Backspacing FTW.
+
 set cindent
 set smartindent
 set autoindent
+
 set tabstop=2
 set softtabstop=2
 set shiftwidth=2
 set expandtab
 set smarttab
-
-au FileType javascript setlocal ts=4 sts=4 sw=4
-au FileType php setlocal ts=4 sts=4 sw=4
-au FileType python setlocal ts=4 sts=4 sw=4
 
 set nowrap
 set textwidth=0
@@ -49,45 +70,27 @@ set textwidth=0
 set wildmode=list:longest,list:full
 set wildignore+=*.o,*.obj,.git,*.class
 
+set laststatus=2 " Always show status bar.
+
+set number
+set ruler
+
+set novisualbell
+set noerrorbells
+set vb t_vb=
+
+set list listchars=tab:▸\ ,eol:¬ " Show tabs and new line 'hidden' characters.
+
+" Folding
 set foldmethod=indent
 set foldnestmax=5
 set foldlevelstart=99
 set nofoldenable
 
-"
-" Display settings.
-"
 set background=dark
 colorscheme railscasts_term
 
-set laststatus=2 " Always show status bar.
-set number
-set ruler
-set novisualbell
-set noerrorbells
-set vb t_vb=
-set list listchars=tab:▸\ ,eol:¬ " Show tabs and new line 'hidden' characters.
-
-" Highlight trailing whitespace!
-hi link TrailingWhiteSpace Search
-au BufWinEnter * let w:twsm=matchadd('TrailingWhiteSpace', '\s\+$')
-
-hi CursorColumn term=underline cterm=underline guibg=#333435
-" hidden carriage return character.
-hi NonText ctermbg=NONE ctermfg=235 guifg=#424242 gui=NONE
-" hidden tab character.
-hi SpecialKey ctermbg=NONE ctermfg=235 guifg=#424242 gui=NONE
-
-" Improve vimdiff colours.
-hi DiffAdd term=bold ctermfg=0 ctermbg=64
-hi DiffChange term=bold ctermfg=0 ctermbg=240
-hi DiffText term=bold cterm=bold ctermbg=160 ctermfg=255
-
-" Highlight long lines.
-if version >= 703
-  highlight ColorColumn ctermbg=233 guibg=#464646
-  set cc=+1 tw=80
-endif
+set tags=tags;$HOME
 
 "
 " Mappings and Commands
@@ -100,6 +103,17 @@ imap ✠ <S-CR>
 
 " Remove trailing whitespace with :RMTWS.
 command! RMTWS :execute '%s/\s\+$//e'
+map <leader>rw <esc>:RMTWS<CR>
+
+map <leader>sc :nohls<CR> " Mapping to clear search HL.
+nmap <silent> <leader>mw :call MarkWindowSwap()<CR>
+nmap <silent> <leader>pw :call DoWindowSwap()<CR>
+map <leader>tc :set invlist<CR> " Toggle list characters.
+cmap w!! %!sudo tee > /dev/null % " Save with sudo.
+map <Leader>t :call RunCurrentSpecFile()<CR>
+map <Leader>s :call RunNearestSpec()<CR>
+map <Leader>l :call RunLastSpec()<CR>
+map <Leader>a :call RunAllSpecs()<CR>
 
 " Toggle long lines highlight.
 if version >= 703
@@ -111,10 +125,6 @@ if version >= 703
     \ endif<CR>
 endif
 
-" Mapping to clear search HL.
-
-map <leader>sc :nohls<CR>
-
 " Mappings to expand the current path (edit, split, vsplit)
 map <leader>ew :e <C-R>=expand("%:p:h") . "/" <CR>
 map <leader>es :sp <C-R>=expand("%:p:h") . "/" <CR>
@@ -122,10 +132,9 @@ map <leader>ev :vsp <C-R>=expand("%:p:h") . "/" <CR>
 map <leader>et :tabe <C-R>=expand("%:p:h") . "/" <CR>
 
 " Tab mappings.
-map ,tc :tabclose<CR>
-map ,tn :tabnew<CR>
-map <silent> ,[ :tabprev<CR>
-map <silent> ,] :tabnext<CR>
+map <leader>tt <esc>:tabnew<CR>
+map <leader>tn <esc>:tabnext<CR>
+map <leader>tp <esc>:tabprev<CR>
 
 " Resize pane mappings.
 nnoremap <C-h> :vertical resize -5<cr>
@@ -133,6 +142,22 @@ nnoremap <C-j> :resize +5<cr>
 nnoremap <C-k> :resize -5<cr>
 nnoremap <C-l> :vertical resize +5<cr>
 
+" Refresh ctags.
+map <leader>rt :!ctags --extra=+f --exclude=.git --exclude=log -R * `bundle show --paths`<CR><CR>
+
+"
+" Misc options.
+"
+let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro' " Line numbers etc in netrw.
+let g:is_posix = 1 " See: http://bit.ly/KcQg0M
+let g:rspec_command = "!zeus rspec {spec}"
+let g:ctrlp_working_path_mode = 0
+let g:ctrlp_jump_to_buffer = 2
+let g:syntastic_enable_signs=1
+
+"
+" Functions
+"
 function! MarkWindowSwap()
     let g:markedWinNum = winnr()
 endfunction
@@ -152,114 +177,42 @@ function! DoWindowSwap()
     exe 'hide buf' markedBuf
 endfunction
 
-nmap <silent> <leader>mw :call MarkWindowSwap()<CR>
-nmap <silent> <leader>pw :call DoWindowSwap()<CR>
+"
+" Autocmd stuff.
+"
+if has("autocmd")
+  " For these languages use different tab spacing.
+  au FileType javascript setlocal ts=4 sts=4 sw=4
+  au FileType php setlocal ts=4 sts=4 sw=4
+  au FileType python setlocal ts=4 sts=4 sw=4
 
-" Toggle list characters.
-map <leader>tc :set invlist<CR>
-
-" Paste toggle.
-set pastetoggle=<F2>
-
-" Refresh ctags.
-map <leader>rt :!ctags --extra=+f --exclude=.git --exclude=log -R * `bundle show --paths`<CR><CR>
-
-" Save with sudo.
-cmap w!! %!sudo tee > /dev/null %
+  " Jump to last position in file.
+  au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
+    \| exe "normal g'\"" | endif
+endif
 
 "
-" Misc settings.
+" Highlighting.
 "
 
-" Line numbers etc in netrw.
-let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
+" Highlight trailing whitespace!
+hi link TrailingWhiteSpace Search
+au BufWinEnter * let w:twsm=matchadd('TrailingWhiteSpace', '\s\+$')
 
-" See: http://bit.ly/KcQg0M
-let g:is_posix = 1
+hi CursorColumn term=underline cterm=underline guibg=#333435 " hidden carriage return character.
+hi NonText ctermbg=NONE ctermfg=235 guifg=#424242 gui=NONE " hidden tab character.
+hi SpecialKey ctermbg=NONE ctermfg=235 guifg=#424242 gui=NONE
 
-"
-" Plugins.
-"
-call vundle#rc($DOTFILES . "/vim/bundle")
+" Improve vimdiff colours.
+hi DiffAdd term=bold ctermfg=0 ctermbg=64
+hi DiffChange term=bold ctermfg=0 ctermbg=240
+hi DiffText term=bold cterm=bold ctermbg=160 ctermfg=255
 
-" Nerd Commenter.
-Bundle "The-NERD-Commenter"
-
-" Fugitive.
-Bundle "fugitive.vim"
-
-" Surround.
-Bundle "surround.vim"
-
-" Most recently used.
-Bundle "mru.vim"
-
-" DelimitMate
-Bundle "delimitMate.vim"
-
-" Supertab.
-Bundle "ervandew/supertab"
-
-" Tagbar.
-Bundle "Tagbar"
-
-" Ack.
-Bundle "ack.vim"
-
-" Ctrl-P.
-Bundle "ctrlp.vim"
-let g:ctrlp_working_path_mode = 0
-let g:ctrlp_jump_to_buffer = 2
-
-" Tabular
-Bundle "Tabular"
-
-" Syntastic
-Bundle "Syntastic"
-let g:syntastic_enable_signs=1
-
-" JShint
-Bundle "wookiehangover/jshint.vim"
-
-" Github Gists.
-Bundle "mattn/gist-vim"
-Bundle "mattn/webapi-vim"
-
-" Slim templates.
-Bundle "bbommarito/vim-slim"
-
-" Matchit.
-Bundle "matchit.zip"
-
-" Ruby.
-Bundle "vim-ruby/vim-ruby"
-
-" Rails.vim
-Bundle "tpope/vim-rails"
-
-" Vim Haml/SCSS
-Bundle "tpope/vim-haml"
-
-" Less syntax highlighting.
-Bundle "groenewege/vim-less"
-
-" Snipmate + Dependencies.
-Bundle "MarcWeber/vim-addon-mw-utils"
-Bundle "tomtom/tlib_vim"
-Bundle "honza/snipmate-snippets"
-Bundle "garbas/vim-snipmate"
-
-Bundle 'thoughtbot/vim-rspec'
-map <Leader>t :call RunCurrentSpecFile()<CR>
-map <Leader>s :call RunNearestSpec()<CR>
-map <Leader>l :call RunLastSpec()<CR>
-map <Leader>a :call RunAllSpecs()<CR>
-let g:rspec_command = "!zeus rspec {spec}"
-
-Bundle "rodjek/vim-puppet"
-
-" Needs to be at the end for Vundle.
-filetype plugin indent on
+" Highlight long lines.
+if version >= 703
+  highlight ColorColumn ctermbg=233 guibg=#464646
+  set cc=+1 tw=80
+endif
 
 " Source local files.
 let LOCALVIMRC = expand("~/.vimrc.local")
