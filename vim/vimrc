@@ -183,6 +183,9 @@ if has("autocmd")
     \| exe "normal g'\"" | endif
 endif
 
+" Don't insert comment lead characters when pressing o or O.
+au FileType * set formatoptions-=o
+
 "
 " Highlighting.
 "
