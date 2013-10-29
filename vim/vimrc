@@ -97,7 +97,7 @@ imap ✠ <S-CR>
 command! RMTWS :execute '%s/\s\+$//e'
 map <leader>rw <esc>:RMTWS<CR>
 
-map <leader>sc :nohls<CR> " Mapping to clear search HL.
+map <Leader>ssc :nohls<CR> " Mapping to clear search HL.
 nmap <silent> <leader>mw :call MarkWindowSwap()<CR>
 nmap <silent> <leader>pw :call DoWindowSwap()<CR>
 map <leader>tc :set invlist<CR> " Toggle list characters.
@@ -112,9 +112,9 @@ map <Leader>sm :RSmodel<CR>
 map <Leader>c :Rcontroller<CR>
 map <Leader>vc :RVcontroller<CR>
 map <Leader>sc :RScontroller<CR>
-map <Leader>r :Rspec<CR>
-map <Leader>vr :RVspec<CR>
-map <Leader>sr :RSspec<CR>
+map <Leader>r :Runittest<CR>
+map <Leader>vr :RVunittest<CR>
+map <Leader>sr :RSunittest<CR>
 map <Leader>v :Rview<CR>
 map <Leader>vv :RVview<CR>
 map <Leader>sv :RSview<CR>
