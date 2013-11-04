@@ -24,6 +24,7 @@ Bundle 'tpope/vim-haml'
 Bundle 'thoughtbot/vim-rspec'
 Bundle 'rodjek/vim-puppet'
 Bundle 'mileszs/ack.vim'
+Bundle 'ecomba/vim-ruby-refactoring'
 Bundle 'rking/ag.vim'
 
 syntax on
