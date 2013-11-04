@@ -24,6 +24,7 @@ Bundle 'tpope/vim-haml'
 Bundle 'thoughtbot/vim-rspec'
 Bundle 'rodjek/vim-puppet'
 Bundle 'mileszs/ack.vim'
+Bundle 'rking/ag.vim'
 
 syntax on
 filetype plugin indent on
