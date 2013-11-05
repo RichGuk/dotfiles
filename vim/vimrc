@@ -97,6 +97,9 @@ set tags=tags;$HOME
 inoremap <S-CR> <Esc>
 imap ✠ <S-CR>
 
+map <C-s> <esc>:w<CR>
+imap <C-s> <esc>:w<CR>
+
 " Remove trailing whitespace with :RMTWS.
 command! RMTWS :execute '%s/\s\+$//e'
 map <leader>rw <esc>:RMTWS<CR>
