@@ -131,6 +131,10 @@ imap <Right> <Nop>
 imap <Up> <Nop>
 imap <Down> <Nop>
 
+" Disable Ex mode and Lookup
+map Q <Nop>
+map K <Nop>
+
 " Toggle long lines highlight.
 if version >= 703
   nnoremap <leader>tl
