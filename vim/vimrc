@@ -27,7 +27,6 @@ Bundle 'mileszs/ack.vim'
 Bundle 'ecomba/vim-ruby-refactoring'
 Bundle 'rking/ag.vim'
 Bundle 'SirVer/ultisnips'
-Bundle 'honza/vim-snippets'
 
 syntax on
 filetype plugin indent on
