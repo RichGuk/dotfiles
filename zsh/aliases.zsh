@@ -25,4 +25,8 @@ alias todo='~/Scripts/todo.txt-cli/todo.sh -d ~/.todo.cfg'
 
 alias ealias="vim ${DOTFILES}/zsh/aliases.zsh"
 
+alias z='zeus'
+alias zdb='zeus rake db:migrate'
+alias zm='zeus g model'
+
 projects=$HOME/Projects
