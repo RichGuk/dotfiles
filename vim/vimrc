@@ -25,7 +25,6 @@ Bundle 'thoughtbot/vim-rspec'
 Bundle 'rodjek/vim-puppet'
 Bundle 'mileszs/ack.vim'
 Bundle 'ecomba/vim-ruby-refactoring'
-Bundle 'rking/ag.vim'
 Bundle 'SirVer/ultisnips'
 
 syntax on
@@ -169,6 +168,10 @@ nnoremap <C-l> :vertical resize +5<cr>
 " Refresh ctags.
 map <leader>rt :!ctags --extra=+f --exclude=.git --exclude=log -R * `bundle show --paths`<CR><CR>
 
+" bind K to grep word under cursor
+nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+nnoremap \ :Ag<SPACE>
+
 "
 " Misc options.
 "
@@ -238,6 +241,21 @@ if version >= 703
   highlight ColorColumn ctermbg=233 guibg=#464646
   set cc=+1 tw=80
 endif
+
+" From this post: http://robots.thoughtbot.com/faster-grepping-in-vim
+" The Silver Searcher
+if executable('ag')
+  " Use ag over grep
+  set grepprg=ag\ --nogroup\ --nocolor
+
+  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+
+  " ag is fast enough that CtrlP doesn't need to cache
+  let g:ctrlp_use_caching = 0
+endif
+
+command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
 
 " Source local files.
 let LOCALVIMRC = expand("~/.vimrc.local")
