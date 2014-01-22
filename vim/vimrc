@@ -36,6 +36,9 @@ runtime macros/matchit.vim
 "
 " Main settings.
 "
+set modeline
+set modelines=3
+
 set history=1000
 set spell
 
