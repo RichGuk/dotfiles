@@ -26,6 +26,8 @@
   st = status
   pr = pull --rebase
   up = !git fetch origin && git rebase origin/master
+  m = merge
+  b = branch
 [push]
   default = current
 [mergetool "fugitive"]
