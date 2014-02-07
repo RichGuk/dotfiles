@@ -5,9 +5,9 @@
 #
 # replace foo bar **/*.rb
 
-meh_this=$1
+find_this=$1
 shift
 replace_with=$1
 shift
 
-ag -l $meh_this $* | xargs sed -i '' "s/$meh_this/$replace_with/g"
+ag -l $find_this $* | xargs sed -i '' "s/$find_this/$replace_with/g"
