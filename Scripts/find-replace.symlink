@@ -10,4 +10,9 @@ shift
 replace_with=$1
 shift
 
+if [ "$find_this" == "-h" ] || [ "${find_this}xy" ==  "xy" ]; then
+  echo 'Example: find-replace "find-this" "replace-with" **/*.rb'
+  exit
+fi
+
 ag -l $find_this $* | xargs sed -i '' "s/$find_this/$replace_with/g"
