@@ -1,4 +1,4 @@
-# :set ft=sh
+#vim: set ft=sh:
 #!/bin/sh
 #
 # Find and replace by a given list of files.
