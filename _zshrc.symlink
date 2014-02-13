@@ -26,4 +26,4 @@ PATH=$HOME/Scripts:$HOME/bin:/usr/local/bin:/usr/local/git/bin:/usr/local/heroku
 EDITOR=vim
 
 # rbenv.
-eval "$(rbenv init -)"
+[[ -s rbenv ]] && eval "$(rbenv init -)"
