@@ -27,3 +27,5 @@ EDITOR=vim
 
 # rbenv.
 [[ -s rbenv ]] && eval "$(rbenv init -)"
+
+[[ -s "$HOME/.zhrc.local" ]] && source "$HOME/.zshrc.local"
