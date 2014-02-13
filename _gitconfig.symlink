@@ -20,14 +20,17 @@
   lg2 = log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%cD%C(reset) %C(bold green)(%cr)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(bold white)— %cn%C(reset)' --abbrev-commit
   lg = !"git lg1"
   ca = commit --amend
-  cv = commit -v
-  ap = add --patch
+  pa = add --patch
   co = checkout
   st = status
   pr = pull --rebase
   up = !git fetch origin && git rebase origin/master
   m = merge
   b = branch
+  a = add
+  p = push
+  c = commit
+  v = commit -v
 [push]
   default = current
 [mergetool "fugitive"]
