@@ -27,7 +27,7 @@ Bundle 'mileszs/ack.vim'
 Bundle 'ecomba/vim-ruby-refactoring'
 Bundle 'SirVer/ultisnips'
 Bundle 'kchmck/vim-coffee-script'
-Bundle 'jgdavey/tslime.vim'
+Bundle 'tpope/vim-dispatch'
 
 syntax on
 filetype plugin indent on
