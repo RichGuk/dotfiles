@@ -9,7 +9,6 @@ alias l='ls -la'
 alias ll='ls -l'
 
 alias be='bundle exec'
-alias rspec='nocorrect rspec'
 alias vim='nocorrect vim'
 
 # Foreman for apps.
