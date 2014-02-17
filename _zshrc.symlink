@@ -26,6 +26,6 @@ PATH=$HOME/Scripts:$HOME/bin:/usr/local/bin:/usr/local/git/bin:/usr/local/heroku
 EDITOR=vim
 
 # rbenv.
-[[ -s rbenv ]] && eval "$(rbenv init -)"
+[[ -s "$HOME/.rbenv" ]] && eval "$(rbenv init -)"
 
 [[ -s "$HOME/.zhrc.local" ]] && source "$HOME/.zshrc.local"
