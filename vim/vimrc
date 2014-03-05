@@ -107,6 +107,7 @@ imap <C-s> <esc>:w<CR>
 command! RMTWS :execute '%s/\s\+$//e'
 map <leader>rw <esc>:RMTWS<CR>
 
+map <silent> <Leader>qc :ccl<CR> " Closes quicklist.
 map <Leader>ssc :nohls<CR> " Mapping to clear search HL.
 nmap <silent> <leader>mw :call MarkWindowSwap()<CR>
 nmap <silent> <leader>pw :call DoWindowSwap()<CR>
