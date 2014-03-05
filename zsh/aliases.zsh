@@ -28,4 +28,6 @@ alias z='zeus'
 alias zdb='zeus rake db:migrate'
 alias zm='zeus g model'
 
+alias delmerged='git branch --merged | grep -v "\*" | grep -v master | xargs -n 1 git branch -d'
+
 projects=$HOME/Projects
