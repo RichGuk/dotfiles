@@ -11,9 +11,9 @@ call vundle#rc($DOTFILES . "/vim/bundle")
 
 Bundle 'gmarik/vundle'
 Bundle 'kien/ctrlp.vim'
-Bundle 'scrooloose/nerdcommenter'
 Bundle 'tpope/vim-fugitive'
 Bundle 'tpope/vim-surround'
+Bundle 'tpope/vim-commentary'
 Bundle 'ervandew/supertab'
 Bundle 'godlygeek/tabular'
 Bundle 'scrooloose/syntastic'
