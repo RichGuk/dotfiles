@@ -72,6 +72,9 @@ set wildignore+=*.o,*.obj,.git,*.class
 set laststatus=2 " Always show status bar.
 
 set relativenumber
+if version >= 704
+  set nu
+end
 set ruler
 
 set novisualbell
