@@ -28,6 +28,8 @@ Bundle 'ecomba/vim-ruby-refactoring'
 Bundle 'SirVer/ultisnips'
 Bundle 'kchmck/vim-coffee-script'
 Bundle 'tpope/vim-dispatch'
+Bundle 'kana/vim-textobj-user'
+Bundle 'nelstrom/vim-textobj-rubyblock'
 
 syntax on
 filetype plugin indent on
