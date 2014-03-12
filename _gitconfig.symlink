@@ -31,6 +31,7 @@
   p = push
   c = commit
   v = commit -v
+  ctags = !.git/hooks/ctags
 [push]
   default = current
 [mergetool "fugitive"]
@@ -40,3 +41,5 @@
 
 [include]
   path = .gitconfig.local
+[init]
+  templatedir = ~/.git_templates
