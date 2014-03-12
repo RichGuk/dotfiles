@@ -28,6 +28,7 @@ Bundle 'tpope/vim-dispatch'
 Bundle 'tpope/vim-fugitive'
 Bundle 'tpope/vim-haml'
 Bundle 'tpope/vim-rails'
+Bundle 'tpope/vim-rbenv'
 Bundle 'tpope/vim-surround'
 Bundle 'vim-ruby/vim-ruby'
 
