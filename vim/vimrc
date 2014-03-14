@@ -188,7 +188,7 @@ nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 "
 let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro' " Line numbers etc in netrw.
 let g:is_posix = 1 " See: http://bit.ly/KcQg0M
-let g:rspec_command = "Dispatch runz rspec {spec}"
+let g:rspec_command = "compiler rspec | set makeprg=runz | Make rspec {spec}"
 let g:ctrlp_working_path_mode = 'ra'
 let g:ctrlp_switch_buffer = 'Et'
 let g:syntastic_enable_signs=1
