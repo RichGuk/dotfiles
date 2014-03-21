@@ -43,3 +43,5 @@
   path = .gitconfig.local
 [init]
   templatedir = ~/.git_templates
+[commit]
+  template = ~/.gitmessage
