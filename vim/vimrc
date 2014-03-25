@@ -72,6 +72,11 @@ set textwidth=0
 set wildmode=list:longest,list:full
 set wildignore+=*.o,*.obj,.git,*.class
 
+set winwidth=84
+set winheight=5
+set winminheight=5
+set winheight=999
+
 set laststatus=2 " Always show status bar.
 
 set relativenumber
