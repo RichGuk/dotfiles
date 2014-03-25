@@ -171,11 +171,6 @@ map <leader>es :sp <C-R>=expand("%:p:h") . "/" <CR>
 map <leader>ev :vsp <C-R>=expand("%:p:h") . "/" <CR>
 map <leader>et :tabe <C-R>=expand("%:p:h") . "/" <CR>
 
-" Tab mappings.
-map <leader>tt <esc>:tabnew<CR>
-map <leader>tn <esc>:tabnext<CR>
-map <leader>tp <esc>:tabprev<CR>
-
 " Resize pane mappings.
 nnoremap <C-h> :vertical resize -5<cr>
 nnoremap <C-j> :resize +5<cr>
