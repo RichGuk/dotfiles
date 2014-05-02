@@ -78,6 +78,8 @@ set winheight=5
 set winminheight=5
 set winheight=999
 
+set formatprg=par\ -w80
+
 set laststatus=2 " Always show status bar.
 
 set relativenumber
