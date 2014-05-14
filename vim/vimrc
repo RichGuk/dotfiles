@@ -31,8 +31,8 @@ Bundle 'tpope/vim-liquid'
 Bundle 'tpope/vim-rails'
 Bundle 'tpope/vim-rbenv'
 Bundle 'tpope/vim-surround'
+Bundle 'tpope/vim-unimpaired'
 Bundle 'vim-ruby/vim-ruby'
-Bundle 'tpope/vim-liquid'
 
 syntax on
 filetype plugin indent on
