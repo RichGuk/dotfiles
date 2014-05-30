@@ -29,3 +29,5 @@ EDITOR=vim
 [[ -s "$HOME/.rbenv" ]] && eval "$(rbenv init -)"
 
 [[ -s "$HOME/.zhrc.local" ]] && source "$HOME/.zshrc.local"
+
+source ${DOTFILES}/zsh-syntax-highlighting-0.2.0/zsh-syntax-highlighting.zsh
