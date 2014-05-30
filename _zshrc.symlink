@@ -6,28 +6,13 @@ export DOTFILES=$(dirname "$ZSHRC")
 
 ZSH="${DOTFILES}/zsh"
 
-# Add RVM completion if it exists.
-if [ -d "$HOME/.rvm/scripts/zsh/Completion" ]; then
-  fpath=($HOME/.rvm/scripts/zsh/Completion $fpath)
-fi
-
-# Load our main configs.
-for config_file ($ZSH/**/*.zsh) source $config_file
-
-if [ -e "$HOME/.zshrc.local" ]; then
-  source "$HOME/.zshrc.local"
-fi
-
-# Misc options.
-setopt multios
-setopt cdablevarS
-
 PATH=$HOME/Scripts:$HOME/bin:/usr/local/bin:/usr/local/git/bin:/usr/local/heroku/bin:/Applications/Postgres.app/Contents/MacOS/bin:$PATH
 EDITOR=vim
+
+for config_file ($ZSH/*.zsh) source $config_file
 
 # rbenv.
 [[ -s "$HOME/.rbenv" ]] && eval "$(rbenv init -)"
 
+# Local zsh settings.
 [[ -s "$HOME/.zhrc.local" ]] && source "$HOME/.zshrc.local"
-
-source ${DOTFILES}/zsh-syntax-highlighting-0.2.0/zsh-syntax-highlighting.zsh

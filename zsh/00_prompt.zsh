@@ -1,7 +1,7 @@
 setopt prompt_subst
 setopt auto_name_dirs
 
-PROMPT='${SSH_TTY:+[%n@%m] }%F{071}%~> %f'
+PROMPT='${SSH_TTY:+[%n@%m] }%F{071}${PWD/#$HOME/~}> %f'
 RPROMPT='%{$reset_color%}$(git_prompt_info)%{$reset_color%} '
 
 function ls_colours() {
