@@ -1,0 +1,1 @@
+cdpath=(~ ~/Projects /mnt/media)
