@@ -2,16 +2,14 @@ update
 
 install caskroom/cask/brew-cask
 
-# Core.
 install git
 install wget
 install vim --override-system-vi
 install tmux
-
-# Dev stuff.
 install mysql
 install postgres
 install memcached
+cask install iterm2
 
 # Ruby related.
 install rbenv
