@@ -17,6 +17,7 @@ fi
 
 cd $DOTFILES
 brew bundle
+brew cask alfred link
 
 ruby --version | grep ${RUBY_VERSION}
 if [[ $? != 0 ]]; then
