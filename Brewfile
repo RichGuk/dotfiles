@@ -23,6 +23,8 @@ install rbenv-binstubs
 cask install google-chrome
 cask install alfred
 cask install dropbox
+cask install ynab
+cask install hipchat
 
 cask install virtualbox
 cask install vagrant
