@@ -15,12 +15,12 @@ if [[ $? == 0 ]]; then
   brew install git
 fi
 
-which tmux
+which -s tmux
 if [[ $? != 0 ]]; then
   brew install tmux
 fi
 
-which rbenv
+which -s rbenv
 if [[ $? != 0 ]]; then
   brew install rbenv
   brew install ruby-build
@@ -36,14 +36,14 @@ if [[ $? != 0 ]]; then
   gem install bundler foreman rails --no-rdoc --no-ri
 fi
 
-which mysql
+which -s mysql
 if [[ $? != 0 ]]; then
   brew install mysql
   mysql.server start
   mysql_secure_installation
 fi
 
-which postgres
+which -s postgres
 if [[ $? != 0 ]]; then
   brew install postgres
 fi
