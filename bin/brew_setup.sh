@@ -17,3 +17,14 @@ fi
 
 cd $DOTFILES
 brew bundle
+
+ruby --version | grep ${RUBY_VERSION}
+if [[ $? != 0 ]]; then
+  rbenv install ${RUBY_VERSION}
+  rbenv global ${RUBY_VERSION}
+
+  [[ -s "$HOME/.rbenv" ]] && eval "$(rbenv init -)"
+
+  gem update --system
+  gem install bundler foreman rails --no-rdoc --no-ri
+fi
