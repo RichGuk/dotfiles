@@ -9,7 +9,8 @@ install tmux
 install mysql
 install postgres
 install memcached
-cask install iterm2
+# Needed for capybara-webkit
+install qt
 
 # Ruby related.
 install rbenv
@@ -23,6 +24,9 @@ install rbenv-binstubs
 #
 cask install google-chrome
 cask install alfred
+cask install dropbox
 
 cask install virtualbox
 cask install vagrant
+
+cask install iterm2
