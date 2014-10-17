@@ -15,3 +15,5 @@ if [[ $? == 0 ]]; then
   brew tap homebrew/boneyard
 fi
 
+cd $DOTFILES
+brew bundle
