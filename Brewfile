@@ -9,8 +9,6 @@ install tmux
 install mysql
 install postgres
 install memcached
-# Needed for capybara-webkit
-install qt
 
 # Ruby related.
 install rbenv
