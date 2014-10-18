@@ -30,4 +30,6 @@ alias zm='zeus g model'
 
 alias delmerged='git branch --merged | grep -v "\*" | grep -v master | xargs -n 1 git branch -d'
 
+alias postgres.server='pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log'
+
 projects=$HOME/Projects
