@@ -9,6 +9,7 @@ install tmux
 install mysql
 install postgres
 install memcached
+install imagemagick
 
 # Ruby related.
 install rbenv
