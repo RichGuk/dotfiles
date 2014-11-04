@@ -12,7 +12,10 @@ EDITOR=vim
 for config_file ($ZSH/*.zsh) source $config_file
 
 # rbenv.
-[[ -s "$HOME/.rbenv" ]] && eval "$(rbenv init -)"
+if [[ -s "$HOME/.rbenv" ]]; then
+  PATH=$HOME/.rbenv/bin:$PATH
+  eval "$(rbenv init -)"
+fi
 
 # Local zsh settings.
 [[ -s "$HOME/.zhrc.local" ]] && source "$HOME/.zshrc.local"
