@@ -5,20 +5,13 @@ My dotfiles/setup scripts that are used on variables machines I use.
 
 ## Setup
 
-1. Clone repo
+1. Setup main symlinks
 
 ```
-git clone https://github.com/RichGuk/dotfiles.git .dotfiles
+curl -L http://git.io/richguk-dotsetup | bash
 ```
 
-2. Run symlinks
-
-```
-cd .dotfiles
-./bin/setup.sh
-```
-
-3. Mac only setup (installs applications, and configures settings)
+2. Mac only setup (installs applications, and configures settings)
 
 ```
 ./bin/mac_setup.sh
@@ -27,5 +20,11 @@ cd .dotfiles
 4. Done.
 
 
-### Credit
+## Credit
+
+The various places I've pinched stuff from. :)
+
+https://gist.github.com/brandonb927/3195465
+http://robots.thoughtbot.com/faster-grepping-in-vim
+
 
