@@ -17,7 +17,7 @@ curl -L http://git.io/richguk-dotsetup | bash
 ./bin/mac_setup.sh
 ```
 
-4. Done.
+3. Done.
 
 
 ## Credit
