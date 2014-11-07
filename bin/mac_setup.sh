@@ -55,9 +55,10 @@ apps=(
   iterm2
   firefox
   cloud
+  totalfinder
 )
 echo "installing apps..."
-brew install ${apps[@]}
+brew cask install ${apps[@]}
 brew cask alfred link
 
 #############################################################
@@ -96,10 +97,19 @@ defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
 # Reveal IP address, hostname, OS version, etc. when clicking the clock in the login window
 sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName
 
+# Menu bar: Always show percentage next to the Battery icon
+defaults write com.apple.menuextra.battery ShowPercent -bool true
+
+#############################################################
+# Trackpad / Input
+##############################################################
+
+# Disable auto-correct
+defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
+
 # Disable smart quotes and smart dashes
 defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
 defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
-
 
 # Enabling full keyboard access for all controls (enable Tab in modal dialogs, menu windows, etc.)
 defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
@@ -109,13 +119,11 @@ defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 
 # Setting a blazingly fast keyboard repeat rate
 defaults write NSGlobalDomain KeyRepeat -int 0
-
-# Disable auto-correct
-defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
+defaults write NSGlobalDomain InitialKeyRepeat -int 15
 
 # Setting trackpad & mouse speed to a reasonable number
-defaults write -g com.apple.trackpad.scaling 1
-defaults write -g com.apple.mouse.scaling 2
+defaults write -g com.apple.trackpad.scaling -1
+defaults write -g com.apple.mouse.scaling -1
 
 # Enable tap to click (Trackpad) for this user and for the login screen
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
@@ -126,9 +134,16 @@ defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 defaults write com.apple.BezelServices kDimTime -int 300
 
 
+#############################################################
+# Screen.
+##############################################################
+
+# Disable separate Spaces per screen.
+defaults write com.apple.spaces spans-displays -bool true
+
 # Requiring password after sleep or screen saver begins
 defaults write com.apple.screensaver askForPassword -int 1
-defaults write com.apple.screensaver askForPasswordDelay -int 3
+defaults write com.apple.screensaver askForPasswordDelay -int 0
 
 # Enabling subpixel font rendering on non-Apple LCDs
 defaults write NSGlobalDomain AppleFontSmoothing -int 2
@@ -151,17 +166,18 @@ defaults write NSGlobalDomain AppleShowAllExtensions -bool true
 defaults write com.apple.finder ShowStatusBar -bool true
 
 # Set home as default finder window.
-defaults write com.apple.finder NewWindowTarget -string "PfDe"
-defaults write com.apple.finder NewWindowTargetPath -string "file://${HOME}"
+defaults write com.apple.finder NewWindowTarget -string "PfHm"
+defaults write com.apple.finder NewWindowTargetPath -string "file:///Users/rich/"
 
 # Show path bar.
-# defaults write com.apple.finder ShowPathbar -bool true
+defaults write com.apple.finder ShowPathbar -bool true
 
 # Disable the warning when changing a file extension
 defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
 
-# Use column view in all Finder windows by default
-defaults write com.apple.finder FXPreferredViewStyle Clmv
+# Use List view in all Finder windows by default
+# Four-letter codes for the other view modes: `icnv`, `clmv`, `Flwv`
+defaults write com.apple.finder FXPreferredViewStyle -string "Flwv"
 
 # Avoid creation of .DS_Store files on network volumes
 defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
@@ -174,6 +190,8 @@ defaults write com.apple.frameworks.diskimages skip-verify-remote -bool true
 # Allowing text selection in Quick Look/Preview in Finder by default
 defaults write com.apple.finder QLEnableTextSelection -bool true
 
+# Empty Trash securely by default
+defaults write com.apple.finder EmptyTrashSecurely -bool true
 
 #############################################################
 #  Dock.
@@ -181,9 +199,6 @@ defaults write com.apple.finder QLEnableTextSelection -bool true
 # Wipe all (default) app icons from the Dock
 # (This is only really useful when setting up a new Mac, or if you don't use the Dock to launch apps.)
 defaults write com.apple.dock persistent-apps -array
-
-# Setting the icon size of Dock items to 36 pixels for optimal size/screen-realestate
-defaults write com.apple.dock tilesize -int 36
 
 # Speeding up Mission Control animations and grouping windows by application
 defaults write com.apple.dock expose-animation-duration -float 0.1
@@ -197,6 +212,11 @@ defaults write com.apple.dock autohide-time-modifier -float 0
 # Disable dashboard.
 defaults write com.apple.dock dashboard-in-overlay -bool true
 
+# Disable the Docks bounce to alert behavior
+defaults write com.apple.dock no-bouncing -bool true
+
+# Change icon size.
+defaults write com.apple.dock tilesize -int 42
 
 #############################################################
 # Time Machine
@@ -240,5 +260,7 @@ defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool false
 
 
 echo "##################################################################"
-echo ""
-echo "Restart your mac!"
+for app in "Dock" "Finder" "SystemUIServer" "Terminal"; do
+  killall "${app}" > /dev/null 2>&1
+done
+echo "Done. You will need to reboot for some changes."
