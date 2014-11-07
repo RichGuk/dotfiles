@@ -31,6 +31,7 @@ binaries=(
   ruby-build
   rbenv-gem-rehash
   rbenv-binstubs
+  gpg
 )
 
 echo "installing binaries..."
