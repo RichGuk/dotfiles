@@ -1,0 +1,93 @@
+#!/bin/bash
+
+#
+# Simple script to copy ssh keys/gpg keyring, etc from a USB stick to any
+# machine's home dir.
+#
+# usage: ./sync-private.sh /Volumes/USB
+#
+
+SRC="$1"
+DST="$HOME"
+# .ssh and .gnupg are already handled. Here you can list other files.
+MISC_FILES=(
+  ".gitconfig.local"
+)
+
+################################################################################
+
+
+
+function copy_file {
+ src=$1
+ dst=$2
+
+ echo "Copy: $src -> $dst"
+ cp -r "$src" "$dst"
+}
+
+function check_file {
+  src_file=$1
+  dst_dir="$DST/$2"
+
+  name=`basename $src_file`
+  dst_file="$dst_dir/$name"
+
+  if [[ -e $dst_file ]]; then
+    # Check if the files are different, if they are offer to newer if newer.
+    diff "$src_file" "$dst_file" > /dev/null
+
+    if [[ $? != 0 ]]; then
+      if [[ $src_file -nt $dst_file ]]; then
+        read -r -p "$src_file is newer, do you want to copy? [y/N] " response
+        if [[ $response =~ ^([yY][eE][sS]|[yY])$ ]]; then
+          copy_file $src_file $dst_file
+        fi
+      else
+        "Skipped: $src_file (older)."
+      fi
+    else
+      echo "Skipped: $src_file (identical)."
+    fi
+
+  else
+    copy_file $src_file $dst_file
+    LAST="normal"
+  fi
+}
+
+echo "#######################"
+echo "Copying SSH keys"
+echo "#######################"
+mkdir -p "$DST/.ssh"
+SAVEIFS=$IFS
+IFS=$(echo -en "\n\b")
+for src_file in $SRC/.ssh/*; do
+  check_file $src_file '.ssh'
+done
+IFS=$SAVEIFS
+
+echo ""
+echo ""
+
+echo "#######################"
+echo "Copying GPG keyring"
+echo "#######################"
+mkdir -p "$DST/.gnupg"
+SAVEIFS=$IFS
+IFS=$(echo -en "\n\b")
+for src_file in $SRC/.gnupg/*; do
+  check_file $src_file '.gnupg'
+done
+IFS=$SAVEIFS
+
+echo "#######################"
+echo "Misc files"
+echo "#######################"
+SAVEIFS=$IFS
+IFS=$(echo -en "\n\b")
+for src_file in "${MISC_FILES[@]}"; do
+  src_file="$SRC/$src_file"
+  check_file $src_file ''
+done
+IFS=$SAVEIFS
