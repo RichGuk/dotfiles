@@ -17,7 +17,7 @@
 SRC="/Users/rich"
 DST="/Volumes/Striker MBP backup"
 EXCLUDE="/Users/rich/.dotfiles/.backupignore"
-KEEP_DAYS=30
+KEEP_DAYS=31
 DATE=`date "+%Y-%m-%dT%H:%M:%S"`
 
 # Get sudo access now.
@@ -63,7 +63,7 @@ sudo rsync --acls \
 pushd "$DST" >>/dev/null
 unlink current
 ln -s "backup-$DATE" current
-sudo find "$DST" -type d -depth 1 -mmin +5 -exec rm -rf {} \;
+sudo find "$DST" -type d -depth 1 -ctime +$KEEP_DAYS -prune -exec rm -rf {} \;
 popd>>/dev/null
 
 echo "Done."
