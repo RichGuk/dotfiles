@@ -1,0 +1,42 @@
+#!/bin/bash -e
+
+BUNDLE_NAME="Striker-backup.sparsebundle"
+BACKUP_SERVER_PATH="/Volumes/media"
+BUNDLE_PATH="/Volumes/media/Backups/$BUNDLE_NAME"
+EXCLUDE="/Users/rich/.dotfiles/.backupignore"
+BACKUP_SERVER='PROMETHEUS'
+MOUNT_URI="smb://rich@$BACKUP_SERVER/media"
+MOUNT_POINT="/Volumes/Striker MBP backup"
+
+# Already mounted quit.
+if [ -e "$MOUNT_POINT" ]; then
+  exit 0
+fi
+
+if [ ! -e "$BACKUP_SERVER_PATH" ]; then
+  ping -c 1 $BACKUP_SERVER >/dev/null 2>&1
+
+  if [ $? != 0 ]; then
+    logger "Can't find backup server: $BACKUP_SERVER"
+    exit 1
+  fi
+
+  /usr/bin/osascript -e "tell application \"Finder\" to mount volume \"$MOUNT_URI\"">/dev/null
+
+  if [ $? != 0 ]; then
+    logger "Failed to mount backup server!"
+    exit 1
+  fi
+fi
+
+if [ ! -e "$DST" ]; then
+  MOUNT_PASSWORD=$(security find-generic-password -w -D "disk image password" -l "$BUNDLE_NAME")
+  printf $MOUNT_PASSWORD | hdiutil attach -stdinpass -mountpoint "$MOUNT_POINT" "$BUNDLE_PATH"
+
+  if [ $? != 0 ]; then
+    logger "Failed to mount bundle!"
+    exit 1
+  fi
+fi
+
+exit 0

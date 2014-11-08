@@ -18,7 +18,7 @@ SRC="/Users/rich"
 DST="/Volumes/Striker MBP backup"
 EXCLUDE="/Users/rich/.dotfiles/.backupignore"
 KEEP_DAYS=31
-DATE=`date "+%Y-%m-%dT%H:%M:%S"`
+DATE=`date "+%Y-%m-%dT%H_%M_%S"`
 
 # Get sudo access now.
 sudo -v
