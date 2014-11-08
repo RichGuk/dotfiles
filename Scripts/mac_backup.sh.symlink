@@ -25,6 +25,7 @@ sudo -v
 
 ##############################################################
 PROG=$0
+PATH=/usr/local/bin:$PATH
 
 if [ ! -r "$SRC" ]; then
   logger -t $PROG "Source $SRC not readable - Cannot start the sync process"
