@@ -57,6 +57,9 @@ apps=(
   firefox
   cloud
   totalfinder
+  keka
+  coconutbattery
+  appcleaner
 )
 echo "installing apps..."
 brew cask install ${apps[@]}
