@@ -1,0 +1,50 @@
+#!/bin/bash
+
+#
+# This encrypts directories or files with a preset GPG key.
+# It has optional compression with bzip2.
+#
+# On OSX you will need to install
+# gpg
+# pv
+#
+# Use homebrew for this. :)
+#
+# Usage:
+# tarenc -c /mnt/backups/archive /mnt/usbdrive/archive.tar.bzip2.gpg
+#
+# For help see see
+# tarenc -h
+
+COMPRESS="none"
+GPG_RECIPIENT=5AB089B0
+
+#==============================================================================
+function show_help {
+  echo "$(basename "$0") -r KEYID -c INPUT OUTPUT"
+  echo ""
+  echo "-c          compress with bzip2"
+  echo "-r KEYID    encrypt with GPG key"
+}
+
+while getopts "h?r:c" opt; do
+  case "$opt" in
+    h|\?)
+      show_help
+      exit 0
+      ;;
+    r)
+      GPG_RECIPIENT=$OPTARG
+      ;;
+    c)
+      COMPRESS="bzip2"
+      ;;
+    esac
+done
+
+shift $((OPTIND-1))
+
+INPUT=$1
+OUTPUT=$2
+SIZE=$(du -sk "${INPUT}" | cut -f 1)
+tar -c "${INPUT}" | pv -s "${SIZE}k" | gpg --compress-algo ${COMPRESS} --encrypt --recipient $GPG_RECIPIENT > "$OUTPUT"
