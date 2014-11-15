@@ -2,7 +2,7 @@
 
 BUNDLE_NAME="Striker-backup.sparsebundle"
 BACKUP_SERVER_PATH="/Volumes/media"
-BUNDLE_PATH="/Volumes/media/Backups/$BUNDLE_NAME"
+BUNDLE_PATH="/Volumes/media/Backups/Current/$BUNDLE_NAME"
 EXCLUDE="/Users/rich/.dotfiles/.backupignore"
 BACKUP_SERVER='PROMETHEUS'
 MOUNT_URI="smb://rich@$BACKUP_SERVER/media"
