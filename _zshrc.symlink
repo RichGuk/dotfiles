@@ -6,8 +6,8 @@ export DOTFILES=$(dirname "$ZSHRC")
 
 ZSH="${DOTFILES}/zsh"
 
-PATH=$HOME/Scripts:$HOME/bin:/usr/local/bin:/usr/local/git/bin:/usr/local/heroku/bin:/Applications/Postgres.app/Contents/MacOS/bin:$PATH
-EDITOR=vim
+export PATH=$HOME/Scripts:$HOME/bin:/usr/local/bin:/usr/local/git/bin:/usr/local/heroku/bin:/Applications/Postgres.app/Contents/MacOS/bin:$PATH
+export EDITOR=vim
 
 for config_file ($ZSH/*.zsh) source $config_file
 
