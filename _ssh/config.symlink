@@ -17,6 +17,10 @@ Host *.27smiles.com
   IdentityFile ~/.ssh/personal-work
   User rich
 
+Host ra.stinkyink.com
+  IdentityFile ~/.ssh/work_home
+  User rich
+
 Host *.stinkyink.com
   IdentityFile ~/.ssh/work
   User rich
