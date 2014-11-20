@@ -32,4 +32,6 @@ alias delmerged='git branch --merged | grep -v "\*" | grep -v master | xargs -n 
 
 alias postgres.server='pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log'
 
+alias _cp="rsync -aP"
+
 projects=$HOME/Projects
