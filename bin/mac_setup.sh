@@ -40,10 +40,6 @@ brew install vim --override-system-vi
 
 
 brew install caskroom/cask/brew-cask
-#
-# apps to look at:
-# hazel
-#
 apps=(
   alfred
   dropbox
@@ -64,6 +60,14 @@ apps=(
 echo "installing apps..."
 brew cask install ${apps[@]}
 brew cask alfred link
+
+
+brew tap caskroom/fonts
+fonts=(
+  font-inconsolata
+)
+echo "installing apps..."
+brew cask install ${fonts[@]}
 
 #############################################################
 # Setup ruby.
