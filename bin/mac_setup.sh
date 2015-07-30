@@ -32,6 +32,9 @@ binaries=(
   rbenv-gem-rehash
   rbenv-binstubs
   gpg
+  s3cmd
+  redis
+  pv
 )
 
 echo "installing binaries..."
