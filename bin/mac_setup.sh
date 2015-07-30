@@ -68,6 +68,7 @@ brew cask alfred link
 brew tap caskroom/fonts
 fonts=(
   font-inconsolata
+  font-montserrat
 )
 echo "installing apps..."
 brew cask install ${fonts[@]}
