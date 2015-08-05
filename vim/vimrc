@@ -105,6 +105,7 @@ set background=dark
 colorscheme railscasts_term
 
 set tags=tags;$HOME
+set switchbuf+=usetab,newtab
 
 "
 " Mappings and Commands
