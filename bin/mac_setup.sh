@@ -35,7 +35,7 @@ binaries=(
   s3cmd
   redis
   pv
-  ctags
+  ctags-exuberant
 )
 
 echo "installing binaries..."
