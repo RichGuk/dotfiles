@@ -1,23 +1,17 @@
 ServerAliveInterval 120
 
-Host home.27smiles.com
-  IdentityFile ~/.ssh/personal
-  IdentityFile ~/.ssh/personal-work
-  User rich
-
-Host *.27smiles.com
-  IdentityFile ~/.ssh/personal
-  IdentityFile ~/.ssh/personal-work
-  User rich
-
-Host ra.stinkyink.com
-  IdentityFile ~/.ssh/work_home
-  User rich
-
-Host *.stinkyink.com
-  IdentityFile ~/.ssh/work
+Host *richgrundy.com
+  IdentityFile ~/.ssh/id_rsa.personal
   User rich
 
 Host *github.com
-  IdentityFile ~/.ssh/github
+  IdentityFile ~/.ssh/id_rsa.personal
   User git
+
+Host *bitbucket.org
+  IdentityFile ~/.ssh/id_rsa.personal
+  User git
+
+Host *stinkyink.com
+  IdentityFile ~/.ssh/id_rsa.work
+  User rich
