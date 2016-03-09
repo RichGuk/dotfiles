@@ -12,6 +12,14 @@ Host *bitbucket.org
   IdentityFile ~/.ssh/id_rsa.personal
   User git
 
-Host *stinkyink.com
+Host gateway.stinkyink.com
+  User deploy
   IdentityFile ~/.ssh/id_rsa.work
-  User rich
+  ProxyCommand none
+  ForwardAgent yes
+
+Host *.stinkyink.com
+  User deploy
+  IdentityFile ~/.ssh/id_rsa.work
+  ProxyCommand ssh -W %h:%p deploy@gateway.stinkyink.com
+  ForwardAgent yes
