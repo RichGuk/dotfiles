@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RUBY_VERSION=2.1.4
+RUBY_VERSION=2.3.0
 
 ###############################################################################
 
@@ -13,7 +13,7 @@ sudo -v
 ##############################################################
 which -s brew
 if [[ $? != 0 ]]; then
-  ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 else
   brew update
 fi
@@ -29,7 +29,6 @@ binaries=(
   git
   rbenv
   ruby-build
-  rbenv-gem-rehash
   rbenv-binstubs
   gpg
   s3cmd
@@ -43,7 +42,7 @@ brew install ${binaries[@]}
 brew install vim --override-system-vi
 
 
-brew install caskroom/cask/brew-cask
+brew tap caskroom/cask
 apps=(
   alfred
   dropbox
