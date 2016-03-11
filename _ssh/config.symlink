@@ -1,5 +1,9 @@
 ServerAliveInterval 120
 
+Host backup.richgrundy.com
+  IdentityFile ~/.ssh/id_rsa.backup
+  User rich
+
 Host *richgrundy.com
   IdentityFile ~/.ssh/id_rsa.personal
   User rich
