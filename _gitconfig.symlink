@@ -32,6 +32,7 @@
   c = commit
   v = commit -v
   ctags = !.git/hooks/ctags
+  trust = "!mkdir -p .git/safe"
 [push]
   default = current
 [mergetool "fugitive"]
