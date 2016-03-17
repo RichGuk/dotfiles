@@ -10,13 +10,3 @@ g() {
 
 # Complete g like git
 compdef g=git
-
-
-# Run RSpec through zeus if it's running.
-rspec() {
-  if [ -S .zeus.sock ]; then
-    zeus rspec "$@"
-  else
-    command rspec "$@"
-  fi
-}
