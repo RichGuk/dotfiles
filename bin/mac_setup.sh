@@ -87,6 +87,15 @@ if [[ $? != 0 ]]; then
   gem install bundler foreman rails --no-rdoc --no-ri
 fi
 
+#############################################################
+# Misc hacks/tweaks.
+##############################################################
+
+# Fixes path issues on non-interactive shells on OSX for zsh.
+# See:
+# http://stackoverflow.com/questions/9853584/how-to-use-correct-ruby-in-vim-how-to-modify-path-in-vim
+# https://github.com/dotphiles/dotzsh#mac-os-x
+sudo chmod ugo-x /usr/libexec/path_helper
 
 
 # Setup some preferences for OSX.
