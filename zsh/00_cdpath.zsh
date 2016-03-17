@@ -1,1 +1,1 @@
-cdpath=(~ ~/Projects /mnt/media)
+cdpath=(~ ~/Projects /data)
