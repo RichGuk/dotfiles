@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Usage:
+# /bin/bash -l -c 'BORG_PASSPHRASE=$(cat /root/.borg_pass) /root/Scripts/prometheus-backup.sh'
+
+BACKUP_PATH=/Volumes/Backup/prometheus
+BACKUP_REMOTE=rich@backup.richgrundy.com
+REPOSITORY="${BACKUP_REMOTE}:${BACKUP_PATH}"
+DISKS=12345
+
+touch /data/.BACKUP
+borg create -v --stats \
+$REPOSITORY::`hostname`-`date +%Y-%m-%d-%H%M` \
+/mnt/data/disk[$DISKS]/Music \
+/mnt/data/disk[$DISKS]/Pictures \
+/mnt/data/disk[$DISKS]/Backups \
+/mnt/data/disk[$DISKS]/Scan\ Inbox \
+/opt/appdata \
+/var/snapraid \
+/etc/libvirt \
+/VM \
+/data/.BACKUP \
+--exclude '*.DS_Store'
+
+borg prune -v $REPOSITORY --prefix `hostname`- \
+  --keep-daily=7 --keep-weekly=4 --keep-monthly=6
