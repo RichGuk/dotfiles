@@ -5,6 +5,11 @@ set-option -g prefix2 C-s
 bind-key C-b send-prefix
 bind-key C-s send-prefix -2
 
+# Copy mode to vi
+set -g mode-keys vi
+# Make v begin selection.
+bind-key -t vi-copy 'v' begin-selection
+
 # Make sure zsh is our shell.
 set-option -g default-shell /bin/zsh
 
