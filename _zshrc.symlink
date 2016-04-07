@@ -6,7 +6,7 @@ export DOTFILES=$(dirname "$ZSHRC")
 
 ZSH="${DOTFILES}/zsh"
 
-export PATH=.git/safe/../../bin:$HOME/Scripts:$HOME/bin:$HOME/.local/bin:/usr/local/bin:/usr/local/git/bin:/usr/local/heroku/bin:/Applications/Postgres.app/Contents/MacOS/bin:$PATH
+export PATH=$HOME/Scripts:$HOME/bin:$HOME/.local/bin:/usr/local/bin:/usr/local/git/bin:/usr/local/heroku/bin:/Applications/Postgres.app/Contents/MacOS/bin:$PATH
 export EDITOR=vim
 
 for config_file ($ZSH/*.zsh) source $config_file
@@ -16,6 +16,8 @@ if [[ -s "$HOME/.rbenv" ]]; then
   PATH=$HOME/.rbenv/bin:$PATH
   eval "$(rbenv init -)"
 fi
+
+export PATH=.git/safe/../../bin:$PATH
 
 # Local zsh settings.
 [[ -s "$HOME/.zhrc.local" ]] && source "$HOME/.zshrc.local"

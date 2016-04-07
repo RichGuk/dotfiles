@@ -9,7 +9,6 @@ alias l='ls -la'
 alias ll='ls -l'
 
 alias be='bundle exec'
-alias vim='nocorrect vim'
 
 # Foreman for apps.
 alias fr_dev='bundle exec foreman run -e .env_development'
