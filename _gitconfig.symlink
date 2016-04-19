@@ -37,9 +37,6 @@
   default = current
 [mergetool "fugitive"]
   cmd = vim -f -c \"Gdiff\" \"$MERGED\"
-[credential]
-  helper = osxkeychain
-
 [include]
   path = .gitconfig.local
 [init]
