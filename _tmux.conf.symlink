@@ -1,5 +1,7 @@
 new-session
 
+set -g default-terminal "screen-256color"
+
 # Add C-s as a prefix.
 set-option -g prefix2 C-s
 bind-key C-b send-prefix
