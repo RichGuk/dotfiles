@@ -36,6 +36,7 @@ Bundle 'vim-ruby/vim-ruby'
 Bundle 'pangloss/vim-javascript'
 Bundle 'mxw/vim-jsx'
 Bundle 'yoppi/fluentd.vim'
+Bundle 'jpo/vim-railscasts-theme'
 
 syntax on
 filetype plugin indent on
@@ -105,7 +106,8 @@ set foldlevelstart=99
 set nofoldenable
 
 set background=dark
-colorscheme railscasts_term
+colorscheme railscasts
+hi Normal ctermbg=none ctermfg=255
 
 set tags=tags;$HOME
 set switchbuf+=usetab,newtab
