@@ -108,6 +108,7 @@ set nofoldenable
 set background=dark
 colorscheme railscasts
 hi Normal ctermbg=none ctermfg=255
+hi TabLineFill term=bold cterm=bold ctermbg=0
 
 set tags=tags;$HOME
 set switchbuf+=usetab,newtab
