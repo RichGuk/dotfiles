@@ -41,6 +41,19 @@ Bundle 'jpo/vim-railscasts-theme'
 syntax on
 filetype plugin indent on
 
+
+set background=dark
+colorscheme railscasts
+hi Normal ctermbg=none ctermfg=255
+hi TabLineFill term=bold cterm=bold ctermbg=0
+
+hi diffRemoved ctermbg=52 ctermfg=15
+hi diffAdded ctermbg=64 ctermfg=15
+hi diffFile ctermbg=4* ctermfg=15
+hi DiffAdd term=bold ctermfg=15 ctermbg=64
+hi DiffChange term=bold ctermfg=15 ctermbg=236
+hi DiffText term=bold cterm=bold ctermbg=160 ctermfg=255
+
 " Run built-in matchit.
 runtime macros/matchit.vim
 
@@ -104,11 +117,6 @@ set foldmethod=indent
 set foldnestmax=5
 set foldlevelstart=99
 set nofoldenable
-
-set background=dark
-colorscheme railscasts
-hi Normal ctermbg=none ctermfg=255
-hi TabLineFill term=bold cterm=bold ctermbg=0
 
 set tags=tags;$HOME
 set switchbuf+=usetab,newtab
@@ -253,11 +261,6 @@ au BufWinEnter * let w:twsm=matchadd('TrailingWhiteSpace', '\s\+$')
 hi CursorColumn term=underline cterm=underline guibg=#333435 " hidden carriage return character.
 hi NonText ctermbg=NONE ctermfg=235 guifg=#424242 gui=NONE " hidden tab character.
 hi SpecialKey ctermbg=NONE ctermfg=235 guifg=#424242 gui=NONE
-
-" Improve vimdiff colours.
-hi DiffAdd term=bold ctermfg=0 ctermbg=64
-hi DiffChange term=bold ctermfg=0 ctermbg=240
-hi DiffText term=bold cterm=bold ctermbg=160 ctermfg=255
 
 " Highlight long lines.
 if version >= 703
