@@ -7,37 +7,38 @@ filetype off
 "
 " Plugins.
 "
-call vundle#rc($DOTFILES . "/vim/bundle")
+call vundle#begin($DOTFILES . "/vim/bundle")
 
-Bundle 'ecomba/vim-ruby-refactoring'
-Bundle 'ervandew/supertab'
-Bundle 'gmarik/vundle'
-Bundle 'godlygeek/tabular'
-Bundle 'kana/vim-textobj-user'
-Bundle 'kchmck/vim-coffee-script'
-Bundle 'kien/ctrlp.vim'
-Bundle 'mattn/gist-vim'
-Bundle 'mattn/webapi-vim'
-Bundle 'nelstrom/vim-textobj-rubyblock'
-Bundle 'rodjek/vim-puppet'
-Bundle 'scrooloose/syntastic'
-Bundle 'thoughtbot/vim-rspec'
-Bundle 'tpope/vim-bundler'
-Bundle 'tpope/vim-commentary'
-Bundle 'tpope/vim-dispatch'
-Bundle 'tpope/vim-fugitive'
-Bundle 'tpope/vim-haml'
-Bundle 'tpope/vim-liquid'
-Bundle 'tpope/vim-rails'
-Bundle 'tpope/vim-rbenv'
-Bundle 'tpope/vim-surround'
-Bundle 'tpope/vim-unimpaired'
-Bundle 'vim-ruby/vim-ruby'
-Bundle 'pangloss/vim-javascript'
-Bundle 'mxw/vim-jsx'
-Bundle 'yoppi/fluentd.vim'
-Bundle 'jpo/vim-railscasts-theme'
-Bundle 'elixir-lang/vim-elixir'
+Plugin 'ecomba/vim-ruby-refactoring'
+Plugin 'ervandew/supertab'
+Plugin 'gmarik/vundle'
+Plugin 'godlygeek/tabular'
+Plugin 'kana/vim-textobj-user'
+Plugin 'kchmck/vim-coffee-script'
+Plugin 'kien/ctrlp.vim'
+Plugin 'mattn/gist-vim'
+Plugin 'mattn/webapi-vim'
+Plugin 'nelstrom/vim-textobj-rubyblock'
+Plugin 'rodjek/vim-puppet'
+Plugin 'scrooloose/syntastic'
+Plugin 'tpope/vim-bundler'
+Plugin 'tpope/vim-commentary'
+Plugin 'tpope/vim-dispatch'
+Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-haml'
+Plugin 'tpope/vim-liquid'
+Plugin 'tpope/vim-rails'
+Plugin 'tpope/vim-rbenv'
+Plugin 'tpope/vim-surround'
+Plugin 'tpope/vim-unimpaired'
+Plugin 'vim-ruby/vim-ruby'
+Plugin 'pangloss/vim-javascript'
+Plugin 'mxw/vim-jsx'
+Plugin 'yoppi/fluentd.vim'
+Plugin 'jpo/vim-railscasts-theme'
+Plugin 'elixir-lang/vim-elixir'
+
+call vundle#end()
 
 syntax on
 filetype plugin indent on
@@ -208,7 +209,6 @@ nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 "
 let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro' " Line numbers etc in netrw.
 let g:is_posix = 1 " See: http://bit.ly/KcQg0M
-let g:rspec_command = "Dispatch rspec {spec}"
 let g:ctrlp_working_path_mode = 'ra'
 let g:ctrlp_switch_buffer = 'Et'
 let g:syntastic_enable_signs=1
