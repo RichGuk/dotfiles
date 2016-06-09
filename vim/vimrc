@@ -37,6 +37,7 @@ Bundle 'pangloss/vim-javascript'
 Bundle 'mxw/vim-jsx'
 Bundle 'yoppi/fluentd.vim'
 Bundle 'jpo/vim-railscasts-theme'
+Bundle 'elixir-lang/vim-elixir'
 
 syntax on
 filetype plugin indent on
