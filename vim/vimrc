@@ -24,6 +24,7 @@ Plugin 'scrooloose/syntastic'
 Plugin 'tpope/vim-bundler'
 Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-dispatch'
+Plugin 'janko-m/vim-test'
 Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-haml'
 Plugin 'tpope/vim-liquid'
@@ -145,19 +146,16 @@ nmap <silent> <leader>mw :call MarkWindowSwap()<CR>
 nmap <silent> <leader>pw :call DoWindowSwap()<CR>
 map <leader>tc :set invlist<CR> " Toggle list characters.
 cmap w!! %!sudo tee > /dev/null % " Save with sudo.
-map <Leader>t :call RunCurrentSpecFile()<CR>
-map <Leader>s :call RunNearestSpec()<CR>
-map <Leader>l :call RunLastSpec()<CR>
-map <Leader>a :call RunAllSpecs()<CR>
+map <Leader>t :TestFile<CR>
+map <Leader>s :TestNearest<CR>
+map <Leader>l :TestLast<CR>
+map <Leader>a :call TestSuite<CR>
 map <Leader>m :Rmodel<CR>
 map <Leader>vm :RVmodel<CR>
 map <Leader>sm :RSmodel<CR>
 map <Leader>c :Rcontroller<CR>
 map <Leader>vc :RVcontroller<CR>
 map <Leader>sc :RScontroller<CR>
-map <Leader>r :Runittest<CR>
-map <Leader>vr :RVunittest<CR>
-map <Leader>sr :RSunittest<CR>
 map <Leader>v :Rview<CR>
 map <Leader>vv :RVview<CR>
 map <Leader>sv :RSview<CR>
@@ -213,6 +211,8 @@ let g:ctrlp_working_path_mode = 'ra'
 let g:ctrlp_switch_buffer = 'Et'
 let g:syntastic_enable_signs=1
 let g:UltiSnipsDontReverseSearchPath="1"
+" See vim-test
+let test#strategy = "dispatch"
 
 "
 " Functions
