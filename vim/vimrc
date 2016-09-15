@@ -149,7 +149,7 @@ cmap w!! %!sudo tee > /dev/null % " Save with sudo.
 map <Leader>t :TestFile<CR>
 map <Leader>s :TestNearest<CR>
 map <Leader>l :TestLast<CR>
-map <Leader>a :call TestSuite<CR>
+map <Leader>a :TestSuite<CR>
 map <Leader>m :Rmodel<CR>
 map <Leader>vm :RVmodel<CR>
 map <Leader>sm :RSmodel<CR>
