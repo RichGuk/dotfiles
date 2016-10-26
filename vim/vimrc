@@ -214,6 +214,8 @@ let g:UltiSnipsDontReverseSearchPath="1"
 " See vim-test
 let test#strategy = "dispatch"
 
+set diffopt+=vertical
+
 "
 " Functions
 "
