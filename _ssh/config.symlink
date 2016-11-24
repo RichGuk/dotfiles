@@ -22,6 +22,18 @@ Host gateway.stinkyink.com
   ProxyCommand none
   ForwardAgent yes
 
+Host mars.stinkyink.com
+  HostName ra.stinkyink.com
+  User rich
+  IdentityFile ~/.ssh/id_rsa.work
+  Port 23
+
+Host venus.stinkyink.com
+  HostName ra.stinkyink.com
+  User rich
+  IdentityFile ~/.ssh/id_rsa.work
+  Port 24
+
 Host *.stinkyink.com
   User deploy
   IdentityFile ~/.ssh/id_rsa.work
