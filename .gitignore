@@ -8,3 +8,4 @@ vim/bundle/*
 _tmux.symlink/plugins/*
 !_tmux.symlink/plugins/.gitkeep
 !_tmux.symlink/plugins/tpm
+zsh/cache
