@@ -3,6 +3,7 @@
 zmodload zsh/stat
 export ZSHRC=$(stat +link "$HOME/.zshrc")
 export DOTFILES=$(dirname "$ZSHRC")
+export DEFAULT_USER=`whoami`
 
 ZSH="${DOTFILES}/zsh"
 

@@ -1,8 +1,14 @@
 setopt prompt_subst
 setopt auto_name_dirs
 
-PROMPT='[%n@%m] %F{071}${PWD/#$HOME/~}> %f'
+PROMPT='$(prompt_context)%F{071}${PWD/#$HOME/~}> %f'
 RPROMPT='%{$reset_color%}$(git_prompt_info)%{$reset_color%} '
+
+prompt_context () {
+  if [[ "$USER" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
+    echo -n "${PR_RESET}${PR_RED}$USER@%m${PR_RESET}%<<${PR_RESET} "
+  fi
+}
 
 function ls_colours() {
   for code in {000..255}; do print -P -- "$code: %F{$code}Test%f"; done
