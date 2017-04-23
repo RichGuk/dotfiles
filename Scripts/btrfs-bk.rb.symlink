@@ -1,0 +1,305 @@
+#!/usr/bin/env ruby
+require "optparse"
+require "time"
+require "open3"
+require "stringio"
+
+
+class BtrfsBk
+  class CommandError < StandardError; end
+
+  # In Minutes.
+  RESUME_CUTOFF = 5
+  WOL_TIMEOUT = 1
+
+  def initialize(options)
+    @options = defaults
+      .merge(options)
+      .merge(parse_dest_path(options[:dest]))
+
+    @remote_host_originally_down = false
+
+    # Need to do this early on as other steps make delay the check time.
+    record_resume_status!
+  end
+
+  def run!
+    if remote_dest? && !remote_host_up?
+      success = false
+      if @options[:wol]
+        @remote_host_originally_down = true
+        success = run_wol_and_wait
+      end
+
+      if !success
+        raise "Unable to talk to remote host: #{remote_hostname}. Are you sure its up?"
+      end
+    end
+
+    create_local_tmp_snapshot!
+    send_backup!
+    finalise_backup!
+  ensure
+    run_cleanup!
+  end
+
+  def recently_resumed?
+    @recently_resumed == true
+  end
+
+  def shutdown_remote_host?
+    @remote_host_originally_down == true
+  end
+
+  private
+  def snapshot_name
+    "btrfs-bk__#{@options[:name]}"
+  end
+
+  def snapshot_tmp_name
+    "btrfs-bk__#{@options[:name]}-tmp"
+  end
+
+  def remote_tmp_snapshot_path
+    File.join(@options[:dest_path], snapshot_tmp_name)
+  end
+
+  def local_tmp_snapshot_path
+    File.join(@options[:local_dest], snapshot_tmp_name)
+  end
+
+  def local_snapshot_path
+    File.join(@options[:local_dest], snapshot_name)
+  end
+
+  def remote_snapshot_path
+    File.join(@options[:dest_path], snapshot_name)
+  end
+
+  def run_cleanup!
+    if File.exists?(local_tmp_snapshot_path)
+      run_cmd("btrfs subvol delete #{local_tmp_snapshot_path}")
+    end
+
+    `#{ssh_cmd("test -e #{remote_tmp_snapshot_path}")}`
+    if $?.success?
+      run_cmd(ssh_cmd("sudo /usr/bin/btrfs subvol delete #{remote_tmp_snapshot_path}"))
+    end
+  end
+
+  def create_local_tmp_snapshot!
+    if File.exists?(local_tmp_snapshot_path)
+      raise "Local snapshot already exists! Previous job didn't clean up correctly?"
+    end
+
+    run_cmd("btrfs subvol snapshot -r #{@options[:src]} #{local_tmp_snapshot_path}")
+  end
+
+  def send_size_diff
+    return if !@options[:progress] || @options[:dry_run]
+
+    output = `/usr/bin/btrfs subvol show #{local_snapshot_path}`
+    if output =~ /Generation[^:]*:\s+(\d+)/
+      gen = Integer($1)
+
+      send_size = 0
+      IO.popen("/usr/bin/btrfs subvol find-new #{local_tmp_snapshot_path} #{gen}").each do |line|
+        if line =~ /len (\d+)/
+          send_size = send_size + Integer($1)
+        end
+      end
+    end
+
+    send_size
+  end
+
+  def send_full_size
+  end
+
+  def send_backup!
+    send_size = nil
+
+    if File.exists?(local_snapshot_path)
+      send_cmd = "/usr/bin/btrfs send -p #{local_snapshot_path} #{local_tmp_snapshot_path}"
+      send_size = send_size_diff
+    else
+      send_cmd = "/usr/bin/btrfs send #{local_tmp_snapshot_path}"
+    end
+
+    run_cmd(send_cmd, progress_cmd(send_size), receive_cmd)
+  end
+
+  def finalise_backup!
+    `#{ssh_cmd("test -e #{remote_snapshot_path}")}`
+    if $?.success?
+      run_cmd(ssh_cmd("sudo btrfs subvol del #{remote_snapshot_path}"))
+    end
+    run_cmd(ssh_cmd("sudo mv #{remote_tmp_snapshot_path} #{remote_snapshot_path}"))
+
+    if File.exists?(local_snapshot_path)
+      run_cmd("/usr/bin/btrfs subvol del #{local_snapshot_path}")
+    end
+    run_cmd("mv #{local_tmp_snapshot_path} #{local_snapshot_path}")
+  end
+
+  def receive_cmd
+    if remote_dest?
+      ssh_cmd("sudo /usr/bin/btrfs receive #{@options[:dest_path]}")
+    else
+      "sudo /usr/bin/btrfs receive #{@options[:dest_path]}"
+    end
+  end
+
+  def remote_host_up?
+    `ping -c 1 #{remote_hostname} 2>/dev/null`
+    $?.success?
+  end
+
+  def run_wol_and_wait
+    started_at = Time.now
+    `wol #{@options[:wol]}`
+
+    if !$?.success?
+      raise "Failed wake on lan. Is wol package installed?"
+    end
+
+    begin
+      if (started_at + (WOL_TIMEOUT * 60)) < Time.now
+        return false
+      end
+
+      success = remote_host_up?
+      sleep 5
+    end while !success
+    success
+  end
+
+  def remote_hostname
+    if remote_dest?
+      @options[:remote_host].split("@").last
+    end
+  end
+
+  def ssh_cmd(cmd)
+    %Q{/usr/bin/ssh #{@options[:remote_host]} "#{cmd}"}
+  end
+
+  def progress_cmd(send_size=nil)
+    if @options[:progress]
+      cmd = "/usr/bin/pv"
+      if send_size
+        cmd += " -s #{send_size}"
+      end
+
+      cmd
+    end
+  end
+
+  def dry_run?
+    @options[:dry_run] == true
+  end
+
+  def remote_dest?
+    !@options[:remote_host].nil?
+  end
+
+  def parse_dest_path(dest)
+    if dest.to_s =~ /:/
+      dest_split = dest.split(":")
+      {dest_path: dest_split.last,
+       remote_host: dest_split.first}
+    else
+      {dest_path: dest,
+       remote_host: nil}
+    end
+  end
+
+  def run_cmd(*cmd)
+    opts = cmd.last.is_a?(Hash) ? cmd.pop : {}
+    cmd = cmd.compact.join(" | ")
+
+    if dry_run?
+      puts cmd
+      []
+    else
+      Open3.popen2(cmd, opts) do |stdin, stdout, wait_thr|
+        output = StringIO.new
+
+        while line = stdout.gets
+          puts line
+          output.write(line)
+        end
+
+        unless wait_thr.value.success?
+          raise CommandError, output.read
+        end
+
+        output
+      end
+    end
+  end
+
+  def defaults
+    {dry_run: false,
+     auto_suspend: false,
+     progress: false}
+  end
+
+  def get_latest_system_resume_time
+    journal = `journalctl -b 0 -o short-iso MESSAGE="PM: Finishing wakeup."`
+    date_str = journal.split("\n").last.split(" ").first
+    begin
+      date = Time.parse(date_str)
+    rescue ArgumentError
+      date = nil
+    end
+  end
+
+  # Record at initialise if the system was recently resumed.
+  # This allows us to suspend the system after, as the script was most likely
+  # ran as part of a wakeup script and not actually being actively used.
+  def record_resume_status!
+    resumed_at = get_latest_system_resume_time
+    if resumed_at && resumed_at >= (Time.now - (RESUME_CUTOFF * 60))
+      @recently_resumed = true
+    else
+      @recently_resumed = false
+    end
+  end
+end
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "btrfs-bk.rb --dest user@host:/mnt/backups/server --name root SRC"
+
+  opts.on("-n", "--name NAME", "Name of snapshot on DEST") do |v|
+    options[:name] = v
+  end
+
+  opts.on("-l", "--local-dest DEST", "Place to store local snapshots for incrementals") do |v|
+    options[:local_dest] = v
+  end
+
+  opts.on("-d", "--dest DEST", "Destination btrfs location for snapshots") do |v|
+    options[:dest] = v
+  end
+
+  opts.on("-w", "--wol MAC", "Wake on LAN remote host if currently down") do |v|
+    options[:wol] = v
+  end
+
+  opts.on("-p", "--progress", "Show progress bar") do |v|
+    options[:progress] = v
+  end
+
+  opts.on("--dry-run", "Don't actually do anything, just print commands") do |v|
+    options[:dry_run] = v
+  end
+
+  opts.on("--auto-suspend", "Suspend system after a recent wakeup") do |v|
+    options[:auto_suspend] = v
+  end
+end.parse!(ARGV)
+options[:src] = [*ARGV.unshift].first
+
+BtrfsBk.new(options).run!
