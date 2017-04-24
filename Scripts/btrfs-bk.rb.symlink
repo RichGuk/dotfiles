@@ -168,15 +168,37 @@ class BtrfsBk
     remote_cmd("test -e", path)
   end
 
+  def get_diff_size
+    size = 0
+    output = run_cmd(btrfs_binary, "subvol", "show", local_snapshot_path)
+    if output =~ /Generation[^:]*:\s+(\d+)/
+      gen = Integer($1)
+      size = get_size(gen)
+    end
+
+    size
+  end
+
+  def get_size(gen=0)
+    size = 0
+    run_cmd(btrfs_binary, "subvol", "find-new", local_tmp_snapshot_path, gen.to_s) do |io|
+      while !io.eof?
+        if io.gets =~ /len (\d+)/
+          size = size + Integer($1)
+        end
+      end
+    end
+    size
+  end
+
   def send_backup!
     # Main snapshot exists locally, we can send incremental backup.
-
     if File.exists?(local_snapshot_path)
       opts = ["-p", local_snapshot_path]
-      estimated_size = 0
+      estimated_size = get_diff_size
     else
       opts = []
-      estimated_size = 0
+      estimated_size = get_size(0)
     end
 
     if remote_dest?
@@ -216,10 +238,9 @@ class BtrfsBk
     end
   end
 
-  def run_cmd(*args)
-    popen(*args) do |io|
-      io.read
-    end
+  def run_cmd(*args, &blk)
+    blk ||= -> (io) { io.read }
+    popen(*args, &blk)
   rescue CommandError
     false
   end
@@ -254,24 +275,6 @@ class BtrfsBk
     end
   end
 
-#   def send_size_diff
-#     return if !@options[:progress] || @options[:dry_run]
-
-#     output = `/usr/bin/btrfs subvol show #{local_snapshot_path}`
-#     if output =~ /Generation[^:]*:\s+(\d+)/
-#       gen = Integer($1)
-
-#       send_size = 0
-#       IO.popen("/usr/bin/btrfs subvol find-new #{local_tmp_snapshot_path} #{gen}").each do |line|
-#         if line =~ /len (\d+)/
-#           send_size = send_size + Integer($1)
-#         end
-#       end
-#     end
-
-#     send_size
-#   end
-
   def copy_stream(send_io, receive_io, chunk_length: (1 << 20), estimated_size: 0)
     longest_message_length = 0
     start = Time.now
@@ -283,7 +286,16 @@ class BtrfsBk
         counter += buffer.size
         rate = counter / (Time.now - start)
 
-        msg = "#{human_readable_size(counter)} (#{human_readable_size(rate)}), 0 remaining"
+        remaining =
+          if estimated_size > counter
+            human_readable_time((estimated_size - counter) / rate)
+          elsif counter - estimated_size < 100 * 1024**2
+            human_readable_time(0)
+          else
+            '?'
+          end
+
+        msg = "#{human_readable_size(counter)}/#{human_readable_size(estimated_size)} (#{human_readable_size(rate)}/s), #{remaining} remaining"
         longest_message_length = [longest_message_length, msg.length].max
         print "\r%-#{longest_message_length}s" % [msg]
       end
