@@ -1,16 +1,15 @@
 #!/usr/bin/env ruby
 require "optparse"
 require "time"
-require "open3"
-require "stringio"
 
-
+# TODO: Rename remote_tmp_snapshot_path to dest_tmp_snapshot_path
 class BtrfsBk
-  class CommandError < StandardError; end
-
   # In Minutes.
   RESUME_CUTOFF = 5
   WOL_TIMEOUT = 1
+
+  class Error < StandardError; end
+  class CommandError < StandardError; end
 
   def initialize(options)
     @options = defaults
@@ -19,36 +18,54 @@ class BtrfsBk
 
     @remote_host_originally_down = false
 
-    # Need to do this early on as other steps make delay the check time.
-    record_resume_status!
+    # if @options[:remote_host]
+    #   @options.merge!(parse_remote_host_options(@options[:remote_host]))
+    # end
+
+  # Record at initialise if the system was recently resumed.
+  # This allows us to suspend the system after, as the script was most likely
+  # ran as part of a wakeup script and not actually being actively used.
+#   def get_latest_system_resume_time
+#     journal = `journalctl -b 0 -o short-iso MESSAGE="PM: Finishing wakeup."`
+#     date_str = journal.split("\n").last.split(" ").first
+#     begin
+#       date = Time.parse(date_str)
+#     rescue ArgumentError
+#       date = nil
+#     end
+#   end
+  # def record_resume_status!
+  #   resumed_at = get_latest_system_resume_time
+  #   if resumed_at && resumed_at >= (Time.now - (RESUME_CUTOFF * 60))
+  #     @recently_resumed = true
+  #   else
+  #     @recently_resumed = false
+  #   end
+  # end
   end
 
   def run!
     if remote_dest? && !remote_host_up?
-      success = false
-      if @options[:wol]
-        @remote_host_originally_down = true
-        success = run_wol_and_wait
-      end
-
-      if !success
-        raise "Unable to talk to remote host: #{remote_hostname}. Are you sure its up?"
-      end
+      wakeup_remote_host!
     end
 
-    create_local_tmp_snapshot!
-    send_backup!
-    finalise_backup!
-  ensure
-    run_cleanup!
+    begin
+      create_local_tmp_snapshot!
+      send_backup!
+      finalize_backup!
+    ensure
+      cleanup!
+    end
+
+    # Shutdown remote system?
+    # Shutdown local system?
   end
 
-  def recently_resumed?
-    @recently_resumed == true
-  end
-
-  def shutdown_remote_host?
-    @remote_host_originally_down == true
+  def defaults
+    {dry_run: false,
+     auto_suspend: false,
+     progress: false,
+     wol: false}
   end
 
   private
@@ -76,131 +93,116 @@ class BtrfsBk
     File.join(@options[:dest_path], snapshot_name)
   end
 
-  def run_cleanup!
-    if File.exists?(local_tmp_snapshot_path)
-      run_cmd("btrfs subvol delete #{local_tmp_snapshot_path}")
+  def dest_path
+    @options[:dest_path]
+  end
+
+  def suspend_remote_system?
+    @remote_host_originally_down == true
+  end
+
+  def suspend_this_system?
+  end
+
+  def wakeup_remote_host!
+    success = false
+    if @options[:wol]
+      @remote_host_originally_down = true
+      success = run_wol_and_wait
     end
 
-    `#{ssh_cmd("test -e #{remote_tmp_snapshot_path}")}`
-    if $?.success?
-      run_cmd(ssh_cmd("sudo /usr/bin/btrfs subvol delete #{remote_tmp_snapshot_path}"))
+    if !success
+      raise Error, "Unable to find remote host: #{remote_hostname}. Are you sure its up?"
+    end
+  end
+
+  def run_wol_and_wait
+    start = Time.now
+    if !run_cmd("wol", @options[:wol])
+      raise "Failed wake on lan. Is wol package installed?"
+    end
+
+    success = false
+    while !success
+      if (start + (WOL_TIMEOUT * 60)) < Time.now
+        return false
+      end
+      success = remote_host_up?
+      sleep 5
+    end
+    success
+  end
+
+  def cleanup!
+    if File.exists?(local_tmp_snapshot_path)
+      run_cmd(btrfs_binary, "subvol", "delete", local_tmp_snapshot_path)
+    end
+
+    if remote_dest? && remote_cmd("test -e", remote_tmp_snapshot_path)
+      remote_cmd("sudo", btrfs_binary, "subvol", "del", remote_tmp_snapshot_path)
+    elsif File.exists?(remote_tmp_snapshot_path)
+      run_cmd(btrfs_binary, "subvol", "del", remote_tmp_snapshot_path)
     end
   end
 
   def create_local_tmp_snapshot!
     if File.exists?(local_tmp_snapshot_path)
-      raise "Local snapshot already exists! Previous job didn't clean up correctly?"
+      raise Error, "Local snapshot already exists! Previous job didn't clean up correctly?"
     end
-
-    run_cmd("btrfs subvol snapshot -r #{@options[:src]} #{local_tmp_snapshot_path}")
+    run_cmd(btrfs_binary, "subvol", "snapshot", "-r", @options[:src], local_tmp_snapshot_path)
   end
 
-  def send_size_diff
-    return if !@options[:progress] || @options[:dry_run]
-
-    output = `/usr/bin/btrfs subvol show #{local_snapshot_path}`
-    if output =~ /Generation[^:]*:\s+(\d+)/
-      gen = Integer($1)
-
-      send_size = 0
-      IO.popen("/usr/bin/btrfs subvol find-new #{local_tmp_snapshot_path} #{gen}").each do |line|
-        if line =~ /len (\d+)/
-          send_size = send_size + Integer($1)
-        end
-      end
+  def finalize_backup!
+    if remote_file_exists?(remote_snapshot_path)
+      remote_cmd("sudo", btrfs_binary, "subvol", "del", remote_snapshot_path)
     end
+    remote_cmd("sudo", "mv", remote_tmp_snapshot_path, remote_snapshot_path)
 
-    send_size
+    if File.exists?(local_snapshot_path)
+      run_cmd(btrfs_binary, "subvol", "del", local_snapshot_path)
+    end
+    run_cmd("mv", local_tmp_snapshot_path, local_snapshot_path)
   end
 
-  def send_full_size
+  def remote_file_exists?(path)
+    remote_cmd("test -e", path)
   end
 
   def send_backup!
-    send_size = nil
+    # Main snapshot exists locally, we can send incremental backup.
 
     if File.exists?(local_snapshot_path)
-      send_cmd = "/usr/bin/btrfs send -p #{local_snapshot_path} #{local_tmp_snapshot_path}"
-      send_size = send_size_diff
+      opts = ["-p", local_snapshot_path]
+      estimated_size = 0
     else
-      send_cmd = "/usr/bin/btrfs send #{local_tmp_snapshot_path}"
+      opts = []
+      estimated_size = 0
     end
 
-    run_cmd(send_cmd, progress_cmd(send_size), receive_cmd)
-  end
-
-  def finalise_backup!
-    `#{ssh_cmd("test -e #{remote_snapshot_path}")}`
-    if $?.success?
-      run_cmd(ssh_cmd("sudo btrfs subvol del #{remote_snapshot_path}"))
-    end
-    run_cmd(ssh_cmd("sudo mv #{remote_tmp_snapshot_path} #{remote_snapshot_path}"))
-
-    if File.exists?(local_snapshot_path)
-      run_cmd("/usr/bin/btrfs subvol del #{local_snapshot_path}")
-    end
-    run_cmd("mv #{local_tmp_snapshot_path} #{local_snapshot_path}")
-  end
-
-  def receive_cmd
     if remote_dest?
-      ssh_cmd("sudo /usr/bin/btrfs receive #{@options[:dest_path]}")
+      receive_cmd = [ssh_binary, @options[:remote_host].to_s, "sudo", btrfs_binary, "receive"]
     else
-      "sudo /usr/bin/btrfs receive #{@options[:dest_path]}"
-    end
-  end
-
-  def remote_host_up?
-    `ping -c 1 #{remote_hostname} 2>/dev/null`
-    $?.success?
-  end
-
-  def run_wol_and_wait
-    started_at = Time.now
-    `wol #{@options[:wol]}`
-
-    if !$?.success?
-      raise "Failed wake on lan. Is wol package installed?"
+      receive_cmd = [btrfs_binary, "receive"]
     end
 
-    begin
-      if (started_at + (WOL_TIMEOUT * 60)) < Time.now
-        return false
+    popen(btrfs_binary, "send", *opts, local_tmp_snapshot_path) do |send_io|
+      popen(*receive_cmd, dest_path, mode: "w", out: "/dev/null") do |receive_io|
+        receive_io.sync = true
+        copy_stream(send_io, receive_io, estimated_size: estimated_size)
       end
-
-      success = remote_host_up?
-      sleep 5
-    end while !success
-    success
-  end
-
-  def remote_hostname
-    if remote_dest?
-      @options[:remote_host].split("@").last
     end
-  end
-
-  def ssh_cmd(cmd)
-    %Q{/usr/bin/ssh #{@options[:remote_host]} "#{cmd}"}
-  end
-
-  def progress_cmd(send_size=nil)
-    if @options[:progress]
-      cmd = "/usr/bin/pv"
-      if send_size
-        cmd += " -s #{send_size}"
-      end
-
-      cmd
-    end
-  end
-
-  def dry_run?
-    @options[:dry_run] == true
   end
 
   def remote_dest?
     !@options[:remote_host].nil?
+  end
+
+  def remote_host_up?
+    run_cmd("/usr/bin/ping", "-c 1 -W 5", remote_hostname)
+  end
+
+  def remote_hostname
+    @options[:remote_host].to_s.split("@").last
   end
 
   def parse_dest_path(dest)
@@ -214,57 +216,100 @@ class BtrfsBk
     end
   end
 
-  def run_cmd(*cmd)
-    opts = cmd.last.is_a?(Hash) ? cmd.pop : {}
-    cmd = cmd.compact.join(" | ")
+  def run_cmd(*args)
+    popen(*args) do |io|
+      io.read
+    end
+  rescue CommandError
+    false
+  end
 
-    if dry_run?
-      puts cmd
-      []
+  def remote_cmd(*args, **options, &blk)
+    run_cmd(*[ssh_binary, @options[:remote_host].to_s, *args], **options, &blk)
+  end
+
+  def btrfs_binary
+    "/usr/bin/btrfs"
+  end
+
+  def ssh_binary
+    "/usr/bin/ssh"
+  end
+
+  # Low level popen that attempts to handle errors.
+  def popen(*args, mode: "r", **options)
+    err_r, err_w = IO.pipe
+    result = nil
+
+    puts "Running: #{args.join(" ")}"
+    IO.popen([*args, err: err_w, **options], mode) do |io|
+      err_w.close
+      result = yield(io)
+    end
+
+    if $?.success?
+      result
     else
-      Open3.popen2(cmd, opts) do |stdin, stdout, wait_thr|
-        output = StringIO.new
+      raise CommandError, err_r.read
+    end
+  end
 
-        while line = stdout.gets
-          puts line
-          output.write(line)
-        end
+#   def send_size_diff
+#     return if !@options[:progress] || @options[:dry_run]
 
-        unless wait_thr.value.success?
-          raise CommandError, output.read
-        end
+#     output = `/usr/bin/btrfs subvol show #{local_snapshot_path}`
+#     if output =~ /Generation[^:]*:\s+(\d+)/
+#       gen = Integer($1)
 
-        output
+#       send_size = 0
+#       IO.popen("/usr/bin/btrfs subvol find-new #{local_tmp_snapshot_path} #{gen}").each do |line|
+#         if line =~ /len (\d+)/
+#           send_size = send_size + Integer($1)
+#         end
+#       end
+#     end
+
+#     send_size
+#   end
+
+  def copy_stream(send_io, receive_io, chunk_length: (1 << 20), estimated_size: 0)
+    longest_message_length = 0
+    start = Time.now
+    counter = 0
+    while !send_io.eof?
+      if buffer = send_io.read(chunk_length)
+        receive_io.write(buffer)
+
+        counter += buffer.size
+        rate = counter / (Time.now - start)
+
+        msg = "#{human_readable_size(counter)} (#{human_readable_size(rate)}), 0 remaining"
+        longest_message_length = [longest_message_length, msg.length].max
+        print "\r%-#{longest_message_length}s" % [msg]
       end
     end
+    print "\r#{" " * longest_message_length}\r"
+    counter
+  rescue Interrupt => e
+    print "\r\n\r"
+    raise e
   end
 
-  def defaults
-    {dry_run: false,
-     auto_suspend: false,
-     progress: false}
+  def human_readable_time(time)
+    hrs = time / 3600
+    min = (time / 60) % 60
+    sec = time % 60
+    "%02i:%02i:%02i" % [hrs, min, sec]
   end
 
-  def get_latest_system_resume_time
-    journal = `journalctl -b 0 -o short-iso MESSAGE="PM: Finishing wakeup."`
-    date_str = journal.split("\n").last.split(" ").first
-    begin
-      date = Time.parse(date_str)
-    rescue ArgumentError
-      date = nil
-    end
-  end
-
-  # Record at initialise if the system was recently resumed.
-  # This allows us to suspend the system after, as the script was most likely
-  # ran as part of a wakeup script and not actually being actively used.
-  def record_resume_status!
-    resumed_at = get_latest_system_resume_time
-    if resumed_at && resumed_at >= (Time.now - (RESUME_CUTOFF * 60))
-      @recently_resumed = true
-    else
-      @recently_resumed = false
-    end
+  def human_readable_size(size, digits: 1)
+    order = ['B', 'kB', 'MB', 'GB']
+    magnitude =
+      if size > 0
+        Integer(Math.log2(size) / 10)
+      else 0
+      end
+    "%.#{digits}f#{order[magnitude]}" % [Float(size) / (1024 ** magnitude)]
   end
 end
 
