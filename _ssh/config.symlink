@@ -4,7 +4,14 @@ Host backup.richgrundy.com
   IdentityFile ~/.ssh/id_rsa.backup
   User rich
 
-Host *richgrundy.com
+Host galactica.richgrundy.com
+  User rich
+  HostName galactica
+  IdentityFile ~/.ssh/id_rsa.personal
+  ProxyCommand ssh -A -W %h:%p rich@home.richgrundy.com
+  ForwardAgent yes
+
+Host !galactica.richgrundy.com *richgrundy.com
   IdentityFile ~/.ssh/id_rsa.personal
   User rich
 
