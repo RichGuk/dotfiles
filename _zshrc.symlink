@@ -18,7 +18,7 @@ if [[ -s "$HOME/.rbenv" ]]; then
   eval "$(rbenv init -)"
 fi
 
-export PATH=.git/safe/../../bin:$PATH
+export PATH=.git/safe/../../bin:.git/safe/../../node_modules/.bin:.git/safe/../../assets/node_modules/.bin:$PATH
 
 # Local zsh settings.
 [[ -s "$HOME/.zhrc.local" ]] && source "$HOME/.zshrc.local"
