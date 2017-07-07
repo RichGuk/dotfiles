@@ -24,6 +24,7 @@ Host *bitbucket.org
   User git
 
 Host gitlab.stinkyink.com
+  HostName 192.168.254.108
   User git
   IdentityFile ~/.ssh/id_rsa.work
   ForwardAgent yes
