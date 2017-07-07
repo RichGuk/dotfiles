@@ -17,6 +17,9 @@ class BtrfsBk
       .merge(parse_dest_path(options[:dest]))
 
     @remote_host_originally_down = false
+    @suspend_this_system = false
+
+    update_suspend_this_system_status!
 
     # if @options[:remote_host]
     #   @options.merge!(parse_remote_host_options(@options[:remote_host]))
@@ -42,6 +45,28 @@ class BtrfsBk
   #     @recently_resumed = false
   #   end
   # end
+  end
+
+  def update_suspend_this_system_status!
+    started_at = Time.now
+    resumed_at = get_latest_system_resume_time
+    if resumed_at && resumed_at >= (started_at - (RESUME_CUTOFF * 60))
+      @suspend_this_system = true
+    else
+      @suspend_this_system = false
+    end
+  end
+
+  # Record at initialise if the system was recently resumed.
+  # This allows us to suspend the system after, as the script was most likely
+  # ran as part of a wakeup script and not actually being actively used.
+  def get_latest_system_resume_time
+    journal = run_cmd("journalctl", '-b 0 -o short-iso MESSAGE="PM: Finishing wakeup."')
+    date_str = journal.to_s.split("\n").last.split(" ").first
+    begin
+      Time.parse(date_str)
+    rescue ArgumentError
+    end
   end
 
   def run!
@@ -202,7 +227,8 @@ class BtrfsBk
     end
 
     if remote_dest?
-      receive_cmd = [ssh_binary, @options[:remote_host].to_s, "sudo", btrfs_binary, "receive"]
+      receive_cmd = [ssh_binary, @options[:remote_host].to_s, "sudo",
+                     "/usr/bin/systemd-inhibit", "--what=sleep:shutdown:idle --why=backup", btrfs_binary, "receive"]
     else
       receive_cmd = [btrfs_binary, "receive"]
     end
