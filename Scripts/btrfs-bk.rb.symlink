@@ -160,13 +160,13 @@ class BtrfsBk
 
   def cleanup!
     if File.exists?(local_tmp_snapshot_path)
-      run_cmd(btrfs_binary, "subvol", "delete", local_tmp_snapshot_path)
+      run_cmd(btrfs_binary, "subvolume", "delete", local_tmp_snapshot_path)
     end
 
     if remote_dest? && remote_cmd("test -e", remote_tmp_snapshot_path)
-      remote_cmd("sudo", btrfs_binary, "subvol", "del", remote_tmp_snapshot_path)
+      remote_cmd("sudo", btrfs_binary, "subvolume", "delete", remote_tmp_snapshot_path)
     elsif File.exists?(remote_tmp_snapshot_path)
-      run_cmd(btrfs_binary, "subvol", "del", remote_tmp_snapshot_path)
+      run_cmd(btrfs_binary, "subvolume", "delete", remote_tmp_snapshot_path)
     end
   end
 
@@ -174,17 +174,17 @@ class BtrfsBk
     if File.exists?(local_tmp_snapshot_path)
       raise Error, "Local snapshot already exists! Previous job didn't clean up correctly?"
     end
-    run_cmd(btrfs_binary, "subvol", "snapshot", "-r", @options[:src], local_tmp_snapshot_path)
+    run_cmd(btrfs_binary, "subvolume", "snapshot", "-r", @options[:src], local_tmp_snapshot_path)
   end
 
   def finalize_backup!
     if remote_file_exists?(remote_snapshot_path)
-      remote_cmd("sudo", btrfs_binary, "subvol", "del", remote_snapshot_path)
+      remote_cmd("sudo", btrfs_binary, "subvolume", "delete", remote_snapshot_path)
     end
     remote_cmd("sudo", "mv", remote_tmp_snapshot_path, remote_snapshot_path)
 
     if File.exists?(local_snapshot_path)
-      run_cmd(btrfs_binary, "subvol", "del", local_snapshot_path)
+      run_cmd(btrfs_binary, "subvolume", "delete", local_snapshot_path)
     end
     run_cmd("mv", local_tmp_snapshot_path, local_snapshot_path)
   end
@@ -195,7 +195,7 @@ class BtrfsBk
 
   def get_diff_size
     size = 0
-    output = run_cmd(btrfs_binary, "subvol", "show", local_snapshot_path)
+    output = run_cmd(btrfs_binary, "subvolume", "show", local_snapshot_path)
     if output =~ /Generation[^:]*:\s+(\d+)/
       gen = Integer($1)
       size = get_size(gen)
@@ -206,7 +206,7 @@ class BtrfsBk
 
   def get_size(gen=0)
     size = 0
-    run_cmd(btrfs_binary, "subvol", "find-new", local_tmp_snapshot_path, gen.to_s) do |io|
+    run_cmd(btrfs_binary, "subvolume", "find-new", local_tmp_snapshot_path, gen.to_s) do |io|
       while !io.eof?
         if io.gets =~ /len (\d+)/
           size = size + Integer($1)
@@ -227,8 +227,7 @@ class BtrfsBk
     end
 
     if remote_dest?
-      receive_cmd = [ssh_binary, @options[:remote_host].to_s, "sudo",
-                     "/usr/bin/systemd-inhibit", "--what=sleep:shutdown:idle --why=backup", btrfs_binary, "receive"]
+      receive_cmd = [ssh_binary, @options[:remote_host].to_s, "sudo", btrfs_binary, "receive"]
     else
       receive_cmd = [btrfs_binary, "receive"]
     end
