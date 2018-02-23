@@ -4,6 +4,7 @@
 
 # Vim
 vim/bundle/*
+_config/nvim.symlink/plugged/*
 .netrwhist
 _tmux.symlink/plugins/*
 !_tmux.symlink/plugins/.gitkeep

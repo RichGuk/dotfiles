@@ -20,5 +20,11 @@ fi
 
 export PATH=.git/safe/../../bin:.git/safe/../../node_modules/.bin:.git/safe/../../assets/node_modules/.bin:$PATH
 
+BASE16_SHELL_SET_BACKGROUND=false
+BASE16_SHELL=$HOME/.config/base16-shell/
+[ -n "$PS1" ] && [ -s $BASE16_SHELL/profile_helper.sh ] && eval "$($BASE16_SHELL/profile_helper.sh)"
+
 # Local zsh settings.
 [[ -s "$HOME/.zhrc.local" ]] && source "$HOME/.zshrc.local"
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
