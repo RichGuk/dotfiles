@@ -289,6 +289,7 @@ class BtrfsBk
 
     puts "Running: #{args.join(" ")}"
     IO.popen([*args, err: err_w, **options], mode) do |io|
+
       err_w.close
       result = yield(io)
     end
