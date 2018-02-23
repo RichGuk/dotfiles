@@ -26,28 +26,32 @@ Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'tpope/vim-commentary'
 " Snippets!!
 Plug 'SirVer/ultisnips'
-
+" Polyglot - all the languages!
+Plug 'sheerun/vim-polyglot'
 " }}}
 
 " External command plugins {{{
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-fugitive'
+Plug 'uplus/deoplete-solargraph' " Auto complete for ruby.
 " }}}
 
 " Ruby/Rails plugins {{{
-" " Plug 'vim-ruby/vim-ruby', { 'for': ['ruby', 'eruby'] }
-" Plug 'tpope/vim-rails', { 'for': ['ruby', 'eruby', 'haml', 'coffee'] }
-" Plug 'tpope/vim-bundler', { 'for': ['ruby', 'eruby', 'haml'] }
+Plug 'tpope/vim-rails', { 'for': ['ruby', 'eruby', 'haml', 'coffee'] }
+Plug 'tpope/vim-bundler', { 'for': ['ruby', 'eruby', 'haml'] }
 " }}}
 
 " JS/ES6 Plugins {{{
-Plug 'pangloss/vim-javascript'
-Plug 'mxw/vim-jsx'
+Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
 " }}}
 
 " Themes plugins {{{
 Plug 'jpo/vim-railscasts-theme'
+" }}}
+
+" Elixir {{{
+Plug 'slashmili/alchemist.vim'
 " }}}
 
 call plug#end()
@@ -73,6 +77,7 @@ let $FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git
 let g:fzf_layout = { 'window': 'enew' }
 " }}}
 "}}}
+
 
 "===========================================================
 " Basic settings {{{
@@ -198,6 +203,7 @@ nnoremap [q :cprevious<CR>
 "===========================================================
 " Plugin mappings {{{
 "===========================================================
+" FZF {{{
 nnoremap <silent> <leader>o :Files<CR>
 nnoremap <silent> <leader>g :GFiles<CR>
 nnoremap <silent> <leader>f :GFiles?<CR>
@@ -205,4 +211,11 @@ nnoremap <silent> <leader>c :BCommits<CR>
 nnoremap <silent> <leader>s :Snippets<CR>
 nnoremap <silent> <leader>b :Buffers<CR>
 nnoremap <silent> <leader>a :Ag
+" }}}
+
+" Deoplete {{{
+" Insert <TAB> or select next match
+inoremap <silent> <expr> <Tab> utils#tabComplete()
+"}}}
+
 " }}}
