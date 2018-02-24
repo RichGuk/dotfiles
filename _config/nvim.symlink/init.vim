@@ -1,6 +1,9 @@
+"===========================================================
+" NeoVim config
+" Author: Rich Grundy
 "
-"
-"
+" Borrowed bits from: martin-svk/dot-files.
+"===========================================================
 
 "===========================================================
 " Plugin Setup {{{
@@ -30,6 +33,10 @@ Plug 'SirVer/ultisnips'
 Plug 'sheerun/vim-polyglot'
 " }}}
 
+" Text manipulation plugins {{{
+Plug 'tpope/vim-surround'
+" }}}
+
 " External command plugins {{{
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
@@ -48,6 +55,7 @@ Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
 
 " Themes plugins {{{
 Plug 'jpo/vim-railscasts-theme'
+Plug 'chriskempson/base16-vim'
 " }}}
 
 " Elixir {{{
@@ -62,7 +70,6 @@ call plug#end()
 "===========================================================
 " Plugin settings {{{
 "===========================================================
-
 " Deoplete settings {{{
 let g:deoplete#enable_at_startup=1
 "}}}
@@ -72,12 +79,10 @@ let g:UltiSnipsUsePythonVersion=3
 "}}}
 
 " FZF {{{
-let $FZF_DEFAULT_OPTS='--reverse'
-let $FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
-let g:fzf_layout = { 'window': 'enew' }
+" let $FZF_DEFAULT_OPTS='--reverse'
+" let $FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
 " }}}
 "}}}
-
 
 "===========================================================
 " Basic settings {{{
@@ -137,17 +142,23 @@ set foldlevel=2
 "===========================================================
 " Theme setup {{{
 "===========================================================
+let base16colorspace=256
+
+function! MyHighlights() abort
+  highlight Normal ctermbg=NONE guibg=NONE ctermfg=255
+  highlight TabLineFill term=bold cterm=bold ctermfg=255 ctermbg=0
+  highlight CursorColumn term=underline cterm=underline guibg=#333435
+  highlight NonText ctermbg=NONE ctermfg=235 guifg=#424242 gui=NONE
+  highlight SpecialKey ctermbg=NONE ctermfg=235 guifg=#424242 gui=NONE
+endfunction
+
 augroup Colours
     autocmd!
-    autocmd ColorScheme * highlight Normal ctermbg=NONE guibg=NONE
-                      \ | highlight CursorColumn term=underline cterm=underline guibg=#333435
-                      \ | highlight NonText ctermbg=NONE ctermfg=235 guifg=#424242 gui=NONE
-                      \ | highlight SpecialKey ctermbg=NONE ctermfg=235 guifg=#424242 gui=NONE
+    autocmd ColorScheme * call MyHighlights()
 augroup END
-if has('termguicolors')
-  set termguicolors
-endif
+
 colorscheme railscasts
+" colorscheme base16-railscasts
 "}}}
 
 "===========================================================
@@ -164,14 +175,14 @@ augroup END
 " PHP commands {{{
 augroup PHPAu
   autocmd!
-  autocmd FileType php setlocal ts=4 sts=4 sw=4
+  autocmd FileType php setlocal softtabstop=4 shiftwidth=4
 augroup END
 " }}}
 
 " Python commands {{{
 augroup PythonAu
   autocmd!
-  autocmd FileType python setlocal ts=4 sts=4 sw=4
+  autocmd FileType python setlocal softtabstop=4 shiftwidth=4
 augroup END
 " }}}
 "}}}
@@ -217,5 +228,4 @@ nnoremap <silent> <leader>a :Ag
 " Insert <TAB> or select next match
 inoremap <silent> <expr> <Tab> utils#tabComplete()
 "}}}
-
 " }}}
