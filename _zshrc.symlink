@@ -18,7 +18,7 @@ if [[ -s "$HOME/.rbenv" ]]; then
   eval "$(rbenv init -)"
 fi
 
-export PATH=.git/safe/../../bin:.git/safe/../../node_modules/.bin:.git/safe/../../assets/node_modules/.bin:$PATH
+export PATH=.git/safe/../../bin:.git/safe/../../node_modules/.bin:.git/safe/../../assets/node_modules/.bin:~/.gem/ruby/2.5.0/bin:$PATH
 
 BASE16_SHELL_SET_BACKGROUND=false
 BASE16_SHELL=$HOME/.config/base16-shell/

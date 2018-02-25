@@ -100,7 +100,7 @@ set history=500
 set pastetoggle=<F2>
 set lazyredraw
 set noswapfile
-set clipboard+=unnamed
+set clipboard^=unnamed
 
 " Search settings {{{
 set hlsearch
@@ -196,7 +196,9 @@ nnoremap <leader>ev :vsp <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <leader>et :tabe <C-R>=expand("%:p:h") . "/" <CR>
 
 " Remove trailing whitespace with :RMTWS
-command! RMTWS :execute '%s/\s\+$//e'
+:command! -range=% RMTWS let b:wv = winsaveview() |
+      \ execute 'keeppattern ' . <line1> . ',' . <line2> . 's/\s\+$//' |
+      \ call winrestview(b:wv)
 nnoremap <leader>rw <esc>:RMTWS<CR>
 " Spell toggle
 nnoremap <silent> <F4> :set spell!<CR> :set spell?<CR>
