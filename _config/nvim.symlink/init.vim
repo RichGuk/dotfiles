@@ -196,6 +196,9 @@ augroup END
 "===========================================================
 " Mappings {{{
 "===========================================================
+" Trying spacebar as leader (while still allowing normal leadermap)
+map <space> <leader>
+
 nnoremap <leader>ew :e <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <leader>es :sp <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <leader>ev :vsp <C-R>=expand("%:p:h") . "/" <CR>
