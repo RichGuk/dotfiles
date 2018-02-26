@@ -1,6 +1,8 @@
-Include config.d/*
-
 ServerAliveInterval 120
+
+Host backup.richgrundy.com
+  IdentityFile ~/.ssh/id_rsa.backup
+  User rich
 
 Host galactica.richgrundy.com
   User rich
@@ -9,9 +11,8 @@ Host galactica.richgrundy.com
   ProxyCommand ssh -A -W %h:%p rich@home.richgrundy.com
   ForwardAgent yes
 
-Host *richgrundy.com
+Host !galactica.richgrundy.com *richgrundy.com
   IdentityFile ~/.ssh/id_rsa.personal
-  ProxyCommand none
   User rich
 
 Host *github.com
@@ -22,20 +23,30 @@ Host *bitbucket.org
   IdentityFile ~/.ssh/id_rsa.personal
   User git
 
+Host gitlab.stinkyink.com
+  User git
+  IdentityFile ~/.ssh/id_rsa.work
+  ForwardAgent yes
+
 Host gateway.stinkyink.com
   User deploy
   IdentityFile ~/.ssh/id_rsa.work
   ProxyCommand none
   ForwardAgent yes
 
-Host work.stinkyink.com
+Host mars.stinkyink.com
   HostName ra.stinkyink.com
   User rich
   IdentityFile ~/.ssh/id_rsa.work
-  ProxyCommand none
   Port 23
 
-Host !ra.stinkyink.com *.stinkyink.com
+Host venus.stinkyink.com
+  HostName ra.stinkyink.com
+  User rich
+  IdentityFile ~/.ssh/id_rsa.work
+  Port 24
+
+Host !gitlab.stinkyink.com !gateway.stinkyink.com *.stinkyink.com
   User deploy
   IdentityFile ~/.ssh/id_rsa.work
   ProxyCommand ssh -W %h:%p deploy@gateway.stinkyink.com
