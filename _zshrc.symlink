@@ -8,7 +8,7 @@ export DEFAULT_USER=`whoami`
 ZSH="${DOTFILES}/zsh"
 
 export PATH=$HOME/Scripts:$HOME/bin:$HOME/.local/bin:/usr/local/bin:/usr/local/git/bin:/usr/local/heroku/bin:/Applications/Postgres.app/Contents/MacOS/bin:$PATH
-export EDITOR=vim
+export EDITOR=nvim
 
 for config_file ($ZSH/*.zsh) source $config_file
 
