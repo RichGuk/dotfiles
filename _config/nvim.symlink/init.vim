@@ -101,6 +101,7 @@ set pastetoggle=<F2>
 set lazyredraw
 set noswapfile
 set clipboard^=unnamed
+set colorcolumn=80
 
 " Search settings {{{
 set hlsearch
@@ -150,6 +151,8 @@ function! MyHighlights() abort
   highlight CursorColumn term=underline cterm=underline guibg=#333435
   highlight NonText ctermbg=NONE ctermfg=235 guifg=#424242 gui=NONE
   highlight SpecialKey ctermbg=NONE ctermfg=235 guifg=#424242 gui=NONE
+  highlight ColorColumn ctermbg=233 guibg=#464646
+  highlight link TrailingWhiteSpace Search
 endfunction
 
 augroup Colours
@@ -169,6 +172,9 @@ augroup MyStandardAu
 
   " Don't insert comment lead character when pressing o.
   autocmd FileType * set formatoptions-=o
+
+  " Highlighting trailing whitespace.
+  autocmd BufWinEnter * let w:twsm=matchadd('TrailingWhiteSpace', '\s\+$')
 augroup END
 
 
