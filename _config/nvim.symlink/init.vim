@@ -238,5 +238,6 @@ nnoremap <silent> <leader>a :Ag
 " Deoplete {{{
 " Insert <TAB> or select next match
 inoremap <silent> <expr> <Tab> utils#tabComplete()
+inoremap <silent> <expr> <C-]> utils#manualTagComplete()
 "}}}
 " }}}

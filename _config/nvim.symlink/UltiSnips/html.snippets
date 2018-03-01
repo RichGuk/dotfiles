@@ -1,0 +1,20 @@
+snippet html "HTML basic structure" b
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="" />
+    <title>${1:`!p snip.rv = snip.basename.replace('-', ' ').capitalize()`}</title>
+  </head>
+  <body>
+    ${0:body}
+  </body>
+</html>
+endsnippet
+
+snippet div "Div block" w
+<div`!p snip.rv=' class="' if t[1] else ""`${1:name}`!p snip.rv = '"' if t[1] else ""`>
+  ${0:${VISUAL}}
+</div>
+endsnippet
