@@ -37,7 +37,7 @@
 [push]
   default = current
 [mergetool "fugitive"]
-  cmd = vim -f -c \"Gdiff\" \"$MERGED\"
+  cmd = nvim -f -c \"Gdiff\" \"$MERGED\"
 [include]
   path = .gitconfig.local
 [init]
