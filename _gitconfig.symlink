@@ -49,3 +49,5 @@
 [user]
 	name = Rich Grundy
 	email = rich@richgrundy.com
+[credential]
+	helper = cache --timeout=3600
