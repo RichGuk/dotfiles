@@ -62,6 +62,11 @@ Plug 'chriskempson/base16-vim'
 Plug 'slashmili/alchemist.vim'
 " }}}
 
+" Golang {{{
+Plug 'fatih/vim-go'
+Plug 'zchee/deoplete-go', { 'do': 'make'}
+" }}}
+
 call plug#end()
 
 
@@ -81,6 +86,22 @@ let g:UltiSnipsUsePythonVersion=3
 " FZF {{{
 " let $FZF_DEFAULT_OPTS='--reverse'
 " let $FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
+" }}}
+
+" Vim-go settings {{{
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_structs = 1
+let g:go_highlight_types = 1
+" }}}
+
+" Alel settings {{{
+let g:ale_sign_error = '⤫'
+let g:ale_sign_warning = '⚠'
 " }}}
 "}}}
 
@@ -102,6 +123,8 @@ set lazyredraw
 set noswapfile
 set clipboard^=unnamed
 set colorcolumn=80
+
+set completeopt-=preview
 
 " Search settings {{{
 set hlsearch
@@ -191,6 +214,14 @@ augroup PythonAu
   autocmd FileType python setlocal softtabstop=4 shiftwidth=4
 augroup END
 " }}}
+
+" Golang commands {{{
+augroup GolangAu
+  autocmd!
+  autocmd FileType go  setlocal noexpandtab shiftwidth=4 softtabstop=4 tabstop=4
+augroup END
+" }}}
+
 "}}}
 
 "===========================================================
@@ -216,7 +247,7 @@ nnoremap <Leader>ssc :nohls<CR>
 " For when you forget to sudo!
 cnoremap w!! %!sudo tee > /dev/null %
 " Search current word.
-nnoremap <silent> K :Ag <C-R><C-W><CR>
+nnoremap <silent> S :Ag <C-R><C-W><CR>
 " Quicklist.
 nnoremap ]q :cnext<CR>
 nnoremap [q :cprevious<CR>
