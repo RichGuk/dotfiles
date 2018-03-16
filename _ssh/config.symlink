@@ -1,3 +1,5 @@
+Include config.d/*
+
 ServerAliveInterval 120
 
 Host backup.richgrundy.com
@@ -46,7 +48,13 @@ Host venus.stinkyink.com
   IdentityFile ~/.ssh/id_rsa.work
   Port 24
 
-Host !gitlab.stinkyink.com !gateway.stinkyink.com *.stinkyink.com
+Host work.stinkyink.com
+  HostName ra.stinkyink.com
+  User rich
+  IdentityFile ~/.ssh/id_rsa.work
+  Port 2222
+
+Host !gitlab.stinkyink.com !gateway.stinkyink.com !work.stinkyink.com *.stinkyink.com
   User deploy
   IdentityFile ~/.ssh/id_rsa.work
   ProxyCommand ssh -W %h:%p deploy@gateway.stinkyink.com
