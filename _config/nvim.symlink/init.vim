@@ -99,7 +99,7 @@ let g:go_highlight_structs = 1
 let g:go_highlight_types = 1
 " }}}
 
-" Alel settings {{{
+" Ale settings {{{
 let g:ale_sign_error = '⤫'
 let g:ale_sign_warning = '⚠'
 " }}}
