@@ -41,7 +41,6 @@ Plug 'tpope/vim-surround'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-fugitive'
-Plug 'uplus/deoplete-solargraph' " Auto complete for ruby.
 " }}}
 
 " Ruby/Rails plugins {{{
