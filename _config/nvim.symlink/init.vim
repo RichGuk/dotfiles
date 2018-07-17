@@ -58,7 +58,7 @@ Plug 'chriskempson/base16-vim'
 " }}}
 
 " Elixir {{{
-Plug 'slashmili/alchemist.vim'
+"Plug 'slashmili/alchemist.vim'
 " }}}
 
 " Golang {{{
