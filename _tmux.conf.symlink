@@ -44,7 +44,7 @@ set-option -g status-right '#[fg=green]#H#[default] %m/%d/%y %I:%M'
 set -g status-right "#[fg=green]#H #[fg=blue]#(cut -d ' ' -f 1-3 /proc/loadavg) #[default] %Y-%m-%d %I:%M"
 
 # Colours.
-set -g status-bg colour235
+set -g status-bg default
 set -g status-fg white
 set-window-option -g window-status-current-fg black
 set-window-option -g window-status-current-bg green

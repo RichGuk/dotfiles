@@ -1,20 +1,26 @@
 setopt prompt_subst
 setopt auto_name_dirs
 
-PROMPT='$(prompt_context)%F{071}${PWD/#$HOME/~}> %f'
-RPROMPT='%{$reset_color%}$(git_prompt_info)%{$reset_color%} '
+PROMPT='%(?.%F{blue}.%F{red})$(prompt_context)%(?.%F{blue}.%F{red})❯%{$reset_color%} %f'
+RPROMPT='%{$reset_color%}%F{248}%40<...<${PWD/#$HOME/🏠} $(git_prompt_info)%{$reset_color%} '
 
 prompt_context () {
   if [[ "$USER" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
-    echo -n "${PR_RESET}${PR_RED}$USER@%m${PR_RESET}%<<${PR_RESET} "
+    echo -n "%{$reset_color%}%F{005}$USER@%m%{$reset_color%} "
+  fi
+}
+
+# Checks if working tree is dirty
+function git_prompt_info() {
+  ref=$(git symbolic-ref HEAD 2> /dev/null) || return
+
+  if [[ -n $(git status -s 2> /dev/null) ]]; then
+    echo "%F{red}${ref#refs/heads/}%{$reset_color%}"
+  else
+    echo "%F{green}${ref#refs/heads/}%{$reset_color%}"
   fi
 }
 
 function ls_colours() {
   for code in {000..255}; do print -P -- "$code: %F{$code}Test%f"; done
 }
-
-ZSH_THEME_GIT_PROMPT_PREFIX="%F{226} "
-ZSH_THEME_GIT_PROMPT_SUFFIX="%f"
-ZSH_THEME_GIT_PROMPT_DIRTY="⚡ "
-ZSH_THEME_GIT_PROMPT_CLEAN=""
