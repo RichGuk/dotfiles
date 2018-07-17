@@ -1,6 +1,7 @@
 Include config.d/*
 
 ServerAliveInterval 120
+AddKeysToAgent yes
 
 Host backup.richgrundy.com
   IdentityFile ~/.ssh/id_rsa.backup
