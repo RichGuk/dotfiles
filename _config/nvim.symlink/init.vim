@@ -122,6 +122,8 @@ set lazyredraw
 set noswapfile
 set clipboard^=unnamed
 set colorcolumn=80
+" See: https://github.com/neovim/neovim/issues/6403
+set guicursor=
 
 set completeopt-=preview
 
