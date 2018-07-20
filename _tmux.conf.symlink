@@ -31,7 +31,7 @@ set -g set-titles on
 set -g set-titles-string "(#S):#I #W"
 
 # # Set status bar info.
-set -g status-utf8 on
+#set -g status-utf8 on
 set -g status-interval 30
 set -g status-justify left
 set -g status-left-length 40
