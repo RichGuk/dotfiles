@@ -41,21 +41,24 @@ Host mars.stinkyink.com
   HostName ra.stinkyink.com
   User rich
   IdentityFile ~/.ssh/id_rsa.work
+  ForwardAgent yes
   Port 23
 
 Host venus.stinkyink.com
   HostName ra.stinkyink.com
   User rich
   IdentityFile ~/.ssh/id_rsa.work
+  ForwardAgent yes
   Port 24
 
 Host work.stinkyink.com
-  HostName ra.stinkyink.com
+  HostName praxis
   User rich
+  ProxyCommand ssh -W %h:%p mars.stinkyink.com
+  ForwardAgent yes
   IdentityFile ~/.ssh/id_rsa.work
-  Port 2222
 
-Host !gitlab.stinkyink.com !gateway.stinkyink.com !work.stinkyink.com *.stinkyink.com
+Host !gitlab.stinkyink.com !gateway.stinkyink.com !work.stinkyink.com !mars.stinkyink.com !venus.stinkyink.com !ra.stinkyink.com *.stinkyink.com
   User deploy
   IdentityFile ~/.ssh/id_rsa.work
   ProxyCommand ssh -W %h:%p deploy@gateway.stinkyink.com
