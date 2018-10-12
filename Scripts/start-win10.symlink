@@ -4,8 +4,9 @@
 # Optimisations for boot my Windows 10 gaming machine.
 #
 VM_NAME=win10
-# HUGEPAGES=2048 # 
-HUGEPAGES=3072
+# HUGEPAGES=2048 #
+# VM ram / 2
+HUGEPAGES=4096
 
 echo 3 > /proc/sys/vm/drop_caches
 echo 1 > /proc/sys/vm/compact_memory
@@ -19,10 +20,10 @@ if [ "$ALLOC_PAGES" -ne "$HUGEPAGES" ]; then
   exit 1
 fi
 
-rmdir /sys/fs/cgroup/cpuset/machine.slice
-cset set -c 0-7 -s machine.slice
-cset shield --kthread on --cpu 1-3,5-7
-echo C3 > /sys/bus/workqueue/devices/writeback/cpumask
+# rmdir /sys/fs/cgroup/cpuset/machine.slice
+# cset set -c 0-7 -s machine.slice
+# cset shield --kthread on --cpu 1-3,5-7
+# echo C3 > /sys/bus/workqueue/devices/writeback/cpumask
 
 cpupower frequency-set -g performance
 echo never > /sys/kernel/mm/transparent_hugepage/enabled
@@ -36,7 +37,7 @@ while [ "$(virsh domstate $VM_NAME)" = "running" ]; do
 done
 
 echo always > /sys/kernel/mm/transparent_hugepage/enabled
-cpupower frequency-set -g powersave
-cset shield --reset
-echo ff > /sys/bus/workqueue/devices/writeback/cpumask
+# cpupower frequency-set -g powersave
+# cset shield --reset
+# echo ff > /sys/bus/workqueue/devices/writeback/cpumask
 echo 0 > /proc/sys/vm/nr_hugepages
