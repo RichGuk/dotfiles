@@ -5,25 +5,30 @@ AddKeysToAgent yes
 
 Host backup.richgrundy.com
   IdentityFile ~/.ssh/id_rsa.backup
+  IdentityFile ~/.ssh/id_rsa
   User rich
 
 Host galactica.richgrundy.com
   User rich
   HostName galactica
   IdentityFile ~/.ssh/id_rsa.personal
+  IdentityFile ~/.ssh/id_rsa
   ProxyCommand ssh -A -W %h:%p rich@home.richgrundy.com
   ForwardAgent yes
 
-Host !galactica.richgrundy.com *richgrundy.com
+Host !galactica.richgrundy.com !backup.richgrundy.com *richgrundy.com
   IdentityFile ~/.ssh/id_rsa.personal
+  IdentityFile ~/.ssh/id_rsa
   User rich
 
 Host *github.com
   IdentityFile ~/.ssh/id_rsa.personal
+  IdentityFile ~/.ssh/id_rsa
   User git
 
 Host *bitbucket.org
   IdentityFile ~/.ssh/id_rsa.personal
+  IdentityFile ~/.ssh/id_rsa
   User git
 
 Host gitlab.stinkyink.com
