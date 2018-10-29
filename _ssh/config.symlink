@@ -35,12 +35,13 @@ Host gitlab.stinkyink.com
   User git
   IdentityFile ~/.ssh/id_rsa.work
   ForwardAgent yes
+  ProxyCommand ssh -W %h:%p mars.stinkyink.com
 
 Host gateway.stinkyink.com
   User deploy
+  ForwardAgent yes
   IdentityFile ~/.ssh/id_rsa.work
   ProxyCommand none
-  ForwardAgent yes
 
 Host mars.stinkyink.com
   HostName ra.stinkyink.com
@@ -63,7 +64,7 @@ Host work.stinkyink.com
   ForwardAgent yes
   IdentityFile ~/.ssh/id_rsa.work
 
-Host !gitlab.stinkyink.com !gateway.stinkyink.com !work.stinkyink.com !mars.stinkyink.com !venus.stinkyink.com !ra.stinkyink.com *.stinkyink.com
+Host !gitlab.stinkyink.com !gateway.stinkyink.com !work.stinkyink.com !mars.stinkyink.com !venus.stinkyink.com !ra.stinkyink.com !wordpress.stinkyink.com *.stinkyink.com
   User deploy
   IdentityFile ~/.ssh/id_rsa.work
   ProxyCommand ssh -W %h:%p deploy@gateway.stinkyink.com
