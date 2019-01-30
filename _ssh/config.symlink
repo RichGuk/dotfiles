@@ -12,6 +12,11 @@ Host backup.grundy.io
   IdentityFile ~/.ssh/id_rsa
   User rich
 
+Host git.grundy.io
+  IdentityFile ~/.ssh/id_rsa.personal
+  User git
+  Port 10022
+
 Host prometheus.grundy.io galactica.grundy.io
   User rich
   IdentityFile ~/.ssh/id_rsa.personal
