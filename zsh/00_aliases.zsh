@@ -7,7 +7,7 @@ alias history='fc -l l'
 
 alias l='ls -la'
 alias ll='ls -l'
-alias lb='lsblk -o NAME,FSTYPE,SIZE,TYPE,LABEL,UUID,MOUNTPOINT'
+alias lb='lsblk -o NAME,FSTYPE,SIZE,TYPE,LABEL,UUID,MOUNTPOINT,FSAVAIL,FSUSE%'
 
 alias be='bundle exec'
 
