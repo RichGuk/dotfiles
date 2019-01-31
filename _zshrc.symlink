@@ -12,11 +12,18 @@ export EDITOR=nvim
 
 for config_file ($ZSH/*.zsh) source $config_file
 
-# rbenv.
-if [[ -s "$HOME/.rbenv" ]]; then
-  PATH=$HOME/.rbenv/bin:$PATH
-  eval "$(rbenv init -)"
-fi
+# Ruby version manager.
+#if [[ -s "$HOME/.rbenv" ]]; then
+#  PATH=$HOME/.rbenv/bin:$PATH
+#  eval "$(rbenv init -)"
+#fi
+
+# Node version manager.
+#[[ -f /usr/share/nvm/init-nvm.sh ]] && source /usr/share/nvm/init-nvm.sh
+
+# asdf version manager (for ruby, node, elixir, etc).
+[[ -f $HOME/.asdf/asdf.sh ]] && source $HOME/.asdf/asdf.sh
+[[ -f $HOME/.asdf/completions/asdf.bash ]] && source $HOME/.asdf/completions/asdf.bash
 
 export PATH=.git/safe/../../bin:.git/safe/../../node_modules/.bin:.git/safe/../../assets/node_modules/.bin:/home/rich/.gem/ruby/2.5.0/bin:/home/rich/go/bin:$PATH
 

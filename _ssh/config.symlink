@@ -24,6 +24,11 @@ Host prometheus.grundy.io galactica.grundy.io
   ProxyCommand ssh -A -W $(echo %h | cut -d. -f1).lan:%p rich@home.grundy.io
   ForwardAgent yes
 
+Host *.lan
+  IdentityFile ~/.ssh/id_rsa.personal
+  IdentityFile ~/.ssh/id_rsa
+  User rich
+
 Host *github.com
   IdentityFile ~/.ssh/id_rsa.personal
   IdentityFile ~/.ssh/id_rsa
