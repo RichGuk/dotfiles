@@ -1,0 +1,33 @@
+snippet class "Basic Ruby class" b
+#:nodoc: all
+class ${1:`!p snip.rv = snip.basename.replace('-', '').capitalize()`}
+  def initialize(${2:attr})
+    $0
+  end
+end
+endsnippet
+
+snippet defi "def initialize"
+def initialize(${1:attr})
+  $0
+end
+endsnippet
+
+snippet if "If block"
+if ${1:condition}
+  $0
+end
+endsnippet
+
+snippet unless "unless block"
+unless ${1:condition}
+  $0
+end
+endsnippet
+
+snippet ife "If/else block"
+if ${1:condition}
+  $0
+else
+end
+endsnippet
