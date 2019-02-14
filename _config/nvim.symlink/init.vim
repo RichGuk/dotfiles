@@ -24,11 +24,9 @@ call plug#begin('~/.config/nvim/plugged')
 " Async syntax checking
 Plug 'w0rp/ale'
 " Autocomplete
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
 " commenting stuff
 Plug 'tpope/vim-commentary'
-" Snippets!!
-Plug 'SirVer/ultisnips'
 " Polyglot - all the languages!
 Plug 'sheerun/vim-polyglot'
 " }}}
@@ -48,10 +46,6 @@ Plug 'tpope/vim-rails', { 'for': ['ruby', 'eruby', 'haml', 'coffee'] }
 Plug 'tpope/vim-bundler', { 'for': ['ruby', 'eruby', 'haml'] }
 " }}}
 
-" JS/ES6 Plugins {{{
-Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
-" }}}
-
 " Themes plugins {{{
 Plug 'jpo/vim-railscasts-theme'
 Plug 'chriskempson/base16-vim'
@@ -63,7 +57,6 @@ Plug 'chriskempson/base16-vim'
 
 " Golang {{{
 Plug 'fatih/vim-go'
-Plug 'zchee/deoplete-go', { 'do': 'make'}
 " }}}
 
 call plug#end()
@@ -74,10 +67,6 @@ call plug#end()
 "===========================================================
 " Plugin settings {{{
 "===========================================================
-" Deoplete settings {{{
-let g:deoplete#enable_at_startup=1
-"}}}
-
 " UltiSnips settings {{{
 let g:UltiSnipsUsePythonVersion=3
 "}}}
@@ -267,9 +256,9 @@ nnoremap <silent> <leader>b :Buffers<CR>
 nnoremap <silent> <leader>a :Ag
 " }}}
 
-" Deoplete {{{
-" Insert <TAB> or select next match
-inoremap <silent> <expr> <Tab> utils#tabComplete()
-inoremap <silent> <expr> <C-]> utils#manualTagComplete()
+" COC {{{
+inoremap <expr> <TAB> pumvisible() ? "\<C-y>" : "\<TAB>"
+let g:coc_snippet_next = '<TAB>'
+let g:coc_snippet_prev = '<S-TAB>'
 "}}}
 " }}}
