@@ -20,6 +20,7 @@ endif
 call plug#begin('~/.config/nvim/plugged')
 
 " Generic plugins {{{
+Plug 'pbrisbin/vim-mkdir'
 
 " Async syntax checking
 Plug 'w0rp/ale'
@@ -32,7 +33,8 @@ Plug 'sheerun/vim-polyglot'
 " }}}
 
 " Text manipulation plugins {{{
-Plug 'tpope/vim-surround'
+Plug 'machakann/vim-sandwich'
+Plug 'mattn/emmet-vim'
 " }}}
 
 " External command plugins {{{
@@ -90,6 +92,10 @@ let g:go_highlight_types = 1
 " Ale settings {{{
 let g:ale_sign_error = '⤫'
 let g:ale_sign_warning = '⚠'
+" }}}
+
+" Emmet {{{
+let g:user_emmet_leader_key='\'
 " }}}
 "}}}
 
@@ -260,5 +266,6 @@ nnoremap <silent> <leader>a :Ag
 inoremap <expr> <TAB> pumvisible() ? "\<C-y>" : "\<TAB>"
 let g:coc_snippet_next = '<TAB>'
 let g:coc_snippet_prev = '<S-TAB>'
+inoremap <silent><expr> <c-space> coc#refresh()
 "}}}
 " }}}
