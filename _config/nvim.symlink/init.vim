@@ -50,7 +50,6 @@ Plug 'tpope/vim-bundler', { 'for': ['ruby', 'eruby', 'haml'] }
 
 " Themes plugins {{{
 Plug 'jpo/vim-railscasts-theme'
-Plug 'chriskempson/base16-vim'
 " }}}
 
 " Elixir {{{
