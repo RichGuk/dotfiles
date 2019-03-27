@@ -22,7 +22,10 @@ call plug#begin('~/.config/nvim/plugged')
 " Generic plugins {{{
 Plug 'pbrisbin/vim-mkdir'
 
-" Async syntax checking
+" " Async syntax checking
+let g:ale_linters = {
+\   'elixir': [],
+\}
 Plug 'w0rp/ale'
 " Autocomplete
 Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
