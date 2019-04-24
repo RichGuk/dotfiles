@@ -7,28 +7,6 @@ Host *grundy.io
   IdentityFile ~/.ssh/id_rsa.personal
   User rich
 
-Host backup.grundy.io
-  IdentityFile ~/.ssh/id_rsa.backup
-  IdentityFile ~/.ssh/id_rsa
-  User rich
-
-Host git.grundy.io
-  IdentityFile ~/.ssh/id_rsa.personal
-  User git
-  Port 10022
-
-Host prometheus.grundy.io galactica.grundy.io
-  User rich
-  IdentityFile ~/.ssh/id_rsa.personal
-  IdentityFile ~/.ssh/id_rsa
-  ProxyCommand ssh -A -W $(echo %h | cut -d. -f1).lan:%p rich@home.grundy.io
-  ForwardAgent yes
-
-Host *.lan
-  IdentityFile ~/.ssh/id_rsa.personal
-  IdentityFile ~/.ssh/id_rsa
-  User rich
-
 Host *github.com
   IdentityFile ~/.ssh/id_rsa.personal
   IdentityFile ~/.ssh/id_rsa
