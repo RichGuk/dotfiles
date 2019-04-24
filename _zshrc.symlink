@@ -32,11 +32,13 @@ export PATH=.git/safe/../../bin:.git/safe/../../node_modules/.bin:.git/safe/../.
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-if ! pgrep -u "$USER" ssh-agent > /dev/null; then
-	ssh-agent > ~/.ssh-agent-info
-fi
-if [[ "$SSH_AGENT_PID" == "" ]]; then
-  if [[ -e ~/.ssh-agent-info ]]; then
-    eval "$(<~/.ssh-agent-info)" >/dev/null
+if [[ "${SSH_AUTH_SOCK}x" == "x" ]]; then
+  if ! pgrep -u "$USER" ssh-agent > /dev/null; then
+    ssh-agent > ~/.ssh-agent-info
+  fi
+  if [[ "$SSH_AGENT_PID" == "" ]]; then
+    if [[ -e ~/.ssh-agent-info ]]; then
+      eval "$(<~/.ssh-agent-info)" >/dev/null
+    fi
   fi
 fi
