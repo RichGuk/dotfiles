@@ -7,6 +7,10 @@ Host *grundy.io
   IdentityFile ~/.ssh/id_rsa.personal
   User rich
 
+Host prometheus*
+  IdentityFile ~/.ssh/id_rsa.personal
+  User rich
+
 Host *github.com
   IdentityFile ~/.ssh/id_rsa.personal
   IdentityFile ~/.ssh/id_rsa
@@ -42,6 +46,7 @@ Host gateway.stinkyink.com
   User deploy
   ForwardAgent yes
   IdentityFile ~/.ssh/id_rsa.work
+  ProxyCommand ssh -W %h:%p rich@mars.stinkyink.com
   ProxyCommand none
 
 Host !mars.stinkyink.com !venus.stinkyink.com !work.stinkyink.com !gateway.stinkyink.com *.stinkyink.com
