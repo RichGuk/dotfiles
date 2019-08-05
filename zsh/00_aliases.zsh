@@ -7,7 +7,7 @@ alias history='fc -l l'
 
 alias l='ls -la'
 alias ll='ls -l'
-alias lb='lsblk -o NAME,FSTYPE,SIZE,TYPE,LABEL,UUID,MOUNTPOINT,FSAVAIL,FSUSE%'
+alias lb='lsblk -o NAME,UUID,FSTYPE,SIZE,TYPE,LABEL,MOUNTPOINT,FSAVAIL,FSUSE%,MODEL,SERIAL'
 alias be='bundle exec'
 alias ealias="vim ${DOTFILES}/zsh/00_aliases.zsh"
 alias delmerged='git branch --merged | grep -v "\*" | grep -v master | xargs -n 1 git branch -d'
