@@ -21,7 +21,7 @@ if [ "$ALLOC_PAGES" -ne "$HUGEPAGES" ]; then
 fi
 
 rmdir /sys/fs/cgroup/cpuset/machine.slice 2>/dev/null
-cset shield -c 1,9,2,10,3,11,4,12
+cset shield -c 1,9,2,10,3,11,7,15
 cset shield --kthread on
 echo 0 > /sys/fs/cgroup/cpuset/user/cpuset.cpu_exclusive
 echo 0 > /sys/fs/cgroup/cpuset/system/cpuset.cpu_exclusive
