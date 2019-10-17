@@ -38,6 +38,7 @@ Plug 'sheerun/vim-polyglot'
 " Text manipulation plugins {{{
 Plug 'machakann/vim-sandwich'
 Plug 'mattn/emmet-vim'
+Plug 'christianrondeau/vim-base64'
 " }}}
 
 " External command plugins {{{
