@@ -1,6 +1,6 @@
 # vim: ft=gitconfig:
 [merge]
-  tool = fugitive
+	tool = fugitive
 [mergetool]
   keepBackup = false
 [color]
@@ -38,7 +38,7 @@
 [push]
   default = current
 [mergetool "fugitive"]
-  cmd = nvim -f -c \"Gdiff\" \"$MERGED\"
+	cmd = nvim -f -c \"Gvdiffsplit!\" \"$MERGED\"
 [include]
   path = .gitconfig.local
 [init]
