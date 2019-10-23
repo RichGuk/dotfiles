@@ -1,0 +1,6 @@
+[Common]
+ShadowSize=20
+ShadowStrength=115
+
+[Windeco]
+DrawTitleBarSeparator=false

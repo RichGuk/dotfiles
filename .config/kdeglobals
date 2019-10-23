@@ -1,0 +1,161 @@
+[$Version]
+update_info=filepicker.upd:filepicker-remove-old-previews-entry,fonts_global.upd:Fonts_Global,fonts_global_toolbar.upd:Fonts_Global_Toolbar
+
+[ColorEffects:Disabled]
+ChangeSelectionColor=
+Color=56,56,56
+ColorAmount=0
+ColorEffect=0
+ContrastAmount=0.65
+ContrastEffect=1
+Enable=
+IntensityAmount=0.1
+IntensityEffect=2
+
+[ColorEffects:Inactive]
+ChangeSelectionColor=true
+Color=112,111,110
+ColorAmount=0.025
+ColorEffect=2
+ContrastAmount=0.1
+ContrastEffect=2
+Enable=false
+IntensityAmount=0
+IntensityEffect=0
+
+[Colors:Button]
+BackgroundAlternate=36,42,52
+BackgroundNormal=36,42,52
+DecorationFocus=129,161,193
+DecorationHover=129,161,193
+ForegroundActive=129,161,193
+ForegroundInactive=131,135,141
+ForegroundLink=136,192,208
+ForegroundNegative=191,97,106
+ForegroundNeutral=235,203,139
+ForegroundNormal=216,222,233
+ForegroundPositive=163,190,140
+ForegroundVisited=131,135,141
+
+[Colors:Complementary]
+BackgroundAlternate=24,24,24
+BackgroundNormal=24,24,24
+DecorationFocus=110,143,178
+DecorationHover=110,143,178
+ForegroundActive=110,143,178
+ForegroundInactive=131,135,141
+ForegroundLink=136,192,208
+ForegroundNegative=191,97,106
+ForegroundNeutral=235,203,139
+ForegroundNormal=168,168,168
+ForegroundPositive=141,178,147
+ForegroundVisited=131,135,141
+
+[Colors:Selection]
+BackgroundAlternate=110,143,178
+BackgroundNormal=129,161,193
+DecorationFocus=129,161,193
+DecorationHover=129,161,193
+ForegroundActive=252,252,252
+ForegroundInactive=46,52,64
+ForegroundLink=136,192,208
+ForegroundNegative=191,97,106
+ForegroundNeutral=235,203,139
+ForegroundNormal=36,42,52
+ForegroundPositive=163,190,140
+ForegroundVisited=131,135,141
+
+[Colors:Tooltip]
+BackgroundAlternate=46,52,64
+BackgroundNormal=46,52,64
+DecorationFocus=129,161,193
+DecorationHover=129,161,193
+ForegroundActive=129,161,193
+ForegroundInactive=131,135,141
+ForegroundLink=136,192,208
+ForegroundNegative=191,97,106
+ForegroundNeutral=235,203,139
+ForegroundNormal=216,222,233
+ForegroundPositive=163,190,140
+ForegroundVisited=131,135,141
+
+[Colors:View]
+BackgroundAlternate=46,52,64
+BackgroundNormal=36,42,52
+DecorationFocus=129,161,193
+DecorationHover=129,161,193
+ForegroundActive=129,161,193
+ForegroundInactive=131,135,141
+ForegroundLink=136,192,208
+ForegroundNegative=191,97,106
+ForegroundNeutral=235,203,139
+ForegroundNormal=195,200,209
+ForegroundPositive=163,190,140
+ForegroundVisited=131,135,141
+
+[Colors:Window]
+BackgroundAlternate=46,52,64
+BackgroundNormal=46,52,64
+DecorationFocus=129,161,193
+DecorationHover=129,161,193
+ForegroundActive=129,161,193
+ForegroundInactive=131,135,141
+ForegroundLink=136,192,208
+ForegroundNegative=191,97,106
+ForegroundNeutral=235,203,139
+ForegroundNormal=216,222,233
+ForegroundPositive=163,190,140
+ForegroundVisited=131,135,141
+
+[General]
+BrowserApplication[$e]=firefox-personal.desktop
+ColorScheme=Nord
+Name[en_GB]=Nord
+Name=Nord
+XftHintStyle=hintslight
+XftSubPixel=rgb
+dbfile=/home/rich/.mozilla/firefox/ed0mlll7.default/places.sqlite
+fixed=Source Code Pro,10,-1,5,50,1,0,0,0,0,Italic
+font=SF Pro Text,10,-1,5,57,0,0,0,0,0,Medium
+menuFont=SF Pro Text,10,-1,5,57,0,0,0,0,0,Medium
+shadeSortColumn=true
+smallestReadableFont=SF Pro Text,10,-1,5,57,0,0,0,0,0,Medium
+toolBarFont=SF Pro Text,10,-1,5,57,0,0,0,0,0,Medium
+widgetStyle=Breeze
+
+[Icons]
+Theme=la-capitaine-icon-theme
+
+[KDE]
+ColorScheme=Nord
+contrast=4
+widgetStyle=Breeze
+
+[KFileDialog Settings]
+Allow Expansion=false
+Automatically select filename extension=true
+Breadcrumb Navigation=true
+Decoration position=2
+LocationCombo Completionmode=5
+PathCombo Completionmode=5
+Show Bookmarks=false
+Show Full Path=false
+Show Inline Previews=true
+Show Preview=false
+Show Speedbar=true
+Show hidden files=false
+Sort by=Name
+Sort directories first=true
+Sort reversed=false
+Speedbar Width=105
+View Style=DetailTree
+
+[WM]
+FakeEntryToKeepThisGroup=true
+activeBackground=46,52,64
+activeBlend=46,52,64
+activeFont=SF Pro Text,10,-1,5,57,0,0,0,0,0,Medium
+activeForeground=216,222,233
+inactiveBackground=46,52,64
+inactiveBlend=46,52,64
+inactiveForeground=131,135,141

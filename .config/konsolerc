@@ -1,0 +1,33 @@
+[Desktop Entry]
+DefaultProfile=Main.profile
+
+[DownloadDialog Settings]
+Height 1080=482
+Width 1920=700
+
+[Favorite Profiles]
+Favorites=Main.profile
+
+[KFileDialog Settings]
+Recent Files[$e]=
+Recent URLs[$e]=
+
+[KonsoleWindow]
+ShowMenuBarByDefault=false
+ShowWindowTitleOnTitleBar=true
+
+[MainWindow]
+Height 1080=616
+Height 1440=857
+MenuBar=Disabled
+State=
+ToolBarsMovable=Disabled
+Width 1920=1317
+Width 2560=1915
+
+[Notification Messages]
+ShowPasteUnprintableWarning=false
+
+[TabBar]
+ExpandTabWidth=true
+TabBarPosition=Top
