@@ -1,0 +1,1 @@
+/home/rich/.config/zsh/zshrc

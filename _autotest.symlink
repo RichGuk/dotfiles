@@ -1,5 +1,0 @@
-Autotest.add_hook(:initialize) {|at|
-  at.add_exception %r{^\.git}
-  at.add_exception %r{^./tmp}
-  nil
-}

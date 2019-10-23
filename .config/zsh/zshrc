@@ -1,0 +1,29 @@
+export PATH=$HOME/Scripts:$HOME/bin:$HOME/.local/bin:/usr/local/bin:/usr/local/git/bin:$PATH
+export PATH=.git/safe/../../bin:.git/safe/../../node_modules/.bin:$PATH
+export EDITOR=nvim
+
+for config_file ($HOME/.config/zsh/*.zsh) source $config_file
+
+# asdf version manager (for ruby, node, elixir, etc).
+[[ -f $HOME/.asdf/asdf.sh ]] && source $HOME/.asdf/asdf.sh
+[[ -f $HOME/.asdf/completions/asdf.bash ]] && source $HOME/.asdf/completions/asdf.bash
+
+# Local zsh settings.
+[[ -s "$HOME/.zhrc.local" ]] && source "$HOME/.zshrc.local"
+
+if [[ -d /usr/share/fzf ]]; then
+  source /usr/share/fzf/key-bindings.zsh
+  source /usr/share/fzf/completion.zsh
+fi
+
+export SSH_AGENT_INFO_FILE=${SSH_AGENT_INFO_FILE:=~/.cache/.ssh-agent-info}
+if [[ "${SSH_AUTH_SOCK}x" == "x" ]]; then
+  if ! pgrep -u "$USER" ssh-agent > /dev/null; then
+    ssh-agent > $SSH_AGENT_INFO_FILE
+  fi
+  if [[ "$SSH_AGENT_PID" == "" ]]; then
+    if [[ -e $SSH_AGENT_INFO_FILE ]]; then
+      eval "$(<$SSH_AGENT_INFO_FILE)" >/dev/null
+    fi
+  fi
+fi

@@ -1,12 +1,1 @@
-.DS_Store
-*.swp
-.netrwhist
-
-# Vim
-vim/bundle/*
-_config/nvim.symlink/plugged/*
-.netrwhist
-_tmux.symlink/plugins/*
-!_tmux.symlink/plugins/.gitkeep
-!_tmux.symlink/plugins/tpm
-zsh/cache
+.dotfiles

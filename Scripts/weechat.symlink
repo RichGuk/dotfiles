@@ -1,2 +1,0 @@
-#!/bin/bash
-ssh cloud9.27smiles.com -R 23053:0.0.0.0:23053 -x -t "tmux attach -t chat" 2> /dev/null
