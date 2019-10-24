@@ -2,5 +2,8 @@
 ShadowSize=20
 ShadowStrength=115
 
+[Style]
+MenuOpacity=82
+
 [Windeco]
 DrawTitleBarSeparator=false

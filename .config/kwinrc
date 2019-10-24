@@ -21,6 +21,9 @@ Id_4=9442b5b2-a131-4897-94d0-9f9a39a1f675
 Number=4
 Rows=1
 
+[Effect-Blur]
+BlurStrength=12
+
 [Effect-CoverSwitch]
 TabBox=false
 TabBoxAlternative=false
@@ -29,8 +32,12 @@ TabBoxAlternative=false
 TabBox=false
 TabBoxAlternative=false
 
+[Effect-kwin4_effect_translucency]
+MoveResize=100
+
 [Plugins]
 blurEnabled=true
+contrastEnabled=false
 desktopchangeosdEnabled=false
 highlightwindowEnabled=true
 
