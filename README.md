@@ -12,7 +12,7 @@ The configs include a base setup for KDE, however, once checked out I don't tend
 to submit most changes to KDE config files because KDE also stores state in them.
 I just submit core config changes with git patch add.
 
-![Archlinux setup](.local/share/arch.png)
+![Archlinux setup](Pictures/arch.png)
 
 
 ## Setup
