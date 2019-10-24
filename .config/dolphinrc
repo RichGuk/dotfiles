@@ -1,0 +1,27 @@
+[CompactMode]
+FontWeight=57
+PreviewSize=32
+
+[DetailsMode]
+FontWeight=57
+PreviewSize=32
+
+[General]
+ViewPropsTimestamp=2019,10,24,16,54,26
+
+[IconsMode]
+FontWeight=57
+PreviewSize=48
+
+[MainWindow]
+Height 1080=639
+MenuBar=Disabled
+State=
+ToolBarsMovable=Disabled
+Width 1920=1011
+
+[MainWindow][Toolbar mainToolBar]
+ToolButtonStyle=IconOnly
+
+[PreviewSettings]
+Plugins=appimagethumbnail,audiothumbnail,comicbookthumbnail,djvuthumbnail,ebookthumbnail,marble_thumbnail_shp,exrthumbnail,directorythumbnail,fontthumbnail,marble_thumbnail_geojson,marble_thumbnail_gpx,imagethumbnail,jpegthumbnail,marble_thumbnail_kmz,marble_thumbnail_kml,kraorathumbnail,windowsexethumbnail,windowsimagethumbnail,opendocumentthumbnail,marble_thumbnail_osm,svgthumbnail
