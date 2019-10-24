@@ -298,14 +298,14 @@ useCustomButtonImage=true
 global=Alt+F1
 
 [Containments][3][ConfigDialog]
-DialogHeight=74
-DialogWidth=1920
+DialogHeight=73
+DialogWidth=2560
 
 [Containments][3][Configuration]
 PreloadWeight=0
 
 [Containments][3][General]
-AppletOrder=99;80;82;65;106;7;41
+AppletOrder=99;80;82;65;102;106;7;41
 
 [Containments][8]
 activityId=
@@ -332,7 +332,10 @@ immutability=1
 plugin=org.kde.plasma.vault
 
 [Containments][8][Applets][104][Configuration]
-PreloadWeight=34
+PreloadWeight=26
+
+[Containments][8][Applets][109][Configuration]
+PreloadWeight=42
 
 [Containments][8][Applets][11]
 immutability=1
@@ -432,9 +435,9 @@ DialogWidth=880
 PreloadWeight=0
 
 [Containments][8][General]
-extraItems=
+extraItems=org.kde.plasma.battery,org.kde.plasma.clipboard,org.kde.plasma.devicenotifier,org.kde.plasma.notifications,org.kde.plasma.bluetooth,org.kde.plasma.keyboardindicator,org.kde.plasma.networkmanagement,org.kde.plasma.volume,org.kde.kdeconnect,org.kde.archUpdate
 hiddenItems=org.kde.discovernotifier
-knownItems=
+knownItems=org.kde.plasma.battery,org.kde.plasma.clipboard,org.kde.plasma.devicenotifier,org.kde.plasma.mediacontroller,org.kde.plasma.notifications,org.kde.plasma.bluetooth,org.kde.plasma.keyboardindicator,org.kde.plasma.networkmanagement,org.kde.plasma.volume,org.kde.plasma.vault,org.kde.kdeconnect
 shownItems=org.kde.plasma.notifications,org.kde.plasma.volume,org.kde.kdeconnect
 
 [Containments][86][Applets][102][Configuration]

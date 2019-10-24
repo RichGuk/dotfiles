@@ -1,0 +1,7 @@
+[General]
+BackgroundHint=Translucent
+CompactStyle=PlayPauseAndInfo
+ExpandedStyle=Horizontal
+MaxWidth=300
+Normal=false
+Translucent=true
