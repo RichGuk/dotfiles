@@ -27,10 +27,8 @@ config checkout
 config submodules update
 
 config config --local status.showUntrackedFiles no
-
 ```
-
-### Automatic
+### Automatic setup
 
 Setup can be automated with the following script. It will attempt to move
 existing files to `$HOME/.dotfiles-backup`.
@@ -55,6 +53,27 @@ config rm --cached .remove-this-dotfile
 config push
 ```
 
+I don't want README.md and INSTALL.md in my home directory, I can access them
+via Github/Gitlab web interface. So inform git to the file hasn't changed then
+remove them locally.
+
+```bash
+config update-index --assume-unchanged README.md INSTALL.md
+rm README.md INSTALL.md
+```
+
+Should I wish to undo this to edit the files (I normally edit via Github/Gitlab)
+I can run the following:
+
+```bash
+config update-index --no-assume-unchanged README.md
+config checkout README.md
+config add  README.md
+config commit -m 'Updated README.md'
+config push
+```
+
+
 ## Archlinux setup
 
-See [INSTALL.md](.INSTALL.md) for my Arch setup.
+See [INSTALL.md](INSTALL.md) for my Arch setup.

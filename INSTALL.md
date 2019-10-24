@@ -316,7 +316,7 @@ sudo usermod -a -G docker,libvirt rich
 sudo systemctl enable docker libvirtd
 ```
 
-Next step is to follow [README.md](.README.md) to setup my home config files
+Next step is to follow [README.md](README.md) to setup my home config files
 (if not restoring from backup).
 
 
