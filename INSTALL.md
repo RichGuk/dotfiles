@@ -295,7 +295,7 @@ sddm sddm-kcm \
 konsole dolphin kate \
 adobe-source-code-pro-fonts noto-fonts noto-fonts-emoji ttf-opensans ttf-roboto ttf-fira-mono
 
-yay -Sy kvantum-qt5 kvantum-theme-arc osx-arc-darker \
+yay -Sy chili-sddm-theme osx-arc-darker \
 otf-san-francisco sierrabreeze-kwin-decoration-git archlinux-artwork
 
 sudo systemctl enable sddm
@@ -316,8 +316,35 @@ sudo usermod -a -G docker,libvirt rich
 sudo systemctl enable docker libvirtd
 ```
 
-Next step is to follow [README.md](README.md) to setup my home config files
-(if not restoring from backup).
+Follow [README.md](README.md) to setup my home config files + KDE theme etc.
 
+Finally configure SDDM. Edit the following:
+
+sudo cat /etc/sddm.conf.d/kde_settings.conf
+```conf
+[Autologin]
+Relogin=false
+Session=plasma
+User=rich
+
+[General]
+HaltCommand=/usr/bin/systemctl poweroff
+Numlock=none
+RebootCommand=/usr/bin/systemctl reboot
+
+[Theme]
+Current=chili
+
+[Users]
+MaximumUid=60000
+MinimumUid=1000
+```
+
+Finally give access to avatar.
+
+```bash
+setfacl -m u:sddm:r /home/rich/.face
+setfacl -m u:sddm:x /home/rich
+```
 
 
