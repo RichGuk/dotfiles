@@ -6,6 +6,8 @@ function config {
   /usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME $@
 }
 
+git clone --bare --recursive https://github.com/RichGuk/dotfiles.git $HOME/.dotfiles
+
 config checkout 2>/dev/null
 
 if [ $? -ne 0 ]; then
@@ -27,5 +29,6 @@ if [ $? -ne 0 ]; then
 fi
 
 config checkout
+config submodules update
 config config status.showUntrackedFiles no
 echo "Checked out dotfiles!"
