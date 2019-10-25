@@ -33,6 +33,10 @@ config config --local status.showUntrackedFiles no
 Setup can be automated with the following script. It will attempt to move
 existing files to `$HOME/.dotfiles-backup`.
 
+```bash
+curl https://raw.githubusercontent.com/RichGuk/dotfiles/master/Scripts/dotfiles-setup.sh | bash
+```
+
 
 ## Tracking files
 
