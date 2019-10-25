@@ -28,12 +28,43 @@ BlurStrength=12
 TabBox=false
 TabBoxAlternative=false
 
+[Effect-Cube]
+BorderActivate=9
+BorderActivateCylinder=9
+BorderActivateSphere=9
+TouchBorderActivate=9
+TouchBorderActivateCylinder=9
+TouchBorderActivateSphere=9
+
+[Effect-DesktopGrid]
+BorderActivate=9
+LayoutMode=1
+TouchBorderActivate=9
+
 [Effect-FlipSwitch]
 TabBox=false
 TabBoxAlternative=false
 
+[Effect-PresentWindows]
+BorderActivate=9
+BorderActivateAll=9
+BorderActivateClass=9
+TouchBorderActivate=7
+TouchBorderActivateAll=9
+TouchBorderActivateClass=9
+
 [Effect-kwin4_effect_translucency]
 MoveResize=100
+
+[ElectricBorders]
+Bottom=None
+BottomLeft=None
+BottomRight=None
+Left=None
+Right=None
+Top=None
+TopLeft=None
+TopRight=None
 
 [Plugins]
 blurEnabled=true
@@ -48,6 +79,8 @@ TextOnly=false
 [TabBox]
 ActivitiesMode=1
 ApplicationsMode=1
+BorderActivate=9
+BorderAlternativeActivate=9
 DesktopMode=1
 HighlightWindows=false
 LayoutName=big_icons
@@ -56,6 +89,8 @@ MultiScreenMode=0
 ShowDesktopMode=0
 ShowTabBox=true
 SwitchingMode=0
+TouchBorderActivate=9
+TouchBorderAlternativeActivate=9
 
 [TabBoxAlternative]
 ActivitiesMode=1
@@ -69,7 +104,19 @@ ShowDesktopMode=0
 ShowTabBox=true
 SwitchingMode=0
 
+[TouchEdges]
+Bottom=None
+Left=None
+Right=None
+Top=None
+
 [Windows]
+ElectricBorderCooldown=350
+ElectricBorderCornerRatio=0.25
+ElectricBorderDelay=150
+ElectricBorderMaximize=true
+ElectricBorderTiling=true
+ElectricBorders=0
 RollOverDesktops=true
 
 [org.kde.kdecoration2]
