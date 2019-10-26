@@ -296,7 +296,8 @@ konsole dolphin kate \
 adobe-source-code-pro-fonts noto-fonts noto-fonts-emoji ttf-opensans ttf-roboto ttf-fira-mono
 
 yay -Sy chili-sddm-theme osx-arc-darker \
-otf-san-francisco sierrabreeze-kwin-decoration-git archlinux-artwork
+otf-san-francisco sierrabreeze-kwin-decoration-git archlinux-artwork \
+plasma5-applets-eventcalendar
 
 sudo systemctl enable sddm
 sudo systemctl start sddm
@@ -307,7 +308,6 @@ Some other packages I have installed:
 pacman -Sy inetutils firefox chromium git virt-manager libvirt \
 docker docker-compose kubectl helm
 ```
-
 Finally now libvirt and docker are installed we can add myself to the groups
 and start them.
 

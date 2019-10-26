@@ -70,11 +70,18 @@ TopRight=None
 blurEnabled=true
 contrastEnabled=false
 desktopchangeosdEnabled=false
+forceblurEnabled=true
 highlightwindowEnabled=true
+minimizeallEnabled=false
+synchronizeskipswitcherEnabled=false
+videowallEnabled=false
 
 [Script-desktopchangeosd]
 PopupHideDelay=1000
 TextOnly=false
+
+[Script-forceblur]
+patterns=yakuake\nurxvt\nkeepassxc\ndolphin\nsystemsettings\nspotify
 
 [TabBox]
 ActivitiesMode=1
