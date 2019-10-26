@@ -333,7 +333,7 @@ Numlock=none
 RebootCommand=/usr/bin/systemctl reboot
 
 [Theme]
-Current=chili
+Current=breeze
 
 [Users]
 MaximumUid=60000
