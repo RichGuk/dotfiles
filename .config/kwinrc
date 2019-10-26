@@ -81,7 +81,7 @@ PopupHideDelay=1000
 TextOnly=false
 
 [Script-forceblur]
-patterns=yakuake\nurxvt\nkeepassxc\ndolphin\nsystemsettings\nspotify
+patterns=yakuake\nurxvt\nkeepassxc\ndolphin\nsystemsettings\nspotify\ngwenview
 
 [TabBox]
 ActivitiesMode=1
