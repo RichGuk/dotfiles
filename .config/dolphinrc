@@ -7,21 +7,27 @@ FontWeight=57
 PreviewSize=32
 
 [General]
-ViewPropsTimestamp=2019,10,24,16,54,26
+Version=200
+ViewPropsTimestamp=2019,10,26,9,13,46
 
 [IconsMode]
 FontWeight=57
 PreviewSize=48
 
 [MainWindow]
-Height 1080=639
+Height 1080=816
+Height 1440=655
 MenuBar=Disabled
-State=
+State=AAAA/wAAAAD9AAAAAwAAAAAAAADxAAACafwCAAAAAfsAAAAWAGYAbwBsAGQAZQByAHMARABvAGMAawAAAAAA/////wAAAAoBAAADAAAAAQAAANwAAAKP/AIAAAAC+wAAABQAcABsAGEAYwBlAHMARABvAGMAawEAAAAAAAACjwAAAFoBAAAD+wAAABAAaQBuAGYAbwBEAG8AYwBrAAAAAAD/////AAAACgEAAAMAAAADAAAAAAAAAAD8AQAAAAH7AAAAGAB0AGUAcgBtAGkAbgBhAGwARABvAGMAawAAAAAA/////wAAAAoBAAADAAAERwAAAo8AAAAEAAAABAAAAAgAAAAI/AAAAAEAAAAAAAAAAQAAABYAbQBhAGkAbgBUAG8AbwBsAEIAYQByAwAAAAD/////AAAAAAAAAAA=
 ToolBarsMovable=Disabled
-Width 1920=1011
+Width 1920=1659
+Width 2560=1354
 
 [MainWindow][Toolbar mainToolBar]
 ToolButtonStyle=IconOnly
 
 [PreviewSettings]
 Plugins=appimagethumbnail,audiothumbnail,comicbookthumbnail,djvuthumbnail,ebookthumbnail,marble_thumbnail_shp,exrthumbnail,directorythumbnail,fontthumbnail,marble_thumbnail_geojson,marble_thumbnail_gpx,imagethumbnail,jpegthumbnail,marble_thumbnail_kmz,marble_thumbnail_kml,kraorathumbnail,windowsexethumbnail,windowsimagethumbnail,opendocumentthumbnail,marble_thumbnail_osm,svgthumbnail
+
+[Toolbar mainToolBar]
+ToolButtonStyle=IconOnly
