@@ -293,7 +293,8 @@ KDE envrionment (login manager, desktop, needed fonts and themes):
 sudo pacman -Sy plasma colord-kde kdeconnect  \
 sddm sddm-kcm \
 konsole dolphin kate \
-adobe-source-code-pro-fonts noto-fonts noto-fonts-emoji ttf-opensans ttf-roboto ttf-fira-mono
+adobe-source-code-pro-fonts noto-fonts noto-fonts-emoji ttf-opensans ttf-roboto ttf-fira-mono \
+ttf-bitstream-vera
 
 yay -Sy chili-sddm-theme osx-arc-darker \
 otf-san-francisco sierrabreeze-kwin-decoration-git archlinux-artwork \
