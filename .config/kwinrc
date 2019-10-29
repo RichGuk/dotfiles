@@ -75,6 +75,7 @@ highlightwindowEnabled=true
 minimizeallEnabled=false
 synchronizeskipswitcherEnabled=false
 videowallEnabled=false
+windowgeometryEnabled=false
 
 [Script-desktopchangeosd]
 PopupHideDelay=1000
@@ -118,13 +119,35 @@ Right=None
 Top=None
 
 [Windows]
+ActiveMouseScreen=false
+AutoRaise=false
+AutoRaiseInterval=750
+BorderSnapZone=10
+CenterSnapZone=0
+ClickRaise=true
+DelayFocusInterval=300
 ElectricBorderCooldown=350
 ElectricBorderCornerRatio=0.25
 ElectricBorderDelay=150
 ElectricBorderMaximize=true
 ElectricBorderTiling=true
 ElectricBorders=0
+FocusPolicy=ClickToFocus
+FocusStealingPreventionLevel=1
+GeometryTip=false
+HideUtilityWindowsForInactive=true
+MaximizeButtonLeftClickCommand=Maximize
+MaximizeButtonMiddleClickCommand=Maximize (vertical only)
+MaximizeButtonRightClickCommand=Maximize (horizontal only)
+NextFocusPrefersMouse=false
+Placement=Smart
 RollOverDesktops=true
+SeparateScreenFocus=true
+ShadeHover=false
+ShadeHoverInterval=250
+SnapOnlyWhenOverlapping=false
+TitlebarDoubleClickCommand=Maximize
+WindowSnapZone=10
 
 [org.kde.kdecoration2]
 BorderSize=Normal
