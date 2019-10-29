@@ -1,9 +1,10 @@
 [Common]
 ShadowSize=20
-ShadowStrength=128
+ShadowStrength=140
 
 [Style]
 MenuOpacity=82
+ToolBarDrawItemSeparator=false
 
 [Windeco]
 DrawTitleBarSeparator=false

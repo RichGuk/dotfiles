@@ -1,5 +1,5 @@
 [Background]
-Color=46,52,64
+Color=36,36,36
 
 [BackgroundFaint]
 Color=40,42,56
@@ -91,5 +91,5 @@ Color=239,240,235
 [General]
 Blur=true
 Description=snazzy
-Opacity=0.9
+Opacity=0.85
 Wallpaper=
