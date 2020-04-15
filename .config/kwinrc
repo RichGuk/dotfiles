@@ -66,6 +66,9 @@ Top=None
 TopLeft=None
 TopRight=None
 
+[NightColor]
+Mode=Constant
+
 [Plugins]
 blurEnabled=true
 contrastEnabled=false

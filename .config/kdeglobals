@@ -89,7 +89,7 @@ ForegroundInactive=136,136,136
 ForegroundLink=49,91,239
 ForegroundNegative=218,68,83
 ForegroundNeutral=246,116,0
-ForegroundNormal=222,222,222
+ForegroundNormal=255,255,255
 ForegroundPositive=39,174,96
 ForegroundVisited=120,120,120
 
@@ -106,6 +106,10 @@ ForegroundNeutral=246,116,0
 ForegroundNormal=222,222,222
 ForegroundPositive=39,174,96
 ForegroundVisited=120,120,120
+
+[Emoticons]
+emoticonsTheme=EmojiOne
+parseMode=2
 
 [General]
 BrowserApplication[$e]=firefox-personal.desktop
@@ -127,6 +131,7 @@ widgetStyle=Breeze
 Theme=McMojave-circle-blue-dark
 
 [KDE]
+AnimationDurationFactor=0.5
 ColorScheme=Nord
 ShowIconsInMenuItems=true
 ShowIconsOnPushButtons=true
