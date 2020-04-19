@@ -31,3 +31,5 @@ ShowPasteUnprintableWarning=false
 [TabBar]
 ExpandTabWidth=true
 TabBarPosition=Top
+TabBarUseUserStyleSheet=true
+TabBarUserStyleSheetFile=file:///home/rich/.config/konsole-tabs.css

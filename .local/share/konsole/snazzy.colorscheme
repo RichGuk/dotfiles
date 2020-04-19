@@ -90,6 +90,7 @@ Color=239,240,235
 
 [General]
 Blur=true
+ColorRandomization=false
 Description=snazzy
 Opacity=0.85
 Wallpaper=

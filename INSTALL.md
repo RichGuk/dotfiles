@@ -298,6 +298,7 @@ ttf-bitstream-vera
 
 yay -Sy chili-sddm-theme osx-arc-darker \
 otf-san-francisco sierrabreeze-kwin-decoration-git archlinux-artwork \
+materia-kde kvantum-theme-materia materia-gtk-theme \
 plasma5-applets-eventcalendar
 
 sudo systemctl enable sddm

@@ -159,7 +159,7 @@ enabledCalendarPlugins=/usr/lib/x86_64-linux-gnu/qt5/plugins/plasmacalendarplugi
 
 [Containments][3][Applets][41][Configuration][General]
 clock_line_2_height_ratio=0.35
-clock_maxheight=22
+clock_maxheight=20
 clock_timeformat=ddd dd, MMM HH:mm
 widget_show_meteogram=false
 widget_show_timer=false
