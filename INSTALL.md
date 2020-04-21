@@ -284,19 +284,19 @@ makepkg -si
 
 Graphics setup:
 ```bash
-sudo pacman -Sy xorg-server xf86-video-fbdev xf86-video-nouveau | xf86-video-amdgpu
+sudo pacman -S xorg-server xf86-video-fbdev xf86-video-nouveau | xf86-video-amdgpu
 ```
 
 KDE envrionment (login manager, desktop, needed fonts and themes):
 
 ```bash
-sudo pacman -Sy plasma colord-kde kdeconnect  \
+sudo pacman -S plasma colord-kde kdeconnect  \
 sddm sddm-kcm \
 konsole dolphin kate \
 adobe-source-code-pro-fonts noto-fonts noto-fonts-emoji ttf-opensans ttf-roboto ttf-fira-mono \
 ttf-bitstream-vera
 
-yay -Sy chili-sddm-theme osx-arc-darker \
+yay -Sy chili-sddm-theme  x-arc-shadow \
 otf-san-francisco sierrabreeze-kwin-decoration-git archlinux-artwork \
 materia-kde kvantum-theme-materia materia-gtk-theme \
 plasma5-applets-eventcalendar
@@ -307,7 +307,7 @@ sudo systemctl start sddm
 
 Some other packages I have installed:
 ```bash
-pacman -Sy inetutils firefox chromium git virt-manager libvirt \
+pacman -S inetutils firefox chromium git virt-manager libvirt \
 docker docker-compose kubectl helm
 ```
 Finally now libvirt and docker are installed we can add myself to the groups
