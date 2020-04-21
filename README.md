@@ -24,7 +24,7 @@ git clone --bare --recursive https://github.com/RichGuk/dotfiles.git $HOME/.dotf
 alias config='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 
 config checkout
-config submodules update
+config submodule update
 
 config config --local status.showUntrackedFiles no
 ```
