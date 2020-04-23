@@ -23,7 +23,7 @@ zstyle ':completion:*:cd:*' tag-order local-directories directory-stack path-dir
 hosts=(
   "$_ssh_hosts[@]"
   "$_etc_hosts[@]"
-  `hostname`
+  "$(cat /etc/hostname)"
   localhost
 )
 zstyle ':completion:*:hosts' hosts $hosts
