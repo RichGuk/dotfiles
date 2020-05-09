@@ -1,3 +1,6 @@
 [submodule ".local/share/icons/la-capitaine-icon-theme"]
 	path = .local/share/icons/la-capitaine-icon-theme
 	url = https://github.com/RichGuk/la-capitaine-icon-theme.git
+[submodule "/home/rich/.config/tmux/plugins/tpm"]
+	path = /home/rich/.config/tmux/plugins/tpm
+	url = https://github.com/tmux-plugins/tpm
