@@ -1,6 +1,6 @@
 [Common]
-ShadowSize=20
-ShadowStrength=140
+ShadowSize=30
+ShadowStrength=128
 
 [Style]
 MenuOpacity=70
@@ -8,3 +8,19 @@ ToolBarDrawItemSeparator=false
 
 [Windeco]
 DrawTitleBarSeparator=false
+
+[Windeco Exception 0]
+BorderSize=0
+Enabled=true
+ExceptionPattern=konsole
+ExceptionType=0
+HideTitleBar=true
+Mask=16
+
+[Windeco Exception 1]
+BorderSize=3
+Enabled=true
+ExceptionPattern=dolphin
+ExceptionType=0
+HideTitleBar=true
+Mask=16

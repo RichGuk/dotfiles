@@ -59,7 +59,7 @@ MoveResize=100
 [ElectricBorders]
 Bottom=None
 BottomLeft=None
-BottomRight=ShowDesktop
+BottomRight=None
 Left=None
 Right=None
 Top=None
