@@ -21,11 +21,15 @@ call plug#begin('~/.config/nvim/plugged')
 
 " Generic plugins {{{
 Plug 'pbrisbin/vim-mkdir'
+Plug 'Yggdroot/indentLine'
 
 " " Async syntax checking
 let g:ale_linters = {
 \   'elixir': [],
 \}
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_insert_leave = 0
+
 Plug 'w0rp/ale'
 " Autocomplete
 Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
@@ -53,6 +57,8 @@ Plug 'tpope/vim-bundler', { 'for': ['ruby', 'eruby', 'haml'] }
 
 " Themes plugins {{{
 Plug 'jpo/vim-railscasts-theme'
+Plug 'chriskempson/base16-vim'
+Plug 'ayu-theme/ayu-vim'
 " }}}
 
 " Elixir {{{
@@ -71,6 +77,14 @@ call plug#end()
 "===========================================================
 " Plugin settings {{{
 "===========================================================
+
+" IndentLine {{
+let g:indentLine_char = ''
+let g:indentLine_first_char = ''
+let g:indentLine_showFirstIndentLevel = 1
+let g:indentLine_setColors = 0
+" }}
+
 " UltiSnips settings {{{
 let g:UltiSnipsUsePythonVersion=3
 "}}}
@@ -118,7 +132,7 @@ set pastetoggle=<F2>
 set lazyredraw
 set noswapfile
 set clipboard^=unnamed
-set colorcolumn=80
+set colorcolumn=100
 " See: https://github.com/neovim/neovim/issues/6403
 set guicursor=
 
@@ -164,7 +178,8 @@ set foldlevel=2
 "===========================================================
 " Theme setup {{{
 "===========================================================
-let base16colorspace=256
+"let base16colorspace=256
+set background=dark
 
 function! MyHighlights() abort
   highlight Normal ctermbg=NONE guibg=NONE ctermfg=255
@@ -181,8 +196,34 @@ augroup Colours
     autocmd ColorScheme * call MyHighlights()
 augroup END
 
+
+" if (has("termguicolors"))
+"   set termguicolors
+" endif
+" colorscheme  base16-tomorrow-night
+" highlight Conceal guibg=none guifg=#7b7b7b
+" highlight LineNr guibg=none guifg=#a09d9d
+
 colorscheme railscasts
-" colorscheme base16-railscasts
+highlight Conceal ctermfg=245 ctermbg=none guibg=none
+highlight Special ctermfg=29
+
+" if (has("termguicolors"))
+"   set termguicolors
+" endif
+" let ayucolor="dark"
+" colorscheme ayu
+" highlight LineNr guifg=#a09d9d
+" highlight Conceal guifg=#7b7b7b
+" highlight CursorLineNr guibg=none
+" highlight Directory guifg=#257bae
+" highlight PreProc guifg=#fb8602
+" highlight Function guifg=#f6d05e
+" highlight Comment guifg=#a2a2a2
+" highlight Visual guibg=#4a4a4a
+
+"let g:gruvbox_contrast_dark="hard"
+"colorscheme gruvbox
 "}}}
 
 "===========================================================
@@ -217,6 +258,13 @@ augroup END
 augroup GolangAu
   autocmd!
   autocmd FileType go  setlocal noexpandtab shiftwidth=4 softtabstop=4 tabstop=4
+augroup END
+" }}}
+
+" Markdown {{{
+augroup MarkdownAu
+  autocmd FileType markdown let b:indentLine_enabled=0
+  autocmd FileType markdown setlocal colorcolumn=80
 augroup END
 " }}}
 

@@ -2,7 +2,7 @@
 AntiAliasFonts=true
 BoldIntense=false
 ColorScheme=snazzy
-Font=Source Code Pro,12,-1,5,50,0,0,0,0,0,Regular
+Font=Source Code Pro,12,-1,5,50,0,0,0,0,0
 
 [General]
 Directory=/home/rich

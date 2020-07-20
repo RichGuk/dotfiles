@@ -6,16 +6,13 @@ switch-to-activity-a444fee5-344b-48f6-873a-c2c0206f7ddf=none,none,Switch to acti
 [KDE Keyboard Layout Switcher]
 Switch keyboard layout to English (UK)=none,none,Switch keyboard layout to English (UK)
 Switch to Next Keyboard Layout=Ctrl+Alt+K,Ctrl+Alt+K,Switch to Next Keyboard Layout
-_k_friendly_name=KDE Daemon
+_k_friendly_name=Keyboard Layout Switcher
 
 [PlayBar]
 _k_friendly_name=PlayBar
 next=,Media Next,Next track
-next-source=none,none,Next source
-play-pause=Media Play\tF7,Media Play,Play/Pause
+play-pause=Media Play,Media Play,Play/Pause
 previous=,Media Previous,Previous track
-seek-backward=Meta+Media Previous,Meta+Media Previous,Seek backward
-seek-forward=Meta+Media Next,Meta+Media Next,Seek forward
 stop=,Media Stop,Stop
 toggle-mediaplayer=none,none,Toggle window media player
 
@@ -27,7 +24,7 @@ _k_friendly_name=Accessibility
 Disable Touchpad=Touchpad Off,Touchpad Off,Disable Touchpad
 Enable Touchpad=Touchpad On,Touchpad On,Enable Touchpad
 Toggle Touchpad=Touchpad Toggle,Touchpad Toggle,Toggle Touchpad
-_k_friendly_name=KDE Daemon
+_k_friendly_name=Touchpad
 
 [kded5]
 Show System Activity=Ctrl+Esc,Ctrl+Esc,Show System Activity
@@ -36,7 +33,8 @@ display=Display\tMeta+P,Display\tMeta+P,Switch Display
 
 [khotkeys]
 _k_friendly_name=KDE Daemon
-{af8e7e72-2605-458d-b9fe-0b47710111c6}=Ctrl+Alt+T,none,Launch Konsole
+{20187b59-f318-4df8-8964-278bf95def23}=Ctrl+Alt+Q,none,KVM keyboard attach
+{a9d8be46-1e38-48e5-800f-5fb74fb0d64f}=none,none,Launch Konsole
 {d03619b6-9b3c-48cc-9d9c-a2aadb485550}=,none,Search
 
 [kmix]
@@ -59,7 +57,7 @@ Lock Session=Meta+L\tCtrl+Alt+L\tScreensaver,Meta+L\tCtrl+Alt+L\tScreensaver,Loc
 Log Out=Ctrl+Alt+Del,none,Log Out
 Log Out Without Confirmation=Ctrl+Alt+Shift+Del,none,Log Out Without Confirmation
 Reboot Without Confirmation=Ctrl+Alt+Shift+PgUp,none,Reboot Without Confirmation
-_k_friendly_name=ksmserver
+_k_friendly_name=Session Management
 
 [kwin]
 Activate Window Demanding Attention=Ctrl+Alt+A,Ctrl+Alt+A,Activate Window Demanding Attention
@@ -125,6 +123,7 @@ Switch to Screen 5=none,none,Switch to Screen 5
 Switch to Screen 6=none,none,Switch to Screen 6
 Switch to Screen 7=none,none,Switch to Screen 7
 Toggle Night Color=none,none,Toggle Night Color
+Toggle Night Colour=none,none,Toggle Night Colour
 Toggle Window Raise/Lower=none,none,Toggle Window Raise/Lower
 Walk Through Desktop List=none,none,Walk Through Desktop List
 Walk Through Desktop List (Reverse)=none,none,Walk Through Desktop List (Reverse)
@@ -231,6 +230,7 @@ Decrease Screen Brightness=Monitor Brightness Down,Monitor Brightness Down,Decre
 Hibernate=Hibernate,Hibernate,Hibernate
 Increase Keyboard Brightness=Keyboard Brightness Up,Keyboard Brightness Up,Increase Keyboard Brightness
 Increase Screen Brightness=Monitor Brightness Up,Monitor Brightness Up,Increase Screen Brightness
+PowerDown=Power Down,Power Down,Power Down
 PowerOff=Power Off,Power Off,Power Off
 Sleep=Sleep\tAlt+Shift+S,Sleep,Suspend
 Toggle Keyboard Backlight=Keyboard Light On/Off,Keyboard Light On/Off,Toggle Keyboard Backlight
@@ -249,12 +249,12 @@ activate task manager entry 6=Meta+6,Meta+6,Activate Task Manager Entry 6
 activate task manager entry 7=Meta+7,Meta+7,Activate Task Manager Entry 7
 activate task manager entry 8=Meta+8,Meta+8,Activate Task Manager Entry 8
 activate task manager entry 9=Meta+9,Meta+9,Activate Task Manager Entry 9
-activate widget 102=none,none,Activate PlayBar Widget
 activate widget 106=none,none,Activate Pager Widget
+activate widget 112=none,none,Activate PlayBar Widget
+activate widget 117=none,none,Activate Application Launcher Widget
 activate widget 30=none,none,Activate Inline Clock Widget
 activate widget 85=none,none,Activate Media Player Widget
 activate widget 88=Alt+F1,none,Activate Simple Menu Widget
-activate widget 99=,none,Activate Simple Menu Widget
 clear-history=none,none,Clear Clipboard History
 clipboard_action=Ctrl+Alt+X,Ctrl+Alt+X,Enable Clipboard Actions
 cycleNextAction=none,none,Next History Item
@@ -268,3 +268,10 @@ show dashboard=Ctrl+F12,Ctrl+F12,Show Desktop
 show-barcode=none,none,Show Barcode...
 show-on-mouse-pos=none,none,Open Klipper at Mouse Position
 stop current activity=Meta+S,Meta+S,Stop Current Activity
+switch to next activity=none,none,Switch to Next Activity
+switch to previous activity=none,none,Switch to Previous Activity
+toggle do not disturb=none,none,Toggle do not disturb
+
+[systemsettings.desktop]
+_k_friendly_name=System Settings
+_launch=Tools,Tools,System Settings

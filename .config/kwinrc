@@ -10,7 +10,7 @@ GLPreferBufferSwap=a
 GLTextureFilter=2
 HiddenPreviews=5
 OpenGLIsUnsafe=false
-WindowsBlockCompositing=true
+WindowsBlockCompositing=false
 XRenderSmoothScale=false
 
 [Desktops]
@@ -71,7 +71,7 @@ Mode=Constant
 
 [Plugins]
 blurEnabled=true
-contrastEnabled=false
+contrastEnabled=true
 desktopchangeosdEnabled=false
 forceblurEnabled=true
 highlightwindowEnabled=true
@@ -85,7 +85,7 @@ PopupHideDelay=1000
 TextOnly=false
 
 [Script-forceblur]
-patterns=yakuake\nurxvt\nkeepassxc\ndolphin\nsystemsettings\nspotify\ngwenview
+patterns=yakuake\nurxvt\nkeepassxc\ndolphin\nsystemsettings\nspotify\ngwenview\ndiscord
 
 [TabBox]
 ActivitiesMode=1
@@ -156,7 +156,7 @@ WindowSnapZone=10
 BorderSize=Normal
 BorderSizeAuto=true
 ButtonsOnLeft=XAI
-ButtonsOnRight=S
+ButtonsOnRight=F
 CloseOnDoubleClickOnMenu=false
 ShowToolTips=true
 library=org.kde.sierrabreeze
