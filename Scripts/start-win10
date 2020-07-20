@@ -7,27 +7,28 @@ export TMP_PARAMS="$*"
 cleanup() {
   cpupower frequency-set -g schedutil
 
-  echo "Resetting cset groups"
-  cset shield --reset
-  sleep 2
-  rmdir /sys/fs/cgroup/cpuset/machine.slice
+  # echo "Resetting cset groups"
+  # cset shield --reset
+  # sleep 2
+  # rmdir /sys/fs/cgroup/cpuset/machine.slice
 
   echo "Undoing kernel tweaks"
   echo fff > /sys/devices/virtual/workqueue/cpumask
   echo fff > /sys/bus/workqueue/devices/writeback/cpumask
   sysctl vm.stat_interval=1
   sysctl -w kernel.watchdog=1
-}
 
+  for i in $(sed -n -e 's/ \([0-9]\+\):.*/\1/p' /proc/interrupts); do echo '0-15' > /proc/irq/$i/smp_affinity_list 2>/dev/null; done
+}
 
 cpupower frequency-set -g performance
 
-# cset shield -c 1,9,2,10,3,11,6,14
-cset shield --kthread on --cpu 1-4,9-12
-sleep 1
-echo 0 > /sys/fs/cgroup/cpuset/system/cpuset.cpu_exclusive
-echo 0 > /sys/fs/cgroup/cpuset/user/cpuset.cpu_exclusive
-
+# rmdir /sys/fs/cgroup/cpuset/machine.slice 2>/dev/null
+# cset shield -c 4-7,12-15
+# cset shield --kthread on
+# sleep 1
+# echo 0 > /sys/fs/cgroup/cpuset/system/cpuset.cpu_exclusive
+# echo 0 > /sys/fs/cgroup/cpuset/user/cpuset.cpu_exclusive
 
 echo "Performing kernel tweaks"
 echo 041 > /sys/bus/workqueue/devices/writeback/cpumask
@@ -36,6 +37,11 @@ sysctl vm.stat_interval=120
 sysctl -w kernel.watchdog=0
 
 virsh start $VM_NAME
+
+if [ $? -ne 0 ]; then
+  echo "VM failed to start!"
+  cleanup
+fi
 
 echo "Enjoy your game :)"
 echo
@@ -50,15 +56,24 @@ fi
 if [ "$(virsh domstate $VM_NAME)" = "running" ]; then
 
   echo "Setting scheduler policy"
-  export QEMU_PID=$(cat /var/run/libvirt/qemu/win10.pid)
+  export QEMU_PID=$(cat /var/run/libvirt/qemu/$VM_NAME.pid)
   chrt -f -p 1 $QEMU_PID
   chrt -p $QEMU_PID
-  bash -c "for i in $(sed -n -e 's/ \([0-9]\+\):.*/\1/p' /proc/interrupts); do echo '0,6' > /proc/irq/$i/smp_affinity_list; done;" > /dev/null 2>&1
 
+  echo
+
+
+  echo "Waiting 60 seconds for VM to fully boot..."
+  sleep 30
+  echo "Setting IRQ affinity"
+  # grep -e edge /proc/interrupts | cut -d: -f1 | tr -d ' ' | while read int; do echo 0-3,8-11 > /proc/irq/$int/smp_affinity_list 2>/dev/null; done
+  # sleep 3
+  grep -e vfio /proc/interrupts | cut -d: -f1 | tr -d ' ' | while read int; do echo 4-5,12-13 > /proc/irq/$int/smp_affinity_list 2>/dev/null; done
 else
-  echo "Failed to set chrt"
+  echo "Failed to set scheduler"
 fi
 
+echo
 while [ "$(virsh domstate $VM_NAME)" = "running" ]; do
   echo -en "\e[1A\rVM running - "
   date
