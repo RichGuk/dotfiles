@@ -19,7 +19,7 @@ Mask=16
 
 [Windeco Exception 1]
 BorderSize=3
-Enabled=true
+Enabled=false
 ExceptionPattern=dolphin
 ExceptionType=0
 HideTitleBar=true
