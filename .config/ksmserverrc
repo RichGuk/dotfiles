@@ -1,6 +1,0 @@
-[General]
-confirmLogout=false
-excludeApps=
-loginMode=default
-offerShutdown=true
-shutdownType=0
