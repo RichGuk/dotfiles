@@ -1,9 +1,6 @@
 [submodule ".local/share/icons/la-capitaine-icon-theme"]
 	path = .local/share/icons/la-capitaine-icon-theme
 	url = https://github.com/RichGuk/la-capitaine-icon-theme.git
-[submodule "/home/rich/.config/tmux/plugins/tpm"]
-	path = /home/rich/.config/tmux/plugins/tpm
-	url = https://github.com/tmux-plugins/tpm
 [submodule ".config/zsh/zsh-syntax-highlighting"]
 	path = .config/zsh/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
