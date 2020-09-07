@@ -31,8 +31,6 @@ let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_insert_leave = 0
 
 Plug 'w0rp/ale'
-" Autocomplete
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " commenting stuff
 Plug 'tpope/vim-commentary'
 " Polyglot - all the languages!
