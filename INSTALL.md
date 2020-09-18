@@ -311,7 +311,8 @@ adobe-source-code-pro-fonts noto-fonts noto-fonts-emoji ttf-opensans ttf-roboto 
 ttf-fira-mono ttf-bitstream-vera inetutils firefox chromium virt-manager libvirt \
 docker docker-compose kubectl helm
 
-yay -S otf-san-francisco sierrabreeze-kwin-decoration-git archlinux-artwork plasma5-applets-eventcalendar
+yay -S otf-san-francisco sierrabreeze-kwin-decoration-git archlinux-artwork \
+plasma5-applets-eventcalendar breeze-snow-cursor-theme mojave-gtk-theme-git
 ```
 
 Add some addtional groups for my user:
