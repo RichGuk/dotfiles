@@ -32,7 +32,7 @@ let g:ale_lint_on_insert_leave = 0
 
 Plug 'w0rp/ale'
 " Autocomplete
-Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " commenting stuff
 Plug 'tpope/vim-commentary'
 " Polyglot - all the languages!
@@ -78,11 +78,16 @@ call plug#end()
 " Plugin settings {{{
 "===========================================================
 
-" IndentLine {{
+" Polyglot {{{
+let g:csv_no_conceal = 1
+" }}}
+
+" "IndentLine {{
 let g:indentLine_char = ''
 let g:indentLine_first_char = ''
 let g:indentLine_showFirstIndentLevel = 1
 let g:indentLine_setColors = 0
+let g:vim_json_syntax_conceal = 0
 " }}
 
 " UltiSnips settings {{{
@@ -196,35 +201,9 @@ augroup Colours
     autocmd ColorScheme * call MyHighlights()
 augroup END
 
-
-" if (has("termguicolors"))
-"   set termguicolors
-" endif
-" colorscheme  base16-tomorrow-night
-" highlight Conceal guibg=none guifg=#7b7b7b
-" highlight LineNr guibg=none guifg=#a09d9d
-
 colorscheme railscasts
 highlight Conceal ctermfg=245 ctermbg=none guibg=none
 highlight Special ctermfg=29
-
-" if (has("termguicolors"))
-"   set termguicolors
-" endif
-" let ayucolor="dark"
-" colorscheme ayu
-" highlight LineNr guifg=#a09d9d
-" highlight Conceal guifg=#7b7b7b
-" highlight CursorLineNr guibg=none
-" highlight Directory guifg=#257bae
-" highlight PreProc guifg=#fb8602
-" highlight Function guifg=#f6d05e
-" highlight Comment guifg=#a2a2a2
-" highlight Visual guibg=#4a4a4a
-
-"let g:gruvbox_contrast_dark="hard"
-"colorscheme gruvbox
-"}}}
 
 "===========================================================
 " Auto commands {{{
@@ -264,7 +243,7 @@ augroup END
 " Markdown {{{
 augroup MarkdownAu
   autocmd FileType markdown let b:indentLine_enabled=0
-  autocmd FileType markdown setlocal colorcolumn=80
+  autocmd FileType markdown setlocal colorcolumn=80 tw=80
 augroup END
 " }}}
 
