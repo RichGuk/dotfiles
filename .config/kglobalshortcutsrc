@@ -8,14 +8,6 @@ Switch keyboard layout to English (UK)=none,none,Switch keyboard layout to Engli
 Switch to Next Keyboard Layout=Ctrl+Alt+K,Ctrl+Alt+K,Switch to Next Keyboard Layout
 _k_friendly_name=Keyboard Layout Switcher
 
-[PlayBar]
-_k_friendly_name=PlayBar
-next=,Media Next,Next track
-play-pause=Media Play,Media Play,Play/Pause
-previous=,Media Previous,Previous track
-stop=,Media Stop,Stop
-toggle-mediaplayer=none,none,Toggle window media player
-
 [kaccess]
 Toggle Screen Reader On and Off=Meta+Alt+S,Meta+Alt+S,Toggle Screen Reader On and Off
 _k_friendly_name=Accessibility
@@ -32,7 +24,7 @@ _k_friendly_name=KDE Daemon
 display=Display\tMeta+P,Display\tMeta+P,Switch Display
 
 [khotkeys]
-_k_friendly_name=KDE Daemon
+_k_friendly_name=Custom Shortcuts Service
 {20187b59-f318-4df8-8964-278bf95def23}=Ctrl+Alt+Q,none,KVM keyboard attach
 {a9d8be46-1e38-48e5-800f-5fb74fb0d64f}=none,none,Launch Konsole
 {d03619b6-9b3c-48cc-9d9c-a2aadb485550}=,none,Search
@@ -52,11 +44,11 @@ _k_friendly_name=KRunner
 _launch=Alt+Space\tAlt+F2\tMeta+Space\tSearch,Alt+Space\tAlt+F2\tMeta+Space\tSearch,KRunner
 
 [ksmserver]
-Halt Without Confirmation=Ctrl+Alt+Shift+PgDown,none,Halt Without Confirmation
+Halt Without Confirmation=Ctrl+Alt+Shift+PgDown,Ctrl+Alt+Shift+PgDown,Halt Without Confirmation
 Lock Session=Meta+L\tCtrl+Alt+L\tScreensaver,Meta+L\tCtrl+Alt+L\tScreensaver,Lock Session
-Log Out=Ctrl+Alt+Del,none,Log Out
-Log Out Without Confirmation=Ctrl+Alt+Shift+Del,none,Log Out Without Confirmation
-Reboot Without Confirmation=Ctrl+Alt+Shift+PgUp,none,Reboot Without Confirmation
+Log Out=Ctrl+Alt+Del,Ctrl+Alt+Del,Log Out
+Log Out Without Confirmation=Ctrl+Alt+Shift+Del,Ctrl+Alt+Shift+Del,Log Out Without Confirmation
+Reboot Without Confirmation=Ctrl+Alt+Shift+PgUp,Ctrl+Alt+Shift+PgUp,Reboot Without Confirmation
 _k_friendly_name=Session Management
 
 [kwin]
@@ -260,7 +252,7 @@ clipboard_action=Ctrl+Alt+X,Ctrl+Alt+X,Enable Clipboard Actions
 cycleNextAction=none,none,Next History Item
 cyclePrevAction=none,none,Previous History Item
 edit_clipboard=none,none,Edit Contents...
-manage activities=Meta+Q,Meta+Q,Activities...
+manage activities=Meta+Q,Meta+Q,Show Activity Switcher
 next activity=Meta+Tab,none,Walk through activities
 previous activity=Meta+Shift+Tab,none,Walk through activities (Reverse)
 repeat_action=Ctrl+Alt+R,Ctrl+Alt+R,Manually Invoke Action on Current Clipboard

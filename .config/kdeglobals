@@ -117,9 +117,10 @@ parseMode=2
 
 [General]
 BrowserApplication[$e]=firefox-personal.desktop
-ColorScheme=McMojave
+ColorScheme=MateriaDarkTweaked
 Name[en_GB]=Nord
 Name=Nord
+XftAntialias=true
 XftHintStyle=hintslight
 XftSubPixel=rgb
 dbfile=/home/rich/.mozilla/firefox/ed0mlll7.default/places.sqlite

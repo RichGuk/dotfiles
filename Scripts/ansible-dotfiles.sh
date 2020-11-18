@@ -31,6 +31,7 @@ ansible-playbook -i "${@}" /dev/stdin <<'PLAYBOOK'
                  alias config='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
                  config fetch
                  config checkout -f server
+                 config submodule init
                  config submodule update
                  config config --local status.showUntrackedFiles no
         dest: dotfiles-update.sh

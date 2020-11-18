@@ -123,7 +123,7 @@ DialogWidth=720
 
 [Containments][3][Applets][117][Configuration][General]
 favoritesPortedToKAstats=true
-icon=/usr/share/archlinux-icons/start-here monochrome light.png
+icon=/usr/share/archlinux/icons/archlinux-icon-crystal-64.svg
 
 [Containments][3][Applets][19][Configuration][Appearance]
 dateFormat=mixedDate
@@ -189,8 +189,13 @@ DialogWidth=1504
 enabledCalendarPlugins=/usr/lib/x86_64-linux-gnu/qt5/plugins/plasmacalendarplugins/holidaysevents.so,/usr/lib/qt/plugins/plasmacalendarplugins/holidaysevents.so
 
 [Containments][3][Applets][41][Configuration][General]
+clockLine2HeightRatio=0.3
+clockTimeFormat1=ddd dd, MMM HH:mm
 clock_line_2_height_ratio=0.3
 clock_timeformat=ddd dd, MMM HH:mm
+v71Migration=true
+widgetShowMeteogram=false
+widgetShowTimer=false
 widget_show_meteogram=false
 widget_show_timer=false
 
@@ -316,7 +321,7 @@ DialogWidth=2560
 PreloadWeight=0
 
 [Containments][3][General]
-AppletOrder=117;82;65;112;7;41
+AppletOrder=117;82;65;7;41
 
 [Containments][8]
 activityId=
