@@ -17,14 +17,9 @@ if [[ -d /usr/share/fzf ]]; then
   source /usr/share/fzf/completion.zsh
 fi
 
-export SSH_AGENT_INFO_FILE=${SSH_AGENT_INFO_FILE:=~/.cache/.ssh-agent-info}
-if [[ "${SSH_AUTH_SOCK}x" == "x" ]]; then
-  if ! pgrep -u "$USER" ssh-agent > /dev/null; then
-    ssh-agent > $SSH_AGENT_INFO_FILE
-  fi
-  if [[ "$SSH_AGENT_PID" == "" ]]; then
-    if [[ -e $SSH_AGENT_INFO_FILE ]]; then
-      eval "$(<$SSH_AGENT_INFO_FILE)" >/dev/null
-    fi
-  fi
+if ! pgrep -u "$USER" ssh-agent > /dev/null; then
+    ssh-agent -t 1h > "$XDG_RUNTIME_DIR/ssh-agent.env"
+fi
+if [[ ! "$SSH_AUTH_SOCK" ]]; then
+    source "$XDG_RUNTIME_DIR/ssh-agent.env" >/dev/null
 fi
