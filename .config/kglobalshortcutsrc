@@ -25,8 +25,7 @@ display=Display\tMeta+P,Display\tMeta+P,Switch Display
 
 [khotkeys]
 _k_friendly_name=Custom Shortcuts Service
-{20187b59-f318-4df8-8964-278bf95def23}=Ctrl+Alt+Q,none,KVM keyboard attach
-{a9d8be46-1e38-48e5-800f-5fb74fb0d64f}=none,none,Launch Konsole
+{1cd68aba-04e6-4959-83e4-aee490926cf0}=Ctrl+Alt+T,none,Launch Konsole
 {d03619b6-9b3c-48cc-9d9c-a2aadb485550}=,none,Search
 
 [kmix]
@@ -114,7 +113,7 @@ Switch to Screen 4=none,none,Switch to Screen 4
 Switch to Screen 5=none,none,Switch to Screen 5
 Switch to Screen 6=none,none,Switch to Screen 6
 Switch to Screen 7=none,none,Switch to Screen 7
-Toggle Night Color=none,none,Toggle Night Color
+Toggle Night Color=none,none,Toggle Night Colour
 Toggle Night Colour=none,none,Toggle Night Colour
 Toggle Window Raise/Lower=none,none,Toggle Window Raise/Lower
 Walk Through Desktop List=none,none,Walk Through Desktop List
@@ -145,10 +144,10 @@ Window Minimize=Meta+PgDown,Meta+PgDown,Minimise Window
 Window Move=none,none,Move Window
 Window No Border=none,none,Hide Window Border
 Window On All Desktops=none,none,Keep Window on All Desktops
-Window One Desktop Down=none,none,Window One Desktop Down
-Window One Desktop Up=none,none,Window One Desktop Up
-Window One Desktop to the Left=none,none,Window One Desktop to the Left
-Window One Desktop to the Right=none,none,Window One Desktop to the Right
+Window One Desktop Down=none,Meta+Ctrl+Shift+Down,Window One Desktop Down
+Window One Desktop Up=none,Meta+Ctrl+Shift+Up,Window One Desktop Up
+Window One Desktop to the Left=none,Meta+Ctrl+Shift+Left,Window One Desktop to the Left
+Window One Desktop to the Right=none,Meta+Ctrl+Shift+Right,Window One Desktop to the Right
 Window Operations Menu=Alt+F3,Alt+F3,Window Operations Menu
 Window Pack Down=none,none,Pack Window Down
 Window Pack Left=none,none,Pack Window to the Left
@@ -188,9 +187,9 @@ Window to Desktop 7=none,none,Window to Desktop 7
 Window to Desktop 8=none,none,Window to Desktop 8
 Window to Desktop 9=none,none,Window to Desktop 9
 Window to Next Desktop=none,none,Window to Next Desktop
-Window to Next Screen=none,none,Window to Next Screen
+Window to Next Screen=none,Meta+Shift+Right,Window to Next Screen
 Window to Previous Desktop=none,none,Window to Previous Desktop
-Window to Previous Screen=none,none,Window to Previous Screen
+Window to Previous Screen=none,Meta+Shift+Left,Window to Previous Screen
 Window to Screen 0=none,none,Window to Screen 0
 Window to Screen 1=none,none,Window to Screen 1
 Window to Screen 2=none,none,Window to Screen 2
@@ -204,9 +203,30 @@ view_actual_size=,Meta+0,Actual Size
 view_zoom_in=Meta+=,Meta+=,Zoom In
 view_zoom_out=Meta+-,Meta+-,Zoom Out
 
+[mediacontrol]
+_k_friendly_name=Media Controller
+mediavolumedown=none,none,Media volume down
+mediavolumeup=none,none,Media volume up
+nextmedia=Media Next,Media Next,Media playback next
+pausemedia=Media Pause,Media Pause,Pause media playback
+playmedia=none,none,Play media playback
+playpausemedia=Ctrl+Alt+Shift+P\tMedia Play,Media Play,Play/Pause media playback
+previousmedia=Media Previous,Media Previous,Media playback previous
+stopmedia=Media Stop,Media Stop,Stop media playback
+
 [org.kde.dolphin.desktop]
 _k_friendly_name=Dolphin
 _launch=Meta+E,Meta+E,Dolphin
+
+[org.kde.konsole.desktop]
+NewTab=,,Open a New Tab
+NewWindow=,,Open a New Window
+_k_friendly_name=Konsole
+_launch=,,Konsole
+
+[org.kde.plasma.emojier.desktop]
+_k_friendly_name=Emoji Selector
+_launch=Meta+.,Meta+.,Emoji Selector
 
 [org.kde.spectacle.desktop]
 ActiveWindowScreenShot=Meta+Print,Meta+Print,Capture Active Window

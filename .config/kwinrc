@@ -1,5 +1,5 @@
 [$Version]
-update_info=kwin.upd:replace-scalein-with-scale,kwin.upd:port-minimizeanimation-effect-to-js,kwin.upd:port-scale-effect-to-js,kwin.upd:port-dimscreen-effect-to-js,kwin.upd:auto-bordersize
+update_info=kwin.upd:replace-scalein-with-scale,kwin.upd:port-minimizeanimation-effect-to-js,kwin.upd:port-scale-effect-to-js,kwin.upd:port-dimscreen-effect-to-js,kwin.upd:auto-bordersize,kwin.upd:desktop-grid-click-behavior,kwin.upd:no-swap-encourage
 
 [Compositing]
 AnimationSpeed=2
@@ -156,7 +156,7 @@ WindowSnapZone=10
 BorderSize=Normal
 BorderSizeAuto=true
 ButtonsOnLeft=XAI
-ButtonsOnRight=F
+ButtonsOnRight=SF
 CloseOnDoubleClickOnMenu=false
 ShowToolTips=true
 library=org.kde.sierrabreeze

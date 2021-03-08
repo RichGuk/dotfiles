@@ -1,3 +1,6 @@
+[$Version]
+update_info=kxkb_variants.upd:split-variants
+
 [Layout]
 DisplayNames=
 LayoutList=gb
@@ -11,3 +14,4 @@ ShowLayoutIndicator=true
 ShowSingle=false
 SwitchMode=Global
 Use=true
+VariantList=\\0
