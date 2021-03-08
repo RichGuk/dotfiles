@@ -1,1 +1,1 @@
-/home/rich/.config/zsh/zshrc
+zshrc
