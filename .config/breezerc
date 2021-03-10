@@ -1,12 +1,14 @@
 [Common]
-ShadowSize=30
-ShadowStrength=128
+ShadowSize=ShadowMedium
+ShadowStrength=191
 
 [Style]
 MenuOpacity=70
 ToolBarDrawItemSeparator=false
 
 [Windeco]
+ButtonSize=ButtonSmall
+DrawBackgroundGradient=true
 DrawTitleBarSeparator=false
 
 [Windeco Exception 0]
