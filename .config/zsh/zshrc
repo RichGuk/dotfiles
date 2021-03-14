@@ -14,6 +14,8 @@ if [[ -d /usr/share/fzf ]]; then
   source /usr/share/fzf/completion.zsh
 fi
 
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
 if ! pgrep -u "$USER" ssh-agent > /dev/null; then
     ssh-agent -t 1h > "$HOME/.cache/ssh-agent.env"
 fi

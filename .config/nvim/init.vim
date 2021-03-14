@@ -36,7 +36,7 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " commenting stuff
 Plug 'tpope/vim-commentary'
 " Polyglot - all the languages!
-Plug 'sheerun/vim-polyglot'
+Plug 'sheerun/vim-polyglot', { 'tag': 'v4.17.0' }
 " }}}
 
 " Text manipulation plugins {{{
@@ -46,6 +46,7 @@ Plug 'christianrondeau/vim-base64'
 " }}}
 
 " External command plugins {{{
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-fugitive'
 " }}}
