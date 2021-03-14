@@ -83,10 +83,10 @@ let g:csv_no_conceal = 1
 " }}}
 
 " "IndentLine {{
-let g:indentLine_char = ''
-let g:indentLine_first_char = ''
+let g:indentLine_char = '¦'
+let g:indentLine_first_char = '¦'
 let g:indentLine_showFirstIndentLevel = 1
-let g:indentLine_setColors = 0
+let g:indentLine_color_term = 240
 let g:vim_json_syntax_conceal = 0
 " }}
 
