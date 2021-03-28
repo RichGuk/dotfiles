@@ -91,6 +91,18 @@ PreloadWeight=42
 [Containments][119][Wallpaper][org.kde.image][General]
 Image=file:///usr/share/wallpapers/Next/contents/images/1920x1080.jpg
 
+[Containments][120]
+activityId=a444fee5-344b-48f6-873a-c2c0206f7ddf
+formfactor=0
+immutability=1
+lastScreen=1
+location=0
+plugin=org.kde.plasma.folder
+wallpaperplugin=org.kde.image
+
+[Containments][120][Wallpaper][org.kde.image][General]
+Image=file:///usr/share/wallpapers/Next/contents/images/2560x1440.png
+
 [Containments][3]
 activityId=
 formfactor=2
@@ -124,6 +136,13 @@ DialogWidth=720
 [Containments][3][Applets][117][Configuration][General]
 favoritesPortedToKAstats=true
 icon=/usr/share/archlinux/icons/archlinux-icon-crystal-64.svg
+
+[Containments][3][Applets][121]
+immutability=1
+plugin=org.kde.plasma.mediacontroller
+
+[Containments][3][Applets][121][Configuration]
+PreloadWeight=55
 
 [Containments][3][Applets][19][Configuration][Appearance]
 dateFormat=mixedDate
@@ -185,15 +204,13 @@ PreloadWeight=100
 DialogHeight=876
 DialogWidth=1504
 
-[Containments][3][Applets][41][Configuration][Events]
-enabledCalendarPlugins=/usr/lib/x86_64-linux-gnu/qt5/plugins/plasmacalendarplugins/holidaysevents.so,/usr/lib/qt/plugins/plasmacalendarplugins/holidaysevents.so
-
 [Containments][3][Applets][41][Configuration][General]
 clockLine2HeightRatio=0.3
 clockTimeFormat1=ddd dd, MMM HH:mm
 clock_line_2_height_ratio=0.3
 clock_timeformat=ddd dd, MMM HH:mm
 v71Migration=true
+v72Migration=true
 widgetShowMeteogram=false
 widgetShowTimer=false
 widget_show_meteogram=false
@@ -337,7 +354,7 @@ immutability=1
 plugin=org.kde.plasma.volume
 
 [Containments][8][Applets][10][Configuration]
-PreloadWeight=41
+PreloadWeight=76
 
 [Containments][8][Applets][10][Configuration][ConfigDialog]
 DialogHeight=860
@@ -362,7 +379,7 @@ immutability=1
 plugin=org.kde.plasma.clipboard
 
 [Containments][8][Applets][11][Configuration]
-PreloadWeight=22
+PreloadWeight=37
 
 [Containments][8][Applets][110]
 immutability=1
@@ -417,7 +434,7 @@ immutability=1
 plugin=org.kde.plasma.bluetooth
 
 [Containments][8][Applets][35][Configuration]
-PreloadWeight=32
+PreloadWeight=42
 
 [Containments][8][Applets][40][Configuration]
 PreloadWeight=42

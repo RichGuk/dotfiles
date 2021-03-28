@@ -17,6 +17,11 @@ ShowMenuBarByDefault=false
 ShowWindowTitleOnTitleBar=true
 
 [MainWindow]
+DisplayPort-2 Window-Maximized 2560x1440=true
+HDMI-A-0 DisplayPort-2 Height 2560x1440=857
+HDMI-A-0 DisplayPort-2 Width 2560x1440=1915
+HDMI-A-0 DisplayPort-2 XPosition 2560x1440=522
+HDMI-A-0 DisplayPort-2 YPosition 2560x1440=423
 Height 1080=616
 Height 1440=857
 MenuBar=Disabled

@@ -1,2 +1,14 @@
+[Applications][discord]
+Seen=true
+ShowBadges=false
+ShowInHistory=false
+ShowPopups=false
+
+[Applications][firefox]
+Seen=true
+
+[Applications][teams]
+Seen=true
+
 [Jobs]
 PermanentPopups=false
