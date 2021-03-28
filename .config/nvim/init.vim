@@ -36,7 +36,7 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " commenting stuff
 Plug 'tpope/vim-commentary'
 " Polyglot - all the languages!
-Plug 'sheerun/vim-polyglot'
+Plug 'sheerun/vim-polyglot', { 'tag': 'v4.17.0' }
 " }}}
 
 " Text manipulation plugins {{{
