@@ -57,8 +57,6 @@ Plug 'tpope/vim-bundler', { 'for': ['ruby', 'eruby', 'haml'] }
 
 " Themes plugins {{{
 Plug 'jpo/vim-railscasts-theme'
-Plug 'chriskempson/base16-vim'
-Plug 'ayu-theme/ayu-vim'
 " }}}
 
 " Elixir {{{
@@ -183,7 +181,6 @@ set foldlevel=2
 "===========================================================
 " Theme setup {{{
 "===========================================================
-"let base16colorspace=256
 set background=dark
 
 function! MyHighlights() abort
