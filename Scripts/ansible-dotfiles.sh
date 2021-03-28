@@ -2,9 +2,8 @@
 
 # Usage:
 
-# ansible-dotfiles.sh -i remoteserver.test.com,remoteserver2.test.com,
-# ansible-dotfiles.sh -i $PWD/product_env
-# ansible-dotfiles.sh -i $PWD/product_env --vault-password-file=$PWD/ansible/.vault-password
+# ansible-dotfiles.sh remoteserver.test.com,remoteserver2.test.com,
+# ansible-dotfiles.sh $PWD/product_env
 
 
 export ANSIBLE_HOST_KEY_CHECKING="False"
@@ -18,7 +17,7 @@ ansible-playbook -i "${@}" /dev/stdin <<'PLAYBOOK'
   tasks:
     - name: Clone dotfiles
       git:
-        repo: "git@gitlab.com:richguk/dotfiles.git"
+        repo: "git@github.com:richguk/dotfiles.git"
         dest: "$HOME/.dotfiles"
         update: yes
         bare: yes
