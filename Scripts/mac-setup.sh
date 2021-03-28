@@ -42,7 +42,7 @@ defaults write com.apple.dock autohide-time-modifier -float 0
 defaults write com.apple.dock no-bouncing -bool true
 
 chflags nohidden ~/Library
-defaults write com.apple.finder AppleShowAllFiles YES
+defaults write com.apple.finder AppleShowAllFiles NO
 defaults write com.apple.finder ShowPathbar -bool true
 defaults write com.apple.finder ShowStatusBar -bool true
 
