@@ -33,7 +33,7 @@
   v = commit -v
   ctags = !.git/hooks/ctags
   trust = "!mkdir -p .git/safe"
-  work = !"git config user.email 'rich@stinkyink.com'"
+  work = !"git config user.email 'rich@zeneducate.com'"
   pushall = !git remote | xargs -L1 git push --all
 [push]
   default = current
