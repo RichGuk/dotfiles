@@ -116,8 +116,11 @@ let g:ale_sign_warning = '⚠'
 " Emmet {{{
 let g:user_emmet_leader_key='\'
 " }}}
-"}}}
 
+" Syntax {{{
+let g:ruby_indent_assignment_style = 'variable'
+"}}}
+"}}}
 "===========================================================
 " Basic settings {{{
 "===========================================================
