@@ -1,5 +1,5 @@
-export PATH=$HOME/Scripts:$HOME/bin:$HOME/.local/bin:/usr/local/bin:/usr/local/git/bin:$PATH
-export PATH=.git/safe/../../bin:.git/safe/../../node_modules/.bin:$PATH
+export PATH=$HOME/Scripts:$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
+export PATH=.git/safe/../../bin::.git/safe/../../node_modules/.bin:$PATH
 export EDITOR=nvim
 export DEFAULT_USER=`whoami`
 
