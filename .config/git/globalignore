@@ -2,6 +2,7 @@
 *.swp
 tags
 .rvmrc
+.vimrc.local
 
 # Zeus related files.
 custom_plan.rb

@@ -295,3 +295,7 @@ let g:coc_snippet_prev = '<S-TAB>'
 inoremap <silent><expr> <c-space> coc#refresh()
 "}}}
 " }}}
+
+if filereadable(".git/safe/../../.vimrc.local")
+  source .git/safe/../../.vimrc.local
+endif
