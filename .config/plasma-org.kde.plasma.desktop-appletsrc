@@ -34,7 +34,7 @@ showToolbox=false
 [Containments][107][Wallpaper][org.kde.image][General]
 Blur=true
 FillMode=6
-Image=/usr/share/wallpapers/Next/
+Image=file:///usr/share/wallpapers/Next/contents/images/2560x1440.png
 SlidePaths=/home/rich/.local/share/wallpapers,/usr/share/wallpapers
 
 [Containments][108]
