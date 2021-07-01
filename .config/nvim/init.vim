@@ -116,8 +116,11 @@ let g:ale_sign_warning = '⚠'
 " Emmet {{{
 let g:user_emmet_leader_key='\'
 " }}}
-"}}}
 
+" Syntax {{{
+let g:ruby_indent_assignment_style = 'variable'
+"}}}
+"}}}
 "===========================================================
 " Basic settings {{{
 "===========================================================
@@ -294,6 +297,12 @@ let g:coc_snippet_next = '<TAB>'
 let g:coc_snippet_prev = '<S-TAB>'
 inoremap <silent><expr> <c-space> coc#refresh()
 "}}}
+" }}}
+
+" COC: Prettier {{{
+command! -nargs=0 Prettier :CocCommand prettier.formatFile
+vmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
 " }}}
 
 if filereadable(".git/safe/../../.vimrc.local")

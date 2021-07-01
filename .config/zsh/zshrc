@@ -9,9 +9,6 @@ for config_file ($HOME/.config/zsh/*.zsh) source $config_file
 [[ -f $HOME/.asdf/asdf.sh ]] && source $HOME/.asdf/asdf.sh
 [[ -f $HOME/.asdf/completions/asdf.bash ]] && source $HOME/.asdf/completions/asdf.bash
 
-# Local zsh settings.
-[[ -s "$HOME/.zhrc.local" ]] && source "$HOME/.zshrc.local"
-
 if [[ -d /usr/share/fzf ]]; then
   source /usr/share/fzf/key-bindings.zsh
   source /usr/share/fzf/completion.zsh
@@ -23,3 +20,6 @@ fi
 if [[ ! "$SSH_AUTH_SOCK" ]]; then
     source "$HOME/.cache/ssh-agent.env" >/dev/null
 fi
+
+# Local zsh settings.
+[[ -s "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
