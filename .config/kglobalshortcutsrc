@@ -34,20 +34,15 @@ decrease_microphone_volume=Microphone Volume Down,Microphone Volume Down,Decreas
 decrease_volume=Volume Down,Volume Down,Decrease Volume
 increase_microphone_volume=Microphone Volume Up,Microphone Volume Up,Increase Microphone Volume
 increase_volume=Volume Up,Volume Up,Increase Volume
-mic_mute=Microphone Mute,Microphone Mute,Mute Microphone
+mic_mute=Microphone Mute,Microphone Mute\tMeta+Volume Mute,Mute Microphone
 mute=Volume Mute,Volume Mute,Mute
 
-[krunner.desktop]
-RunClipboard=Alt+Shift+F2,Alt+Shift+F2,Run command on clipboard contents
-_k_friendly_name=KRunner
-_launch=Alt+Space\tAlt+F2\tMeta+Space\tSearch,Alt+Space\tAlt+F2\tMeta+Space\tSearch,KRunner
-
 [ksmserver]
-Halt Without Confirmation=Ctrl+Alt+Shift+PgDown,Ctrl+Alt+Shift+PgDown,Halt Without Confirmation
+Halt Without Confirmation=Ctrl+Alt+Shift+PgDown,none,Halt Without Confirmation
 Lock Session=Meta+L\tCtrl+Alt+L\tScreensaver,Meta+L\tCtrl+Alt+L\tScreensaver,Lock Session
 Log Out=Ctrl+Alt+Del,Ctrl+Alt+Del,Log Out
-Log Out Without Confirmation=Ctrl+Alt+Shift+Del,Ctrl+Alt+Shift+Del,Log Out Without Confirmation
-Reboot Without Confirmation=Ctrl+Alt+Shift+PgUp,Ctrl+Alt+Shift+PgUp,Reboot Without Confirmation
+Log Out Without Confirmation=Ctrl+Alt+Shift+Del,none,Log Out Without Confirmation
+Reboot Without Confirmation=Ctrl+Alt+Shift+PgUp,none,Reboot Without Confirmation
 _k_friendly_name=Session Management
 
 [kwin]
@@ -223,6 +218,11 @@ NewTab=,,Open a New Tab
 NewWindow=,,Open a New Window
 _k_friendly_name=Konsole
 _launch=,,Konsole
+
+[org.kde.krunner.desktop]
+RunClipboard=,Alt+Shift+F2,Run command on clipboard contents
+_k_friendly_name=KRunner
+_launch=Alt+Space,Alt+Space\tAlt+F2\tSearch,KRunner
 
 [org.kde.plasma.emojier.desktop]
 _k_friendly_name=Emoji Selector
