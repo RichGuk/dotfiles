@@ -78,6 +78,9 @@ call plug#end()
 
 " Polyglot {{{
 let g:csv_no_conceal = 1
+" Markdown
+let g:vim_markdown_conceal_code_blocks = 0
+let g:vim_markdown_new_list_item_indent = 0
 " }}}
 
 " "IndentLine {{
@@ -113,14 +116,11 @@ let g:ale_sign_error = '⤫'
 let g:ale_sign_warning = '⚠'
 " }}}
 
-" Emmet {{{
-let g:user_emmet_leader_key='\'
-" }}}
-
 " Syntax {{{
 let g:ruby_indent_assignment_style = 'variable'
 "}}}
 "}}}
+
 "===========================================================
 " Basic settings {{{
 "===========================================================
@@ -244,6 +244,14 @@ augroup END
 augroup MarkdownAu
   autocmd FileType markdown let b:indentLine_enabled=0
   autocmd FileType markdown setlocal colorcolumn=80 tw=80
+  autocmd FileType markdown setlocal conceallevel=2
+  autocmd FileType markdown highlight Title cterm=bold ctermfg=202
+augroup END
+" }}}
+
+" Nunjucks {{{
+augroup NunjucksAu
+  autocmd BufNewFile,BufRead *.njk setf htmldjango
 augroup END
 " }}}
 
@@ -252,9 +260,6 @@ augroup END
 "===========================================================
 " Mappings {{{
 "===========================================================
-" Trying spacebar as leader (while still allowing normal leadermap)
-map <space> <leader>
-
 nnoremap <leader>ew :e <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <leader>es :sp <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <leader>ev :vsp <C-R>=expand("%:p:h") . "/" <CR>
@@ -277,6 +282,8 @@ nnoremap <silent> S :Ag <C-R><C-W><CR>
 nnoremap ]q :cnext<CR>
 nnoremap [q :cprevious<CR>
 "}}}
+
+nnoremap gf :e <cfile><CR>
 
 "===========================================================
 " Plugin mappings {{{
