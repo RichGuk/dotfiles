@@ -19,5 +19,7 @@ alias tmux='tmux -f $HOME/.config/tmux/tmux.conf'
 alias vim="nvim"
 alias vi="nvim"
 
+alias n="notes"
+
 
 projects=$HOME/Projects
