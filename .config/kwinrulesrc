@@ -1,7 +1,6 @@
 [1]
 Description=Application settings for firefox
 clientmachinematch=0
-noborder=true
 noborderrule=2
 titlematch=0
 wmclass=navigator firefox
@@ -9,34 +8,6 @@ wmclasscomplete=true
 wmclassmatch=1
 
 [10]
-Description=Window settings for spotify
-clientmachine=localhost
-opacityactive=80
-opacityactiverule=2
-opacityinactive=80
-opacityinactiverule=2
-title=Sigur Rós - Dauðalogn
-titlematch=1
-types=1
-wmclass=spotify
-wmclassmatch=1
-
-[11]
-Description=Window settings for systemsettings
-clientmachine=localhost
-opacityactive=80
-opacityactiverule=2
-opacityinactive=80
-opacityinactiverule=2
-title=KWin Scripts — System Settings
-types=1
-windowrole=mainwindow#1
-windowrolematch=1
-wmclass=systemsettings5 systemsettings
-wmclasscomplete=true
-wmclassmatch=1
-
-[12]
 Description=Window settings for dolphin
 clientmachine=localhost
 opacityactive=80
@@ -89,40 +60,19 @@ wmclass=signal
 wmclassmatch=1
 
 [6]
-Description=Application settings for discord
-clientmachinematch=0
-desktopfile=discord.desktop
-desktopfilerule=2
-wmclass=discord
-wmclassmatch=1
-
-[7]
-Description=Window settings for discord
-clientmachine=localhost
-opacityactive=80
-opacityactiverule=2
-opacityinactive=80
-opacityinactiverule=2
-title=Discord
-types=1
-windowrole=browser-window
-windowrolematch=1
-wmclass=discord
-wmclassmatch=1
-
-[8]
 Description=Window settings for looking-glass-client
 above=true
 aboverule=2
 blockcompositingrule=2
 clientmachine=localhost
+clientmachinematch=0
 title=Looking Glass (client)
 titlematch=1
 types=1
 wmclass=looking-glass-client
 wmclassmatch=1
 
-[9]
+[7]
 Description=Window settings for gwenview
 clientmachine=localhost
 opacityactive=80
@@ -136,5 +86,33 @@ windowrolematch=1
 wmclass=gwenview
 wmclassmatch=1
 
+[8]
+Description=Window settings for spotify
+clientmachine=localhost
+opacityactive=80
+opacityactiverule=2
+opacityinactive=80
+opacityinactiverule=2
+title=Sigur Rós - Dauðalogn
+titlematch=1
+types=1
+wmclass=spotify
+wmclassmatch=1
+
+[9]
+Description=Window settings for systemsettings
+clientmachine=localhost
+opacityactive=80
+opacityactiverule=2
+opacityinactive=80
+opacityinactiverule=2
+title=KWin Scripts — System Settings
+types=1
+windowrole=mainwindow#1
+windowrolematch=1
+wmclass=systemsettings5 systemsettings
+wmclasscomplete=true
+wmclassmatch=1
+
 [General]
-count=12
+count=10

@@ -5,13 +5,17 @@ ColorScheme=snazzy
 Font=Source Code Pro,12,-1,5,50,0,0,0,0,0
 
 [General]
+Command=/usr/bin/zsh
 Directory=/home/rich
 Environment=TERM=xterm-256color,COLORTERM=truecolor
 Name=Main
 Parent=FALLBACK/
 RemoteTabTitleFormat=%H
+SilenceSeconds=10
 StartInCurrentSessionDir=false
+TerminalColumns=110
 TerminalMargin=10
+TerminalRows=30
 
 [Interaction Options]
 TrimLeadingSpacesInSelectedText=true
