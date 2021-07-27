@@ -1,6 +1,6 @@
 [Appearance]
 AntiAliasFonts=true
-BoldIntense=false
+BoldIntense=true
 ColorScheme=snazzy
 Font=Source Code Pro,12,-1,5,50,0,0,0,0,0
 
