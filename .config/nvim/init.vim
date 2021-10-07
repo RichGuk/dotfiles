@@ -61,6 +61,7 @@ Plug 'jpo/vim-railscasts-theme'
 
 " Elixir {{{
 "Plug 'slashmili/alchemist.vim'
+Plug 'elixir-editors/vim-elixir'
 " }}}
 
 " Golang {{{
