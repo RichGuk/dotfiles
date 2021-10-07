@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/bin/sh
 
 notes_dir=${NOTES_DIR:-~/Documents/Notes}
 
