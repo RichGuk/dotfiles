@@ -25,8 +25,9 @@ display=Display\tMeta+P,Display\tMeta+P,Switch Display
 
 [khotkeys]
 _k_friendly_name=Custom Shortcuts Service
-{186dec3d-14d6-4b5d-9a45-2aab5ccbea9d}=Ctrl+Alt+N,none,New Note
+{186dec3d-14d6-4b5d-9a45-2aab5ccbea9d}=Ctrl+Alt+N,none,Notes
 {1cd68aba-04e6-4959-83e4-aee490926cf0}=Ctrl+Alt+T,none,Launch Konsole
+{70afe18a-9f3d-4962-875b-43fa643049f0}=Ctrl+Alt+J,none,New note
 {978cfe5c-dce6-4f8a-8174-95e1c491b185}=Meta+T,none,Konsole or new
 {d03619b6-9b3c-48cc-9d9c-a2aadb485550}=,none,Search
 
@@ -48,7 +49,7 @@ Reboot Without Confirmation=Ctrl+Alt+Shift+PgUp,none,Reboot Without Confirmation
 _k_friendly_name=Session Management
 
 [kwin]
-Activate Window Demanding Attention=Ctrl+Alt+A,Ctrl+Alt+A,Activate Window Demanding Attention
+Activate Window Demanding Attention=none,Ctrl+Alt+A,Activate Window Demanding Attention
 Cube=Ctrl+F11,Ctrl+F11,Desktop Cube
 Cylinder=none,none,Desktop Cylinder
 Decrease Opacity=none,none,Decrease Opacity of Active Window by 5 %
@@ -207,7 +208,7 @@ mediavolumeup=none,none,Media volume up
 nextmedia=Media Next,Media Next,Media playback next
 pausemedia=Media Pause,Media Pause,Pause media playback
 playmedia=none,none,Play media playback
-playpausemedia=Ctrl+Shift+P\tMedia Play,Media Play,Play/Pause media playback
+playpausemedia=Ctrl+Alt+Shift+P\tMedia Play,Media Play,Play/Pause media playback
 previousmedia=Media Previous,Media Previous,Media playback previous
 stopmedia=Media Stop,Media Stop,Stop media playback
 

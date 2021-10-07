@@ -8,7 +8,7 @@ Color=40,42,56
 Color=40,42,56
 
 [Color0]
-Color=40,42,56
+Color=6,6,8
 
 [Color0Faint]
 Color=40,42,56
@@ -92,5 +92,5 @@ Color=239,240,235
 Blur=true
 ColorRandomization=false
 Description=snazzy
-Opacity=0.9
+Opacity=0.85
 Wallpaper=

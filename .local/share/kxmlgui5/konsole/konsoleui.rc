@@ -1,6 +1,6 @@
 <?xml version='1.0'?>
 <!DOCTYPE gui SYSTEM 'kpartgui.dtd'>
-<gui version="13" name="konsole">
+<gui name="konsole" version="17">
  <MenuBar>
   <Menu name="file">
    <text>File</text>
@@ -32,6 +32,8 @@
    <Separator/>
    <Action name="detach-tab"/>
    <Action name="detach-view"/>
+   <Action name="save-layout"/>
+   <Action name="load-layout"/>
    <Separator/>
    <DefineGroup name="session-view-operations"/>
   </Menu>
@@ -48,6 +50,10 @@
    <Action name="configure-notifications"/>
    <Action name="configure-settings"/>
   </Menu>
+  <Menu name="plugins">
+   <text>Plugins</text>
+   <ActionList name="plugin-submenu"/>
+  </Menu>
   <Menu name="help">
    <text>Help</text>
   </Menu>
@@ -60,20 +66,20 @@
   <Action name="split-view-top-bottom"/>
  </ToolBar>
  <ActionProperties>
-  <Action shortcut="" name="clone-tab"/>
-  <Action shortcut="" name="help_contents"/>
-  <Action shortcut="Alt+Right; Alt+}" name="next-tab"/>
-  <Action shortcut="Shift+Right; Alt+}" name="next-view"/>
-  <Action shortcut="Shift+Left; Alt+{" name="previous-tab"/>
-  <Action shortcut="Shift+Left; Alt+{" name="previous-view"/>
-  <Action shortcut="Alt+1" name="switch-to-tab-0"/>
-  <Action shortcut="Alt+2" name="switch-to-tab-1"/>
-  <Action shortcut="Alt+3" name="switch-to-tab-2"/>
-  <Action shortcut="Alt+4" name="switch-to-tab-3"/>
-  <Action shortcut="Alt+5" name="switch-to-tab-4"/>
-  <Action shortcut="Alt+6" name="switch-to-tab-5"/>
-  <Action shortcut="Alt+7" name="switch-to-tab-6"/>
-  <Action shortcut="Alt+8" name="switch-to-tab-7"/>
-  <Action shortcut="Alt+9" name="switch-to-tab-8"/>
+  <Action name="clone-tab" shortcut=""/>
+  <Action name="help_contents" shortcut=""/>
+  <Action name="next-tab" shortcut="Alt+Right; Alt+}"/>
+  <Action name="next-view" shortcut="Shift+Right; Alt+}"/>
+  <Action name="previous-tab" shortcut="Shift+Left; Alt+{"/>
+  <Action name="previous-view" shortcut="Shift+Left; Alt+{"/>
+  <Action name="switch-to-tab-0" shortcut="Alt+1"/>
+  <Action name="switch-to-tab-1" shortcut="Alt+2"/>
+  <Action name="switch-to-tab-2" shortcut="Alt+3"/>
+  <Action name="switch-to-tab-3" shortcut="Alt+4"/>
+  <Action name="switch-to-tab-4" shortcut="Alt+5"/>
+  <Action name="switch-to-tab-5" shortcut="Alt+6"/>
+  <Action name="switch-to-tab-6" shortcut="Alt+7"/>
+  <Action name="switch-to-tab-7" shortcut="Alt+8"/>
+  <Action name="switch-to-tab-8" shortcut="Alt+9"/>
  </ActionProperties>
 </gui>
