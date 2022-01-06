@@ -1,9 +1,16 @@
 snippet class "Basic Ruby class" b
-#:nodoc: all
-class ${1:`!p snip.rv = snip.basename.replace('-', '').capitalize()`}
+class ${1:Test}
   def initialize(${2:attr})
-    $0
+    $3
   end
+end
+endsnippet
+
+snippet rspec "Rspec file" b
+require 'rails_helper'
+
+describe ${1:Test} do
+  $0
 end
 endsnippet
 

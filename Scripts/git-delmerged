@@ -1,0 +1,1 @@
+g branch --merged | egrep -v '(\*|develop|master)'

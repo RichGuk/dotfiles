@@ -248,6 +248,7 @@ augroup MarkdownAu
   autocmd FileType markdown setlocal colorcolumn=80 tw=80
   autocmd FileType markdown setlocal conceallevel=2
   autocmd FileType markdown highlight Title cterm=bold ctermfg=202
+  autocmd FileType markdown nnoremap <tab> ^f(lgf<CR>
 augroup END
 " }}}
 
@@ -301,10 +302,28 @@ nnoremap <silent> <leader>a :Ag
 " }}}
 
 " COC {{{
-inoremap <expr> <TAB> pumvisible() ? "\<C-y>" : "\<TAB>"
+" inoremap <expr> <TAB> pumvisible() ? "\<C-y>" : "\<TAB>"
+" let g:coc_snippet_next = '<TAB>'
+" inoremap <silent><expr> <c-space> coc#refresh()
+
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? coc#_select_confirm() :
+      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
 let g:coc_snippet_next = '<TAB>'
 let g:coc_snippet_prev = '<S-TAB>'
-inoremap <silent><expr> <c-space> coc#refresh()
+
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
 "}}}
 " }}}
 
