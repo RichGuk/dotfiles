@@ -30,6 +30,8 @@ brew install --cask \
   raycast \
   dozer \
   shottr \
+  lulu \
+  browserosaurus \
   font-source-code-pro
 
 
