@@ -1,4 +1,6 @@
 {
   "coc.preferences.noselect": false,
   "coc.preferences.preferCompleteThanJumpPlaceholder": true,
+  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": true,
+  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": true,
 }
