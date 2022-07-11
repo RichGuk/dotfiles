@@ -26,7 +26,6 @@ brew install --cask \
   spotify \
   vlc \
   zerotier-one \
-  veracrypt \
   raycast \
   dozer \
   shottr \
