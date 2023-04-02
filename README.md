@@ -5,16 +5,6 @@ This contains my *$HOME* configuration files. I'm following the method mentioned
 and [here](https://www.atlassian.com/git/tutorials/dotfiles) to manage
 the dotfiles.
 
-I use [Archlinux](https://archlinux.org) as my main OS and
-[KDE](https://kde.org/) as my Desktop.
-
-The configs include a base setup for KDE, however, once checked out I don't tend
-to submit most changes to KDE config files because KDE also stores state in them.
-I just submit core config changes with git patch add.
-
-![Archlinux setup](Pictures/arch.png)
-
-
 ## Setup
 
 ### Manual steps
