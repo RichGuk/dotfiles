@@ -52,3 +52,5 @@
 	helper = cache --timeout=3600
 [init]
 	defaultBranch = main
+[rebase]
+	instructionFormat = (%an) %s
