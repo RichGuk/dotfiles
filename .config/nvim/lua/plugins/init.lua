@@ -99,4 +99,12 @@ return require('packer').startup(function(use)
   }
 
   use 'tpope/vim-fugitive'
+
+  use {
+    'stevearc/oil.nvim',
+    config = function()
+      require('oil').setup()
+      vim.keymap.set("n", "-", require("oil").open, { desc = "Open parent directory" })
+    end
+  }
 end)
