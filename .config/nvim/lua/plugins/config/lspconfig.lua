@@ -1,17 +1,33 @@
 local lspconfig = require('lspconfig')
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
--- lspconfig.ruby_ls.setup {
+lspconfig.ruby_ls.setup {
+  capabilities = capabilities,
+  init_options = {
+    enabledFeatures = { "codeActions", "diagnostics", "documentHighlights", "documentSymbols", "formatting", "inlayHint", "semanticHighlighting", "pathCompletion" }
+  },
+}
+-- lspconfig.solargraph.setup {
 --   capabilities = capabilities,
 -- }
-lspconfig.solargraph.setup {
-  capabilities = capabilities,
-}
 lspconfig.tsserver.setup {
   capabilities = capabilities,
 }
 lspconfig.eslint.setup {
   capabilities = capabilities,
+}
+lspconfig.svelte.setup {
+  capabilities = capabilities,
+}
+lspconfig.lua_ls.setup {
+  capabilities = capabilities,
+  settings = {
+    Lua = {
+      diagnostics = {
+        globals = { 'vim' }
+      }
+    }
+  }
 }
 
 -- Global mappings.
@@ -46,8 +62,5 @@ vim.api.nvim_create_autocmd('LspAttach', {
     vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts)
     vim.keymap.set('n', '<space>ca', vim.lsp.buf.code_action, opts)
     vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
-    vim.keymap.set('n', '<space>f', function()
-      vim.lsp.buf.format { async = true }
-    end, opts)
   end,
 })

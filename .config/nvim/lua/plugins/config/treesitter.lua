@@ -1,26 +1,31 @@
 require('nvim-treesitter.configs').setup({
   ensure_installed = {
-    'ruby',
-    'elixir',
-    'python',
-    'go',
-    'rust',
-    'javascript',
     'bash',
-    'json',
-    'markdown',
-    'yaml',
-    'lua',
-    'html',
     'css',
+    'diff',
+    'dockerfile',
+    'elixir',
+    'go',
+    'html',
+    'javascript',
+    'json',
+    'lua',
+    'markdown',
+    'python',
+    'ruby',
+    'rust',
     'svelte',
+    'typescript',
     'vim',
+    'yaml',
   },
+  sync_install = false,
+  auto_install = true,
   highlight = {
     enable = true,
     -- disable = { 'ruby' }
-    disable = { 'json', 'css' },
-    additional_vim_regex_highlighting = true,
+    disable = { 'json' },
+    additional_vim_regex_highlighting = false,
   },
   indent = {
     enable = true,
@@ -68,5 +73,8 @@ require('nvim-treesitter.configs').setup({
     swap_previous = {
       ['<leader>A'] = '@parameter.inner',
     },
+  },
+  endwise = {
+    enable = true,
   },
 })

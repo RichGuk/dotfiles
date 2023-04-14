@@ -12,11 +12,12 @@ return require('packer').startup(function(use)
   use {
     '/Users/rich/Projects/Personal/luacast',
     config = function()
-      vim.cmd [[
-        colorscheme luacast
-      ]]
+      vim.cmd.colorscheme('luacast')
+      vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+      vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
     end
   }
+  use 'luisiacc/gruvbox-baby'
 
   use {
     'neovim/nvim-lspconfig',
@@ -38,6 +39,7 @@ return require('packer').startup(function(use)
     'L3MON4D3/LuaSnip',
     config = function()
       require('luasnip').config.setup({})
+      require("luasnip.loaders.from_vscode").lazy_load()
     end
   }
 
@@ -71,7 +73,7 @@ return require('packer').startup(function(use)
     after = 'nvim-treesitter',
     requires = 'nvim-treesitter/nvim-treesitter',
   })
-  use 'nvim-treesitter/playground'
+  use 'RRethy/nvim-treesitter-endwise'
 
   use {
     'tpope/vim-rails',
@@ -79,13 +81,12 @@ return require('packer').startup(function(use)
   }
 
   use {
-    'junegunn/fzf',
-  }
-  use {
     'junegunn/fzf.vim',
     requires = {
-      'nvim-lua/plenary.nvim'
+      'nvim-lua/plenary.nvim',
+      'junegunn/fzf',
     },
+    run = ':call fzf#install()',
     config = function()
       require('plugins.config.fzf')
     end
@@ -104,7 +105,7 @@ return require('packer').startup(function(use)
     'stevearc/oil.nvim',
     config = function()
       require('oil').setup()
-      vim.keymap.set("n", "-", require("oil").open, { desc = "Open parent directory" })
+      vim.keymap.set('n', '-', require('oil').open, { desc = 'Open parent directory' })
     end
   }
 end)
