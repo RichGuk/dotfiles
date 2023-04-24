@@ -15,7 +15,7 @@ return require('packer').startup(function(use)
   use 'wbthomason/packer.nvim'
 
   use {
-    '/Users/rich/Projects/Personal/luacast',
+    'RichGuk/luacast',
     config = function()
       vim.cmd.colorscheme('luacast')
       vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
