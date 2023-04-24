@@ -6,9 +6,11 @@ if wezterm.config_builder then
   config = wezterm.config_builder()
 end
 
+config.term = 'wezterm'
+
 config.front_end = 'WebGpu'
 
-config.font = wezterm.font('Fira Code')
+config.font = wezterm.font('FiraCode Nerd Font')
 config.harfbuzz_features = { 'calt=0', 'clig=0', 'liga=0' }
 config.font_size = 16
 
@@ -16,16 +18,14 @@ config.window_background_opacity = 0.90
 config.macos_window_background_blur = 30
 -- config.color_scheme = 'kanagawabones'
 
-local scheme = wezterm.get_builtin_color_schemes()['PaleNightHC']
-scheme.background = '#16222f'
+local scheme = wezterm.get_builtin_color_schemes()['Snazzy']
+-- scheme.background = '#16222f'
+scheme.background = '#031926'
 
 config.color_schemes = {
-  ['PaleNightHC'] = scheme,
-  -- ['kanagawabones'] = {
-  --   background = '#16222f',
-  -- },
+  ['Snazzy'] = scheme,
 }
-config.color_scheme = 'PaleNightHC'
+config.color_scheme = 'Snazzy'
 
 config.colors = {
   tab_bar = {
