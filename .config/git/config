@@ -9,7 +9,7 @@
   diff = auto
   interactive = auto
 [core]
-  excludesfile = ~/.config/git/.globalignore
+  excludesfile = ~/.config/git/globalignore
   editor = "nvim"
 [apply]
   whitespace = nowarn
@@ -31,6 +31,7 @@
   p = push
   c = commit
   v = commit -v
+  wt = worktree
   ctags = !.git/hooks/ctags
   trust = "!mkdir -p .git/safe"
   work = !"git config user.email 'rich@zeneducate.com'"
