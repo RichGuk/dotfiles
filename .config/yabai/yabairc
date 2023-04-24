@@ -1,0 +1,40 @@
+yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+sudo yabai --load-sa
+
+yabai -m config layout bsp
+yabai -m config window_placement second_child
+yabai -m config top_padding 0
+yabai -m config bottom_padding 0
+yabai -m config left_padding 0
+yabai -m config right_padding 0
+yabai -m config window_gap 10
+yabai -m config window_shadow float
+
+yabai -m config window_border off
+
+yabai - m config split_ratio 0.5
+
+yabai -m config mouse_modifier alt
+yabai -m config mouse_action1 move
+yabai -m config mouse_action2 resize
+#yabai -m config focus_follows_mouse autoraise
+
+# when window is dropped in center of another window, swap them (on edges it will split it)
+yabai -m mouse_drop_action swap
+
+yabai -m space 1 --label Term
+yabai -m space 2 --label Firefox
+yabai -m space 4 --label Chrome
+yabai -m space 9 --label Slack
+yabai -m space 10 --label Discord
+
+yabai -m rule --add app="^Wezterm$" space=Term
+yabai -m rule --add app="^Firefox$" space=Firefox
+yabai -m rule --add app="^Google Chrome$" space=Chrome
+yabai -m rule --add app="^Slack$" space=Slack
+yabai -m rule --add app="^Discord$" space=Discord
+
+yabai -m rule --add app="^(LuLu|Calculator|Software Update|Dictionary|VLC|System Preferences|System Settings|zoom.us|Photo Booth|Archive Utility|App Store|Steam|Raycast|Activity Monitor)$" manage=off
+yabai -m rule --add label="Finder" app="^Finder$" title="(Co(py|nnect)|Move|Info|Pref)" manage=off
+yabai -m rule --add label="Firefox" app="^Firefox$" title="^(Library)$" manage=off
+yabai -m rule --add label="About This Mac" app="System Information" title="About This Mac" manage=off
