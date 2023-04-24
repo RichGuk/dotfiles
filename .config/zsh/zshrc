@@ -1,5 +1,7 @@
-export PATH=$HOME/Scripts:$HOME/bin:$HOME/.local/bin:/usr/local/bin:/opt/homebrew/bin:$PATH
+export PATH=$HOME/Scripts:$HOME/.local/bin:/usr/local/bin:/opt/homebrew/bin:$PATH
+export PATH=$PATH:/Users/rich/.spicetify
 export PATH=.git/safe/../../bin::.git/safe/../../node_modules/.bin:$PATH
+export TERMINFO_DIRS=$TERMINFO_DIRS:$HOME/.local/share/terminfo
 export EDITOR=nvim
 export DEFAULT_USER=`whoami`
 
