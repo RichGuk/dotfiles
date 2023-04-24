@@ -1,6 +1,7 @@
 local o = vim.opt
 local g = vim.g
 
+o.cursorline = true
 o.number = true
 o.relativenumber = true
 o.history = 500

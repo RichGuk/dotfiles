@@ -18,7 +18,7 @@ vim.keymap.set('n', '<leader>Y', [["+Y]])
 vim.keymap.set('n', 'S', ':Ag <C-r><C-w><CR>')
 
 vim.keymap.set('n', '<leader>es', ':sp <C-R>=expand("%:p:h") . "/" <CR>')
-vim.keymap.set('n', '<leader>e', ':e <C-R>=expand("%:p:h") . "/" <CR>')
+vim.keymap.set('n', '<leader>ef', ':e <C-R>=expand("%:p:h") . "/" <CR>')
 vim.keymap.set('n', '<leader>ev', ':vsp <C-R>=expand("%:p:h") . "/" <CR>')
 vim.keymap.set('n', '<leader>et', ':tabe <C-R>=expand("%:p:h") . "/" <CR>')
 

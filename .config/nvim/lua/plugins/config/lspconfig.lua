@@ -16,6 +16,9 @@ lspconfig.tsserver.setup {
 lspconfig.eslint.setup {
   capabilities = capabilities,
 }
+lspconfig.eslint.setup {
+  capabilities = capabilities,
+}
 lspconfig.svelte.setup {
   capabilities = capabilities,
 }

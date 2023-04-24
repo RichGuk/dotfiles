@@ -41,7 +41,6 @@ vim.api.nvim_create_autocmd('FileType', {
   callback = function()
     vim.opt_local.colorcolumn = '80'
     vim.opt_local.textwidth = 80
-    vim.opt_local.conceallevel = 2
 
     -- Used for my notes to jump to the file with <tab>.
     vim.keymap.set('n', '<tab>', '^f(lgf<CR>')

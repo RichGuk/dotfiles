@@ -1,10 +1,15 @@
-local fn = vim.fn
-local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
-
-if fn.empty(fn.glob(install_path)) > 0 then
-  packer_bootstrap = fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
-  vim.cmd [[packadd packer.nvim]]
+local ensure_packer = function()
+  local fn = vim.fn
+  local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
+  if fn.empty(fn.glob(install_path)) > 0 then
+    fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
+    vim.cmd [[packadd packer.nvim]]
+    return true
+  end
+  return false
 end
+
+local packer_bootstrap = ensure_packer()
 
 return require('packer').startup(function(use)
   use 'wbthomason/packer.nvim'
@@ -17,7 +22,6 @@ return require('packer').startup(function(use)
       vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
     end
   }
-  use 'luisiacc/gruvbox-baby'
 
   use {
     'neovim/nvim-lspconfig',
@@ -76,11 +80,6 @@ return require('packer').startup(function(use)
   use 'RRethy/nvim-treesitter-endwise'
 
   use {
-    'tpope/vim-rails',
-    ft = {'ruby', 'eruby', 'haml', 'coffee'}
-  }
-
-  use {
     'junegunn/fzf.vim',
     requires = {
       'nvim-lua/plenary.nvim',
@@ -108,4 +107,16 @@ return require('packer').startup(function(use)
       vim.keymap.set('n', '-', require('oil').open, { desc = 'Open parent directory' })
     end
   }
+
+  use {
+    'nvim-lualine/lualine.nvim',
+    requires = { 'nvim-tree/nvim-web-devicons', opt = true },
+    config = function()
+      require('plugins.config.lualine')
+    end
+  }
+
+  if packer_bootstrap then
+    require('packer').sync()
+  end
 end)
