@@ -14,12 +14,19 @@ local packer_bootstrap = ensure_packer()
 return require('packer').startup(function(use)
   use 'wbthomason/packer.nvim'
 
+  -- use {
+  --   'RichGuk/luacast',
+  --   config = function()
+  --     vim.cmd.colorscheme('luacast')
+  --     vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+  --     vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+  --   end
+  -- }
   use {
-    'RichGuk/luacast',
+    'catppuccin/nvim',
+    as = 'catppuccin',
     config = function()
-      vim.cmd.colorscheme('luacast')
-      vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-      vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+      require('plugins.config.catppuccin')
     end
   }
 
@@ -79,23 +86,22 @@ return require('packer').startup(function(use)
   })
   use 'RRethy/nvim-treesitter-endwise'
 
-  use {
-    'junegunn/fzf.vim',
-    requires = {
-      'nvim-lua/plenary.nvim',
-      'junegunn/fzf',
-    },
-    run = ':call fzf#install()',
+  use { 'ibhagwan/fzf-lua',
+    requires = { 'nvim-tree/nvim-web-devicons' },
     config = function()
       require('plugins.config.fzf')
     end
   }
+  use { 'junegunn/fzf', run = './install --bin', }
 
   use {
     'jose-elias-alvarez/null-ls.nvim',
     config = function()
       require('plugins.config.null-ls')
-    end
+    end,
+    requires = {
+      'nvim-lua/plenary.nvim',
+    },
   }
 
   use 'tpope/vim-fugitive'

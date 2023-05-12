@@ -1,26 +1,35 @@
 local lspconfig = require('lspconfig')
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
-lspconfig.ruby_ls.setup {
-  capabilities = capabilities,
-  init_options = {
-    enabledFeatures = { "codeActions", "diagnostics", "documentHighlights", "documentSymbols", "formatting", "inlayHint", "semanticHighlighting", "pathCompletion" }
-  },
-}
--- lspconfig.solargraph.setup {
+require('lspconfig.ui.windows').default_options.border = 'single'
+
+-- lspconfig.ruby_ls.setup {
 --   capabilities = capabilities,
+--   init_options = {
+--     enabledFeatures = { "codeActions", "diagnostics", "documentHighlights", "documentSymbols", "formatting", "inlayHint", "semanticHighlighting", "pathCompletion" }
+--   },
 -- }
+lspconfig.solargraph.setup {
+  capabilities = capabilities,
+}
 lspconfig.tsserver.setup {
   capabilities = capabilities,
 }
 lspconfig.eslint.setup {
   capabilities = capabilities,
 }
-lspconfig.eslint.setup {
-  capabilities = capabilities,
-}
+
+
 lspconfig.svelte.setup {
   capabilities = capabilities,
+  on_attach = function(client)
+    vim.api.nvim_create_autocmd("BufWritePost", {
+      pattern = { "*.js", "*.ts" },
+      callback = function(ctx)
+        client.notify("$/onDidChangeTsOrJsFile", { uri = ctx.file })
+      end,
+    })
+  end
 }
 lspconfig.lua_ls.setup {
   capabilities = capabilities,

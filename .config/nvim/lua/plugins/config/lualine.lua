@@ -1,7 +1,8 @@
 require('lualine').setup({
-  options = { theme = 'ayu_dark' },
+  options = { theme = 'catppuccin' },
   globalstatus = true,
   sections = {
+    lualine_b = {'diff', 'diagnostics'},
     lualine_c = {
       {
         'filename',
