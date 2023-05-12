@@ -5,10 +5,10 @@
 #
 
 # ==== Navigation ====
-alt - h : yabai -m window --focus west
+alt - h : yabai -m window --focus west || (yabai -m display --focus west && yabai -m window --focus last)
 alt - j : yabai -m window --focus south
 alt - k : yabai -m window --focus north
-alt - l : yabai -m window --focus east
+alt - l : yabai -m window --focus east || (yabai -m display --focus east && yabai -m window --focus first)
 
 # Move to window to down/up/left/right
 shift + alt - h : yabai -m window --swap west
@@ -16,7 +16,8 @@ shift + alt - j : yabai -m window --swap south
 shift + alt - k : yabai -m window --swap north
 shift + alt - l : yabai -m window --swap east
 
-alt - tab : yabai -m window --focus stack.recent
+alt - tab : yabai -m window --focus stack.next || yabai -m window --focus stack.first
+shift + alt - tab : yabai -m window --focus stack.prev || yabai -m window --focus stack.last
 
 # ==== Resize windows =====
 alt - 3 : yabai -m window --ratio abs:0.66
