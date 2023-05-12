@@ -24,18 +24,16 @@
   co = checkout
   st = status
   pr = pull --rebase
-  up = !git fetch origin && git rebase origin/master
   m = merge
   b = branch
   a = add
   p = push
   c = commit
   v = commit -v
+  s = switch
   wt = worktree
-  ctags = !.git/hooks/ctags
   trust = "!mkdir -p .git/safe"
   work = !"git config user.email 'rich@zeneducate.com'"
-  pushall = !git remote | xargs -L1 git push --all
 [push]
   default = current
 [mergetool "fugitive"]
