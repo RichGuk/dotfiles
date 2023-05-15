@@ -16,19 +16,27 @@ return require('packer').startup(function(use)
 
   use { 'catppuccin/nvim', as = 'catppuccin' }
 
-  use { 'neovim/nvim-lspconfig' }
-
-  use { 'hrsh7th/nvim-cmp' }
-
-  use 'hrsh7th/cmp-buffer'
-  use 'hrsh7th/cmp-nvim-lsp'
-  use 'saadparwaiz1/cmp_luasnip'
   use {
-    'L3MON4D3/LuaSnip',
-    config = function()
-      require('luasnip').config.setup({})
-      require("luasnip.loaders.from_vscode").lazy_load()
-    end
+    'VonHeikemen/lsp-zero.nvim',
+    branch = 'v2.x',
+    requires = {
+      -- LSP Support
+      {'neovim/nvim-lspconfig'},
+      {'williamboman/mason.nvim'},
+      {'williamboman/mason-lspconfig.nvim'},
+
+      -- Autocompletion
+      {'hrsh7th/nvim-cmp'},
+      {'hrsh7th/cmp-path'},
+      {'hrsh7th/cmp-buffer'},
+      {'hrsh7th/cmp-nvim-lsp'},
+      {'hrsh7th/cmp-nvim-lua'},
+      {'saadparwaiz1/cmp_luasnip'},
+
+      -- Snippets
+      {'L3MON4D3/LuaSnip'},
+      {'rafamadriz/friendly-snippets'},
+    }
   }
 
   use { 'lukas-reineke/indent-blankline.nvim' }
