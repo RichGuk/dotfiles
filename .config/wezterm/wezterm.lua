@@ -16,23 +16,20 @@ config.font_size = 16
 
 config.window_background_opacity = 0.90
 config.macos_window_background_blur = 30
--- config.color_scheme = 'kanagawabones'
-
-local scheme = wezterm.get_builtin_color_schemes()['Snazzy']
--- scheme.background = '#16222f'
-scheme.background = '#031926'
 
 local schemec = wezterm.get_builtin_color_schemes()['Catppuccin Mocha']
--- scheme.background = '#16222f'
-schemec.background = '#171622'
+schemec.background = '#1e1e2e'
 
 config.color_schemes = {
-  ['Snazzy'] = scheme,
   ['Catppuccin Mocha'] = schemec,
 }
--- config.color_scheme = 'Snazzy'
 
 config.color_scheme = 'Catppuccin Mocha'
+
+config.window_frame = {
+  active_titlebar_bg = 'rgba(30, 30, 46, 0.5)',
+  inactive_titlebar_bg = 'rgba(30, 30, 46, 0.5)',
+}
 
 config.colors = {
   tab_bar = {
@@ -51,11 +48,6 @@ config.colors = {
       italic = true,
     },
   },
-}
-
-config.window_frame = {
-  active_titlebar_bg = '#171622',
-  inactive_titlebar_bg = '#16222f',
 }
 
 config.hide_tab_bar_if_only_one_tab = true

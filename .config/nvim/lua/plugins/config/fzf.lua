@@ -6,6 +6,12 @@ vim.keymap.set('n', '<leader>g',
 vim.keymap.set('n', '<leader>b',
   "<cmd>lua require('fzf-lua').buffers()<CR>", { silent = true })
 
+vim.keymap.set('n', 'S',
+  "<cmd>lua require('fzf-lua').grep_cword()<CR>", { silent = true })
+
+vim.keymap.set('n', '<leader>a',
+  "<cmd>lua require('fzf-lua').grep()<CR>", { silent = true })
+
 -- vim.cmd [[
 -- nnoremap <silent> <leader>o :Files<CR>
 -- nnoremap <silent> <leader>g :GFiles<CR>

@@ -15,19 +15,12 @@ vim.keymap.set('x', '<leader>p', [["_dP]])
 vim.keymap.set({'n', 'v'}, '<leader>y', [["+y]])
 vim.keymap.set('n', '<leader>Y', [["+Y]])
 
-vim.keymap.set('n', 'S',
-  "<cmd>lua require('fzf-lua').grep_cword()<CR>", { silent = true })
-
-vim.keymap.set('n', '<leader>a',
-  "<cmd>lua require('fzf-lua').grep()<CR>", { silent = true })
-
 vim.keymap.set('n', '<leader>es', ':sp <C-R>=expand("%:p:h") . "/" <CR>')
 vim.keymap.set('n', '<leader>ef', ':e <C-R>=expand("%:p:h") . "/" <CR>')
 vim.keymap.set('n', '<leader>ev', ':vsp <C-R>=expand("%:p:h") . "/" <CR>')
 vim.keymap.set('n', '<leader>et', ':tabe <C-R>=expand("%:p:h") . "/" <CR>')
 
 vim.keymap.set('n', '<leader>sc', ':nohls <CR>')
-
 
 vim.keymap.set('n', 'gf', ':e <cfile><CR>')
 
