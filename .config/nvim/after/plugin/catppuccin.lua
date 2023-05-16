@@ -3,6 +3,7 @@ require("catppuccin").setup({
   integrations = {
     cmp = true,
   },
+  no_italic = true,
   native_lsp = {
     enabled = true,
   },
@@ -13,9 +14,5 @@ require("catppuccin").setup({
     end,
   }
 })
-
--- vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
---   border = "rounded",
--- })
 
 vim.cmd.colorscheme 'catppuccin'

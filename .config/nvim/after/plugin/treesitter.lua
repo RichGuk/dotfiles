@@ -2,34 +2,30 @@ require('nvim-treesitter.configs').setup({
   ensure_installed = {
     'bash',
     'css',
+    'scss',
     'diff',
     'dockerfile',
     'elixir',
-    'go',
     'html',
     'javascript',
+    'svelte',
+    'typescript',
     'json',
     'lua',
     'markdown',
-    'python',
     'ruby',
     'rust',
-    'svelte',
-    'typescript',
-    'vim',
     'yaml',
   },
   sync_install = false,
   auto_install = true,
   highlight = {
     enable = true,
-    -- disable = { 'ruby' }
     disable = { 'json' },
     additional_vim_regex_highlighting = false,
   },
   indent = {
     enable = true,
-    -- disable = { 'ruby' },
   },
   textobjects = {
     select = {
