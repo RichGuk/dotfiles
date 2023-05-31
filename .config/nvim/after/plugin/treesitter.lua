@@ -1,5 +1,7 @@
 require('nvim-treesitter.configs').setup({
   ensure_installed = {
+    'vim',
+    'vimdoc',
     'bash',
     'css',
     'scss',

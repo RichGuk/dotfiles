@@ -11,11 +11,3 @@ vim.keymap.set('n', 'S',
 
 vim.keymap.set('n', '<leader>a',
   "<cmd>lua require('fzf-lua').grep()<CR>", { silent = true })
-
--- vim.cmd [[
--- nnoremap <silent> <leader>o :Files<CR>
--- nnoremap <silent> <leader>g :GFiles<CR>
--- nnoremap <silent> <leader>h :GFiles?<CR>
--- nnoremap <silent> <leader>c :BCommits<CR>
--- nnoremap <silent> <leader>b :Buffers<CR>
--- ]]

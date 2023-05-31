@@ -32,7 +32,3 @@ vim.keymap.set('n', '<leader>j', '<cmd>lprev<CR>zz')
 vim.keymap.set('n', '<leader>r', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 
 vim.keymap.set('c', 'w!!', '%!sudo tee > /dev/null %')
-
-vim.keymap.set('n', '<leader>f', function()
-  vim.lsp.buf.format { async = true }
-end)

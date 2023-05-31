@@ -2,8 +2,11 @@ local lsp = require('lsp-zero').preset({})
 
 lsp.ensure_installed({
   'tsserver',
-  'solargraph',
   'eslint',
+})
+
+lsp.setup_servers({
+  'solargraph',
 })
 
 require('lspconfig').lua_ls.setup(lsp.nvim_lua_ls())
@@ -21,6 +24,11 @@ require('lspconfig').svelte.setup {
 
 lsp.on_attach(function(_, bufnr)
   lsp.default_keymaps({ buffer = bufnr })
+  local opts = { buffer = bufnr }
+
+  vim.keymap.set({ 'n', 'v' }, '<leader>f', function()
+    vim.lsp.buf.format({ async = true, timeout_ms = 10000 })
+  end, opts)
 
   vim.keymap.set('n', '<leader>vd', vim.diagnostic.open_float)
   vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
