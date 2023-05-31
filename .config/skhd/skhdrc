@@ -102,5 +102,6 @@ shift + ctrl + cmd - d: yabai -m space --move next
 
 rcmd - h : open ~
 rcmd - t : osascript ~/Scripts/launch-term.scpt
+rcmd - f : osascript ~/Scripts/launch-firefox.scpt
 
 # shift + cmd - n : yabai -m signal --add label=float_next_window_created event=window_created action='yabai -m signal --remove float_next_window_created; yabai -m signal --remove float_next_application_launched; yabai -m window $YABAI_WINDOW_ID --toggle float --grid 4:4:1:1:2:2' ; /opt/homebrew/bin/wezterm start --always-new-process /Users/rich/Scripts/notes
