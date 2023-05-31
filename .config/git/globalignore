@@ -3,4 +3,4 @@
 tags
 .rvmrc
 .vimrc.local
-*.ignore.*
+*.ignore.md
