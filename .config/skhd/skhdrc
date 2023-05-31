@@ -49,6 +49,8 @@ shift + alt - c : yabai -m space --layout stack
 
 alt - a: yabai -m display --focus west
 alt - d: yabai -m display --focus east
+alt - up: yabai -m display --focus north
+alt - down: yabai -m display --focus south
 
 # For my mouse buttons to move spaces.
 ctrl + shift - 0x21  : yabai -m space --focus prev
@@ -66,6 +68,7 @@ shift + alt + ctrl - 5 : yabai -m space --focus 5
 shift + alt + ctrl - 6 : yabai -m space --focus 6
 shift + alt + ctrl - 7 : yabai -m space --focus 7
 shift + alt + ctrl - 8 : yabai -m space --focus 8
+shift + alt + ctrl - 9 : yabai -m space --focus 9
 
 #
 # Caps + cmd + 1-8
@@ -82,8 +85,13 @@ shift + alt + ctrl + cmd - 8 : yabai -m window --space 8 && yabai -m space --foc
 
 # Move windows between displays:
 # Caps + cmd + [ or ]
+#
 shift + alt + ctrl + cmd - 0x21 : yabai -m window --display west; yabai -m display --focus west
 shift + alt + ctrl + cmd - 0x1E : yabai -m window --display east; yabai -m display --focus east
+shift + alt + ctrl + cmd - left : yabai -m window --display west; yabai -m display --focus west
+shift + alt + ctrl + cmd - right : yabai -m window --display east; yabai -m display --focus east
+shift + alt + ctrl + cmd - up : yabai -m window --display north; yabai -m display --focus north
+shift + alt + ctrl + cmd - down : yabai -m window --display south; yabai -m display --focus south
 
 #
 # rshift + [ad]
