@@ -53,3 +53,5 @@
 	defaultBranch = main
 [rebase]
 	instructionFormat = (%an) %s
+[rerere]
+	enabled = true
