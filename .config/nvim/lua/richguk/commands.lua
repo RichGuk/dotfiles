@@ -31,6 +31,11 @@ vim.api.nvim_create_autocmd('FileType', {
   end
 })
 
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'ruby',
+  command = 'setlocal indentkeys-=.'
+})
+
 vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufRead' }, {
   pattern = '*.njk',
   command = "setfiletype htmldjango"

@@ -9,8 +9,7 @@ require("catppuccin").setup({
   },
   highlight_overrides = {
     all = function()
-      return {
-      }
+      return {}
     end,
   }
 })
