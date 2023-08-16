@@ -69,7 +69,7 @@ shift + alt + ctrl - 1 : yabai -m space --focus $(yabai -m query --spaces --disp
 shift + alt + ctrl - 2 : yabai -m space --focus $(yabai -m query --spaces --display | jq '.[1].index')
 shift + alt + ctrl - 3 : yabai -m space --focus $(yabai -m query --spaces --display | jq '.[2].index')
 shift + alt + ctrl - 4 : yabai -m space --focus $(yabai -m query --spaces --display | jq '.[3].index')
-shift + alt + ctrl - 5 : yabai -m space --focus 5
+shift + alt + ctrl - 5 : yabai -m space --focus $(yabai -m query --spaces --display | jq '.[4].index')
 shift + alt + ctrl - 6 : yabai -m space --focus 6
 shift + alt + ctrl - 7 : yabai -m space --focus 7
 shift + alt + ctrl - 8 : yabai -m space --focus 8
