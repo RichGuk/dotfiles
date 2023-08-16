@@ -18,6 +18,8 @@ require('nvim-treesitter.configs').setup({
     'ruby',
     'rust',
     'yaml',
+    'go',
+    'gomod'
   },
   sync_install = false,
   auto_install = true,

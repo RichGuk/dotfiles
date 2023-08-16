@@ -3,6 +3,8 @@ local lsp = require('lsp-zero').preset({})
 lsp.ensure_installed({
   'tsserver',
   'eslint',
+  'golangci_lint_ls',
+  'gopls',
 })
 
 lsp.setup_servers({
