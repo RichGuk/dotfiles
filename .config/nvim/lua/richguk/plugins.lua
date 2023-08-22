@@ -47,6 +47,8 @@ return require('packer').startup(function(use)
 
   use { 'numToStr/Comment.nvim' }
 
+  use { 'rgroli/other.nvim' }
+
   use {
     'nvim-treesitter/nvim-treesitter',
     run = function()

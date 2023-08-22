@@ -36,6 +36,7 @@ lsp.on_attach(function(_, bufnr)
   vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
   vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
   vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist)
+  vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action)
 end)
 
 lsp.setup()
