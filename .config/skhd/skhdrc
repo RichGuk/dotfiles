@@ -25,7 +25,7 @@ alt - tab : yabai -m window --focus stack.next || yabai -m window --focus stack.
 shift + alt - tab : yabai -m window --focus stack.prev || yabai -m window --focus stack.last
 
 # ==== Resize windows =====
-alt - 3 : yabai -m window --ratio abs:0.66
+alt - 4 : yabai -m window --ratio abs:0.66
 alt - 5 : yabai -m window --ratio abs:0.5
 alt - 6 : yabai -m window --ratio abs:0.33
 
@@ -89,14 +89,20 @@ shift + alt + ctrl + cmd - 7 : yabai -m window --space 7 && yabai -m space --foc
 shift + alt + ctrl + cmd - 8 : yabai -m window --space 8 && yabai -m space --focus 8
 
 # Move windows between displays:
-# Caps + cmd + [ or ]
 #
-shift + alt + ctrl + cmd - 0x21 : yabai -m window --display west; yabai -m display --focus west
-shift + alt + ctrl + cmd - 0x1E : yabai -m window --display east; yabai -m display --focus east
-shift + alt + ctrl + cmd - left : yabai -m window --display west; yabai -m display --focus west
-shift + alt + ctrl + cmd - right : yabai -m window --display east; yabai -m display --focus east
-shift + alt + ctrl + cmd - up : yabai -m window --display north; yabai -m display --focus north
-shift + alt + ctrl + cmd - down : yabai -m window --display south; yabai -m display --focus south
+# Caps + cmd + [q,w,e]
+shift + alt + ctrl + cmd - q : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "916A383C-DE21-4FAD-BB48-B2F5312A6C6A").index') && yabai -m window --display $index; yabai -m display --focus $index
+shift + alt + ctrl + cmd - w : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "20029FB0-F67F-4E01-B59B-B7F98A22A0C0").index') && yabai -m window --display $index; yabai -m display --focus $index
+shift + alt + ctrl + cmd - e : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A4F31F56-C284-49CB-BC3C-8CC964125543").index') && yabai -m window --display $index; yabai -m display --focus $index
+
+# Caps + cmd + [ or ]
+# shift + alt + ctrl + cmd + w : id=$(yabai -m query --displays | jq '.[] | select(.uuid == "20029FB0-F67F-4E01-B59B-B7F98A22A0C0").id') && yabai -m --display $id
+# shift + alt + ctrl + cmd - 0x21 : yabai -m window --display west; yabai -m display --focus west
+# shift + alt + ctrl + cmd - 0x1E : yabai -m window --display east; yabai -m display --focus east
+# shift + alt + ctrl + cmd - left : yabai -m window --display west; yabai -m display --focus west
+# shift + alt + ctrl + cmd - right : yabai -m window --display east; yabai -m display --focus east
+# shift + alt + ctrl + cmd - up : yabai -m window --display north; yabai -m display --focus north
+# shift + alt + ctrl + cmd - down : yabai -m window --display south; yabai -m display --focus south
 
 #
 # rshift + [ad]
