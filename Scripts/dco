@@ -3,4 +3,7 @@
 export UID
 export GID=$(id -g)
 
-docker-compose "$@"
+export PUID=$UID
+export PGID=$(id -g)
+
+docker compose "$@"
