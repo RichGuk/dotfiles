@@ -1,6 +1,6 @@
 # vim: ft=gitconfig:
 [merge]
-	tool = fugitive
+  tool = fugitive
 [mergetool]
   keepBackup = false
 [color]
@@ -37,21 +37,25 @@
 [push]
   default = current
 [mergetool "fugitive"]
-	cmd = nvim -f -c \"Gvdiffsplit!\" \"$MERGED\"
+  cmd = "nvim -f -c \"Gvdiffsplit!\" \"$MERGED\""
 [include]
   path = .gitconfig.local
 [commit]
   template = ~/.config/git/message
 [github]
-	user = RichGuk
+ user = RichGuk
 [user]
-	name = Rich Grundy
-	email = rich@grundy.io
+  name = Rich Grundy
+  email = rich@grundy.io
+  signingkey = 6C855408C8D031F5
 [credential]
-	helper = cache --timeout=3600
+ helper = cache --timeout=3600
 [init]
-	defaultBranch = main
+ defaultBranch = main
 [rebase]
-	instructionFormat = (%an) %s
+  instructionFormat = (%an) %s
 [rerere]
-	enabled = true
+  enabled = true
+
+[includeIf "gitdir:~/Projects/Work/"]
+  path = ~/.config/git/work

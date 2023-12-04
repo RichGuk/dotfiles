@@ -1,0 +1,9 @@
+# vim: ft=gitconfig:
+
+[user]
+  name = Rich Grundy
+  email = rich@zeneducate.com
+  signingkey = 3218AC7D
+
+[commit]
+  gpgsign = true
