@@ -25,5 +25,7 @@ if [[ ! "$SSH_AUTH_SOCK" ]]; then
   [ -f "$HOME/.cache/ssh-agent.env" ] && source "$HOME/.cache/ssh-agent.env" >/dev/null
 fi
 
+export GPG_TTY=$(tty)
+
 # Local zsh settings.
 [[ -s "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
