@@ -16,6 +16,7 @@ config.font_size = 16
 
 config.window_background_opacity = 0.90
 config.macos_window_background_blur = 30
+config.send_composed_key_when_left_alt_is_pressed = true
 
 local schemec = wezterm.get_builtin_color_schemes()['Catppuccin Mocha']
 schemec.background = '#1e1e2e'
