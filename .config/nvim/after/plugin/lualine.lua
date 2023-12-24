@@ -6,6 +6,7 @@ require('lualine').setup({
   options = { theme = custom_catppuccin },
   globalstatus = true,
   sections = {
+    lualine_a = {'buffers'},
     lualine_b = {'diff', 'diagnostics'},
     lualine_c = {
       {

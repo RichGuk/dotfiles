@@ -12,7 +12,7 @@ local rails_alternative_targets = {
   { context = "factories",  target = "/spec/factories/%1.rb",               transformer = "singularize" },
 }
 
-local is_rspec = vim.fn.isdirectory(vim.loop.cwd() .. "/spec")
+local is_rspec = vim.fn.isdirectory(vim.fn.getcwd() .. "/spec")
 
 local main_targets = is_rspec and {
   { context = "test", target = "/spec/%1/%2_spec.rb" },

@@ -12,8 +12,14 @@ vim.keymap.set('n', 'N', 'Nzzzv')
 
 vim.keymap.set('x', '<leader>p', [["_dP]])
 vim.keymap.set('n', '<leader>P', [["+p]])
-vim.keymap.set({'n', 'v'}, '<leader>y', [["+y]])
+vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]])
 vim.keymap.set('n', '<leader>Y', [["+Y]])
+
+vim.keymap.set('n', 'bk', ':blast<enter>', { noremap = false })
+vim.keymap.set('n', 'bj', ':bfirst<enter>', { noremap = false })
+vim.keymap.set('n', 'bh', ':bprev<enter>', { noremap = false })
+vim.keymap.set('n', 'bl', ':bnext<enter>', { noremap = false })
+vim.keymap.set('n', 'bd', ':bdelete<enter>', { noremap = false })
 
 vim.keymap.set('n', '<leader>es', ':sp <C-R>=expand("%:p:h") . "/" <CR>')
 vim.keymap.set('n', '<leader>ef', ':e <C-R>=expand("%:p:h") . "/" <CR>')
