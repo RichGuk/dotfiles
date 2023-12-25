@@ -17,7 +17,7 @@
 # tarenc -h
 
 COMPRESS="none"
-GPG_RECIPIENT=5AB089B0
+GPG_RECIPIENT=421B3B2C
 
 #==============================================================================
 function show_help {
