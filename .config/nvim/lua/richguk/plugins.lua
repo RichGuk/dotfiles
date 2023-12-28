@@ -18,7 +18,7 @@ return require('packer').startup(function(use)
 
   use {
     'VonHeikemen/lsp-zero.nvim',
-    branch = 'v2.x',
+    branch = 'v3.x',
     requires = {
       -- LSP Support
       {'neovim/nvim-lspconfig'},
@@ -31,11 +31,11 @@ return require('packer').startup(function(use)
       {'hrsh7th/cmp-buffer'},
       {'hrsh7th/cmp-nvim-lsp'},
       {'hrsh7th/cmp-nvim-lua'},
-      {'saadparwaiz1/cmp_luasnip'},
-
-      -- Snippets
-      {'L3MON4D3/LuaSnip'},
-      {'rafamadriz/friendly-snippets'},
+      -- {'saadparwaiz1/cmp_luasnip'},
+      --
+      -- -- Snippets
+      -- {'L3MON4D3/LuaSnip'},
+      -- {'rafamadriz/friendly-snippets'},
     }
   }
 
