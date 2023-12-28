@@ -1,90 +1,76 @@
-local ensure_packer = function()
-  local fn = vim.fn
-  local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
-  if fn.empty(fn.glob(install_path)) > 0 then
-    fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
-    vim.cmd [[packadd packer.nvim]]
-    return true
-  end
-  return false
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable",
+    lazypath,
+  })
 end
+vim.opt.rtp:prepend(lazypath)
 
-local packer_bootstrap = ensure_packer()
-
-return require('packer').startup(function(use)
-  use 'wbthomason/packer.nvim'
-
-  use { 'catppuccin/nvim', as = 'catppuccin' }
-
-  use {
+require("lazy").setup({
+  {
+    'catppuccin/nvim',
+    name = 'catppuccin',
+    lazy = false,
+    priority = 1000,
+  },
+  {
     'VonHeikemen/lsp-zero.nvim',
     branch = 'v3.x',
-    requires = {
+    dependencies = {
       -- LSP Support
-      {'neovim/nvim-lspconfig'},
-      {'williamboman/mason.nvim'},
-      {'williamboman/mason-lspconfig.nvim'},
+      'neovim/nvim-lspconfig',
+      'williamboman/mason.nvim',
+      'williamboman/mason-lspconfig.nvim',
 
       -- Autocompletion
-      {'hrsh7th/nvim-cmp'},
-      {'hrsh7th/cmp-path'},
-      {'hrsh7th/cmp-buffer'},
-      {'hrsh7th/cmp-nvim-lsp'},
-      {'hrsh7th/cmp-nvim-lua'},
+      'hrsh7th/nvim-cmp',
+      'hrsh7th/cmp-path',
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-nvim-lua',
       -- {'saadparwaiz1/cmp_luasnip'},
       --
       -- -- Snippets
       -- {'L3MON4D3/LuaSnip'},
       -- {'rafamadriz/friendly-snippets'},
     }
-  }
-
-  use { 'lukas-reineke/indent-blankline.nvim' }
-
-  use 'pbrisbin/vim-mkdir'
-
-  use 'machakann/vim-sandwich'
-
-  use { 'numToStr/Comment.nvim' }
-
-  use { 'rgroli/other.nvim' }
-
-  use {
-    'nvim-treesitter/nvim-treesitter',
-    run = function()
-      local ts_update = require('nvim-treesitter.install').update({ with_sync = true })
-      ts_update()
-    end
-  }
-
-  use {
+  },
+  { 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate' },
+  {
     'nvim-treesitter/nvim-treesitter-textobjects',
-    after = 'nvim-treesitter',
-    requires = 'nvim-treesitter/nvim-treesitter',
-  }
-  use {
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+  },
+  {
     'RRethy/nvim-treesitter-endwise',
-    after = 'nvim-treesitter',
-    requires = 'nvim-treesitter/nvim-treesitter',
-  }
-
-  use { 'ibhagwan/fzf-lua', requires = { 'nvim-tree/nvim-web-devicons' } }
-  use { 'junegunn/fzf', run = './install --bin', }
-
-  use { 'jose-elias-alvarez/null-ls.nvim', requires = { 'nvim-lua/plenary.nvim' } }
-
-  use 'tpope/vim-fugitive'
-
-  use { 'stevearc/oil.nvim' }
-
-  use {
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+  },
+  {
+    'ibhagwan/fzf-lua',
+    dependencies = { 'nvim-tree/nvim-web-devicons' }
+  },
+  {
+    'junegunn/fzf',
+    build = './install --bin'
+  },
+  {
+    'jose-elias-alvarez/null-ls.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim' }
+  },
+  {
     'nvim-lualine/lualine.nvim',
-    requires = { 'nvim-tree/nvim-web-devicons', opt = true },
-  }
-
-  use 'christoomey/vim-tmux-navigator'
-
-  if packer_bootstrap then
-    require('packer').sync()
-  end
-end)
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+  },
+  'lukas-reineke/indent-blankline.nvim',
+  'pbrisbin/vim-mkdir',
+  'machakann/vim-sandwich',
+  'numToStr/Comment.nvim',
+  'rgroli/other.nvim',
+  'tpope/vim-fugitive',
+  'stevearc/oil.nvim',
+  'christoomey/vim-tmux-navigator'
+})
