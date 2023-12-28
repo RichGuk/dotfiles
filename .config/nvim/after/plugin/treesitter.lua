@@ -1,4 +1,18 @@
-require('nvim-treesitter.configs').setup({
+local ensure_installed = {
+  'vim',
+  'vimdoc',
+  'bash',
+  'dockerfile',
+  'javascript',
+  'typescript',
+  'json',
+  'lua',
+  'markdown',
+  'ruby',
+  'yaml',
+}
+
+if os.getenv("FULL_DOTFILES") then
   ensure_installed = {
     'vim',
     'vimdoc',
@@ -20,7 +34,11 @@ require('nvim-treesitter.configs').setup({
     'yaml',
     'go',
     'gomod'
-  },
+  }
+end
+
+require('nvim-treesitter.configs').setup({
+  ensure_installed = ensure_installed,
   sync_install = false,
   auto_install = true,
   highlight = {
