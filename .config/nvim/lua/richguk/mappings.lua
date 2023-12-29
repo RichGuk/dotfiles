@@ -2,39 +2,44 @@ vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
-vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
-vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
-vim.keymap.set('n', 'J', 'mzJ`z')
-vim.keymap.set('n', '<C-d>', '<C-d>zz')
-vim.keymap.set('n', '<C-u>', '<C-u>zz')
-vim.keymap.set('n', 'n', 'nzzzv')
+vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv") -- move line up
+vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv") -- move line down
+vim.keymap.set('n', 'J', 'mzJ`z') -- move line below to end of current
+vim.keymap.set('n', '<C-d>', '<C-d>zz') -- scroll down but keep cursor central
+vim.keymap.set('n', '<C-u>', '<C-u>zz') -- scroll up ^
+vim.keymap.set('n', 'n', 'nzzzv') -- search but keep cursor central
 vim.keymap.set('n', 'N', 'Nzzzv')
 
-vim.keymap.set('x', '<leader>p', [["_dP]])
-vim.keymap.set('n', '<leader>P', [["+p]])
-vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]])
-vim.keymap.set('n', '<leader>Y', [["+Y]])
 
+vim.keymap.set('x', '<leader>p', [["_dP]]) -- paste without yanking into reg
+vim.keymap.set('n', '<leader>P', [["+p]]) -- paste from system
+
+vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]]) -- yank into system
+vim.keymap.set('n', '<leader>Y', [["+Y]]) -- yank line into system
+
+-- bindings for moving around buffers
 vim.keymap.set('n', 'zk', ':blast<enter>', { noremap = false })
 vim.keymap.set('n', 'zj', ':bfirst<enter>', { noremap = false })
 vim.keymap.set('n', 'zh', ':bprev<enter>', { noremap = false })
 vim.keymap.set('n', 'zl', ':bnext<enter>', { noremap = false })
 vim.keymap.set('n', 'zd', ':bdelete<enter>', { noremap = false })
 
+-- opening files in the same directory
 vim.keymap.set('n', '<leader>es', ':sp <C-R>=expand("%:p:h") . "/" <CR>')
 vim.keymap.set('n', '<leader>ef', ':e <C-R>=expand("%:p:h") . "/" <CR>')
 vim.keymap.set('n', '<leader>ev', ':vsp <C-R>=expand("%:p:h") . "/" <CR>')
 vim.keymap.set('n', '<leader>et', ':tabe <C-R>=expand("%:p:h") . "/" <CR>')
 
-vim.keymap.set('n', '<leader>sc', ':nohls <CR>')
+vim.keymap.set('n', '<leader>sc', ':nohls <CR>') -- clear search
 
 vim.keymap.set('n', 'gf', ':e <cfile><CR>')
 
-vim.keymap.set('n', '<C-k>', '<cmd>cnext<CR>zz')
-vim.keymap.set('n', '<C-j>', '<cmd>cprev<CR>zz')
+-- navigation around location/quick lists
+vim.keymap.set('n', '<C-,>', '<cmd>cnext<CR>zz')
+vim.keymap.set('n', '<C-.>', '<cmd>cprev<CR>zz')
 vim.keymap.set('n', '<leader>k', '<cmd>lnext<CR>zz')
 vim.keymap.set('n', '<leader>j', '<cmd>lprev<CR>zz')
 
-vim.keymap.set('n', '<leader>r', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
+vim.keymap.set('n', '<leader>r', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]]) -- rename current word
 
-vim.keymap.set('c', 'w!!', '%!sudo tee > /dev/null %')
+vim.keymap.set('c', 'w!!', '%!sudo tee > /dev/null %') -- forgot to start with sudo
