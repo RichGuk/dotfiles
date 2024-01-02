@@ -1,14 +1,9 @@
 return {
   {
-    'VonHeikemen/lsp-zero.nvim',
-    branch = 'v3.x',
+    'neovim/nvim-lspconfig',
     dependencies = {
-      -- LSP Support
-      'neovim/nvim-lspconfig',
       'williamboman/mason.nvim',
       'williamboman/mason-lspconfig.nvim',
-
-      -- Autocompletion
       'hrsh7th/nvim-cmp',
       'hrsh7th/cmp-path',
       'hrsh7th/cmp-buffer',
@@ -16,8 +11,6 @@ return {
       'hrsh7th/cmp-nvim-lua',
     },
     config = function()
-      local lsp_zero = require('lsp-zero')
-
       local ensure_installed = {}
       if os.getenv("FULL_DOTFILES") then
         ensure_installed = {
@@ -28,69 +21,82 @@ return {
         }
       end
 
+      local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
       require('mason').setup({})
       require('mason-lspconfig').setup({
         ensure_installed = ensure_installed,
         handlers = {
-          lsp_zero.default_setup,
+          function(server)
+            require('lspconfig')[server].setup({
+              capabilities = lsp_capabilities,
+            })
+          end,
           lua_ls = function()
-            require('lspconfig').lua_ls.setup(lsp_zero.nvim_lua_ls())
+            require('lspconfig').lua_ls.setup({
+              capabilities = lsp_capabilities,
+              settings = {
+                Lua = {
+                  diagnostics = {
+                    globals = { 'vim' },
+                  },
+                }
+              }
+            })
           end
         }
       })
-
       require('lspconfig').solargraph.setup({})
 
-
-      lsp_zero.on_attach(function(_, bufnr)
-        lsp_zero.default_keymaps({ buffer = bufnr })
-        local opts = { buffer = bufnr }
-
-        vim.keymap.set({ 'n', 'v' }, '<leader>f', function()
-          vim.lsp.buf.format({ async = true, timeout_ms = 10000 })
-        end, opts)
-
-        vim.keymap.set('n', '<leader>vd', vim.diagnostic.open_float)
-        vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
-        vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
-        vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist)
-        vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action)
-      end)
-
       local cmp = require('cmp')
-      local cmp_action = require('lsp-zero').cmp_action()
+      local luasnip = require('luasnip')
 
+      local has_words_before = function()
+        unpack = unpack or table.unpack
+        local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+        return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match('%s') == nil
+      end
 
       cmp.setup({
         window = {
           completion = cmp.config.window.bordered(),
           documentation = cmp.config.window.bordered()
         },
+        snippet = {
+          expand = function(args)
+            require('luasnip').lsp_expand(args.body)
+          end
+        },
         sources = {
-          -- { name = "copilot", group_index = 2 },
           { name = 'path' },
           { name = 'nvim_lsp' },
           { name = 'nvim_lua' },
           { name = 'buffer',  keyword_length = 3 },
+          { name = 'luasnip' },
         },
         mapping = cmp.mapping.preset.insert({
           ['<CR>'] = cmp.mapping.confirm({ select = true }),
-          ['<Tab>'] = cmp_action.tab_complete(),
-          ['<S-Tab>'] = cmp_action.select_prev_or_fallback(),
+          ['<Tab>'] = function(fallback)
+            if cmp.visible() then
+              cmp.select_next_item()
+            elseif luasnip.expand_or_jumpable() then
+              luasnip.expand_or_jump()
+            elseif has_words_before() then
+              cmp.complete()
+            else
+              fallback()
+            end
+          end,
+          ['<S-Tab>'] = function(fallback)
+            if cmp.visible() then
+              cmp.select_prev_item()
+            elseif luasnip.jumpable(-1) then
+              luasnip.jump(-1)
+            else
+              fallback()
+            end
+          end,
         }),
-        snippet = {
-          expand = function(_)
-          end
-        },
       })
-
-      cmp.event:on("menu_opened", function()
-        vim.b.copilot_suggestion_hidden = true
-      end)
-
-      cmp.event:on("menu_closed", function()
-        vim.b.copilot_suggestion_hidden = false
-      end)
     end
   }
 }

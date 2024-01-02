@@ -11,6 +11,8 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+vim.g.copilot_no_tab_map = true
+
 require('richguk.mappings')
 require('lazy').setup('richguk.plugins')
 require('richguk.options')
