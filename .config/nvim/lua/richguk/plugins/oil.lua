@@ -1,9 +1,9 @@
 return {
   'stevearc/oil.nvim',
   config = function()
-    require('oil').setup({})
-
-    vim.keymap.set('n', '-', require('oil').open, { desc = 'Open parent directory' })
+    local oil = require('oil')
+    oil.setup({})
+    vim.keymap.set('n', '-', oil.open, { desc = 'Open parent directory' })
   end
 }
 
