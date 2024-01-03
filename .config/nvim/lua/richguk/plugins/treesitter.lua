@@ -38,9 +38,10 @@ if os.getenv("FULL_DOTFILES") then
 end
 
 return {
-  { 
+  {
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
+    event = { "BufReadPost", "BufNewFile" },
     config = function()
       require('nvim-treesitter.configs').setup({
         ensure_installed = ensure_installed,
