@@ -7,7 +7,6 @@ return {
     end
   },
   'pbrisbin/vim-mkdir',
-  'machakann/vim-sandwich',
   'tpope/vim-fugitive',
   'christoomey/vim-tmux-navigator',
 }
