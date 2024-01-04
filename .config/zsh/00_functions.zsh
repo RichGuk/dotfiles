@@ -9,3 +9,7 @@ g() {
 }
 # Complete g like git
 compdef g=git
+
+function mcd() {
+  mkdir -p "$1" && cd "$1";
+}

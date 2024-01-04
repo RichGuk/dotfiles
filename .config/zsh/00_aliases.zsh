@@ -1,9 +1,7 @@
 alias pu="pushd"
 alias po="popd"
 
-alias ...='cd ../..'
-
-alias history='fc -l l'
+# alias history='fc -l l'
 
 alias l='ls -la'
 alias ll='ls -l'
@@ -12,13 +10,8 @@ alias be='bundle exec'
 alias ealias="vim ~/.config/zsh/00_aliases.zsh"
 
 alias dots='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
-alias tmux='tmux -f $HOME/.config/tmux/tmux.conf'
 
 alias vim='nvim'
 alias vi='nvim'
 
-alias n='notes'
-
 alias ssh='TERM=screen-256color ssh'
-
-projects=$HOME/Projects

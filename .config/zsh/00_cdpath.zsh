@@ -1,1 +1,0 @@
-cdpath=(~ ~/Projects /data)
