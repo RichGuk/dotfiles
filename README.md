@@ -18,15 +18,6 @@ config submodule update
 
 config config --local status.showUntrackedFiles no
 ```
-### Automatic setup
-
-Setup can be automated with the following script. It will attempt to move
-existing files to `$HOME/.dotfiles-backup`.
-
-```bash
-curl https://raw.githubusercontent.com/RichGuk/dotfiles/master/Scripts/dotfiles-setup.sh | bash
-```
-
 
 ## Tracking files
 
@@ -56,7 +47,7 @@ config update-index --assume-unchanged README.md INSTALL.md
 rm README.md INSTALL.md
 ```
 
-Should I wish to undo this to edit the files (I normally edit via Github/Gitlab)
+Should I wish to undo this to edit the files (I normally edit via web)
 I can run the following:
 
 ```bash
@@ -66,8 +57,3 @@ config add  README.md
 config commit -m 'Updated README.md'
 config push
 ```
-
-
-## Archlinux setup
-
-See [INSTALL.md](INSTALL.md) for my Arch setup.
