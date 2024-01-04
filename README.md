@@ -1,54 +1,53 @@
 # RichGuk's dotfiles
 
-This contains my *$HOME* configuration files. I'm following the method mentioned
+These are the dotfiles I use across various Linux/Mac machines. I use a git working directory, mentioned 
 [here](https://wiki.archlinux.org/index.php/Dotfiles)
 and [here](https://www.atlassian.com/git/tutorials/dotfiles) to manage
 the dotfiles.
 
 ## Setup
 
-### Manual steps
+Clone the files into a .dotfiles and set a temporary alias to manage the dotfiles.
 
 ```bash
 git clone --bare --recursive https://github.com/RichGuk/dotfiles.git $HOME/.dotfiles
-alias config='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
+alias dots='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 
 config checkout
 config submodule update
 
-config config --local status.showUntrackedFiles no
+dots config --local status.showUntrackedFiles no
 ```
 
 ## Tracking files
 
-To add  files to be tracked simply use the normal git commands via the alias.
+We hide untracked files, i.e. only files we manually add in the home dir are tracked.
+
+To add these files, use the normal git commands via the alias.
 
 ```bash
-config add .config/new-config-file
-config add .new-dotfile-to-track
-config commit -m 'Added new config files'
-config push
+dots add .config/new-config-file
+dots add .new-dotfile-to-track
+dots commit -m 'Added new config files'
+dots push
 
 ```
 
-To remove a file from being tracked and keep it locally use
+To remove a file from being tracked, but keep it locally, use:
 
 ```bash
-config rm --cached .remove-this-dotfile
-config push
+dots rm --cached .remove-this-dotfile
+dots push
 ```
-
-I don't want README.md and INSTALL.md in my home directory, I can access them
-via Github/Gitlab web interface. So inform git to the file hasn't changed then
-remove them locally.
+There are some files part of this repo that I don't actually want in my home dir. e.g. README.md. You can remove it, and tell git to assume it has no changes:
 
 ```bash
-config update-index --assume-unchanged README.md INSTALL.md
-rm README.md INSTALL.md
+config update-index --assume-unchanged README.md
+rm README.md
 ```
+_(can always do updates via web)_
 
-Should I wish to undo this to edit the files (I normally edit via web)
-I can run the following:
+To undo this:
 
 ```bash
 config update-index --no-assume-unchanged README.md
