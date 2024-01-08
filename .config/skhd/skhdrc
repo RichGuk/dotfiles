@@ -1,7 +1,7 @@
 #
-# Caps/Meh = ['shift', 'alt', 'ctrl']
-# Right shift / Meh2 = ['shift', 'ctrl', 'cmd']
-# Hyper = Meh/Caps + cmd
+# Caps = Meh = ['shift', 'alt', 'ctrl']
+# hold |\ = Meh2 = ['shift', 'ctrl', 'cmd']
+# Tab = Hypr = ['shift', 'alt', 'ctrl', 'cmd']
 #
 
 # ==== Navigation ====
@@ -15,11 +15,6 @@ shift + alt - h : yabai -m window --swap west
 shift + alt - j : yabai -m window --swap south
 shift + alt - k : yabai -m window --swap north
 shift + alt - l : yabai -m window --swap east
-# Caps + cmd + hjkl: Reinsert window to left/right, etc
-shift + alt + ctrl + cmd - h : yabai -m window --warp west
-shift + alt + ctrl + cmd - j : yabai -m window --warp south
-shift + alt + ctrl + cmd - k : yabai -m window --warp north
-shift + alt + ctrl + cmd - l : yabai -m window --warp east
 
 alt - tab : yabai -m window --focus stack.next || yabai -m window --focus stack.first
 shift + alt - tab : yabai -m window --focus stack.prev || yabai -m window --focus stack.last
@@ -28,6 +23,7 @@ shift + alt - tab : yabai -m window --focus stack.prev || yabai -m window --focu
 alt - 4 : yabai -m window --ratio abs:0.66
 alt - 5 : yabai -m window --ratio abs:0.5
 alt - 6 : yabai -m window --ratio abs:0.33
+alt - 0x18 : yabai -m space --balance # alt - =
 
 alt - r : yabai -m space --rotate 90
 alt - y : yabai -m space --mirror y-axis
@@ -36,7 +32,6 @@ alt - t: yabai -m window --toggle split
 alt - m : yabai -m window --toggle zoom-fullscreen
 shift + alt - m: yabai -m window --toggle zoom-parent
 
-alt - 0x18 : yabai -m space --balance # alt - =
 alt - f : yabai -m window --toggle float --grid 4:4:1:1:2:2
 alt - s : yabai -m window --insert east;  skhd -k "cmd - n"
 alt - v : yabai -m window --insert south; skhd -k "cmd - n"
@@ -52,31 +47,42 @@ shift + alt - z : yabai -m space --layout bsp
 shift + alt - x : yabai -m space --layout float
 shift + alt - c : yabai -m space --layout stack
 
-alt - a: yabai -m display --focus west
-alt - d: yabai -m display --focus east
-alt - up: yabai -m display --focus north
-alt - down: yabai -m display --focus south
+alt - q: index=$(yabai -m query --displays | jq '.[] | select(.uuid == "14FC0FF3-E4A5-498F-989D-9930C4D41436").index') && yabai -m display --focus $index 
+alt - w: index=$(yabai -m query --displays | jq '.[] | select(.uuid == "2D12CFBC-8C0E-433D-B208-2FDA452BA74A").index') && yabai -m display --focus $index 
+alt - e: index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").index') && yabai -m display --focus $index 
 
-# For my mouse buttons to move spaces.
-ctrl + shift - 0x21  : yabai -m space --focus prev
-ctrl + shift - 0x1E  : yabai -m space --focus next
+# Might need this if plugging into a different monitor.
+#alt - up: yabai -m display --focus north
+#alt - down: yabai -m display --focus south
 
 #
 # Caps + 1-8
-# Focus on space
-#
-shift + alt + ctrl - 1 : yabai -m space --focus $(yabai -m query --spaces --display | jq '.[0].index')
-shift + alt + ctrl - 2 : yabai -m space --focus $(yabai -m query --spaces --display | jq '.[1].index')
-shift + alt + ctrl - 3 : yabai -m space --focus $(yabai -m query --spaces --display | jq '.[2].index')
-shift + alt + ctrl - 4 : yabai -m space --focus $(yabai -m query --spaces --display | jq '.[3].index')
-shift + alt + ctrl - 5 : yabai -m space --focus $(yabai -m query --spaces --display | jq '.[4].index')
+# Focus spaces on main monitor
+# shift + alt + ctrl - 1 : index=$(yabai -m query --spaces --display | jq '.[0].index') && yabai -m space --focus $index
+# shift + alt + ctrl - 2 : index=$(yabai -m query --spaces --display | jq '.[1].index') && yabai -m space --focus $index
+# shift + alt + ctrl - 3 : index=$(yabai -m query --spaces --display | jq '.[2].index') && yabai -m space --focus $index
+# shift + alt + ctrl - 4 : index=$(yabai -m query --spaces --display | jq '.[3].index') && yabai -m space --focus $index
+shift + alt + ctrl - 1 : yabai -m space --focus 1
+shift + alt + ctrl - 2 : yabai -m space --focus 2
+shift + alt + ctrl - 3 : yabai -m space --focus 3
+shift + alt + ctrl - 4 : yabai -m space --focus 4
+shift + alt + ctrl - 5 : yabai -m space --focus 5
 shift + alt + ctrl - 6 : yabai -m space --focus 6
-shift + alt + ctrl - 7 : yabai -m space --focus 7
-shift + alt + ctrl - 8 : yabai -m space --focus 8
-shift + alt + ctrl - 9 : yabai -m space --focus 9
+
+# Meh2 + 1-4 focus spaces on left monitor
+shift + ctrl + cmd - 1 : yabai -m space --focus 7
+shift + ctrl + cmd - 2 : yabai -m space --focus 8
+shift + ctrl + cmd - 3 : yabai -m space --focus 9
+shift + ctrl + cmd - 4 : yabai -m space --focus 10
+
+# Meh2 + 5-8 focus spaces on right monitor
+shift + ctrl + cmd - 5 : yabai -m space --focus 11
+shift + ctrl + cmd - 6 : yabai -m space --focus 12
+shift + ctrl + cmd - 7 : yabai -m space --focus 13
+shift + ctrl + cmd - 8 : yabai -m space --focus 14
 
 #
-# Caps + cmd + 1-8
+# Tab + 1-8
 # Move window to space X and follow
 #
 shift + alt + ctrl + cmd - 1 : index=$(yabai -m query --spaces --display | jq '.[0].index') && yabai -m window --space $index && yabai -m space --focus $index
@@ -85,22 +91,17 @@ shift + alt + ctrl + cmd - 3 : index=$(yabai -m query --spaces --display | jq '.
 shift + alt + ctrl + cmd - 4 : index=$(yabai -m query --spaces --display | jq '.[3].index') && yabai -m window --space $index && yabai -m space --focus $index
 shift + alt + ctrl + cmd - 5 : yabai -m window --space 5 && yabai -m space --focus 5
 shift + alt + ctrl + cmd - 6 : yabai -m window --space 6 && yabai -m space --focus 6
-shift + alt + ctrl + cmd - 7 : yabai -m window --space 7 && yabai -m space --focus 7
-shift + alt + ctrl + cmd - 8 : yabai -m window --space 8 && yabai -m space --focus 8
 
 # Move windows between displays:
 #
-# Caps + cmd + [q,w,e]
+# Tab + [q,w,e]
 shift + alt + ctrl + cmd - q : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "14FC0FF3-E4A5-498F-989D-9930C4D41436").index') && yabai -m window --display $index; yabai -m display --focus $index
 shift + alt + ctrl + cmd - w : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "2D12CFBC-8C0E-433D-B208-2FDA452BA74A").index') && yabai -m window --display $index; yabai -m display --focus $index
 shift + alt + ctrl + cmd - e : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").index') && yabai -m window --display $index; yabai -m display --focus $index
 
 #
-# shift + left/right
-# Move space left - right
+# Shortcuts for opening apps
 #
-shift - left: yabai -m space --move prev
-shift - right: yabai -m space --move next
-
-shift - down : open ~
-shift - up : osascript ~/Scripts/launch-term.scpt
+alt - down : open ~
+alt - return : osascript ~/Scripts/launch-term.scpt
+alt - up : osascript ~/Scripts/launch-firefox.scpt
