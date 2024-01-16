@@ -11,7 +11,7 @@ return {
         options = { theme = custom_catppuccin },
         globalstatus = true,
         sections = {
-          lualine_b = {'diff', 'diagnostics'},
+          lualine_b = { 'diff', 'diagnostics' },
           lualine_c = {
             {
               'filename',
@@ -26,7 +26,7 @@ return {
               path = 1,
             }
           },
-        }
+        },
       })
     end
   },

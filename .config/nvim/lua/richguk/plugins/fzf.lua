@@ -1,6 +1,7 @@
 return {
   {
     'ibhagwan/fzf-lua',
+    event = 'VeryLazy',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
       vim.keymap.set('n', '<leader>o',
@@ -16,9 +17,5 @@ return {
       vim.keymap.set('n', '<leader>a',
         "<cmd>lua require('fzf-lua').grep()<CR>", { silent = true })
     end
-  },
-  {
-    'junegunn/fzf',
-    build = './install --bin'
   }
 }
