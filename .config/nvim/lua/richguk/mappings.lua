@@ -19,11 +19,11 @@ vim.keymap.set('n', '<leader>Y', [["+Y]])          -- yank line into system
 vim.keymap.set('n', '<leader>t', '<cmd>ToggleBlame<CR>')
 
 -- bindings for moving around buffers
-vim.keymap.set('n', 'tk', ':blast<enter>', { noremap = false })
-vim.keymap.set('n', 'tj', ':bfirst<enter>', { noremap = false })
-vim.keymap.set('n', 'th', ':bprev<enter>', { noremap = false })
-vim.keymap.set('n', 'tl', ':bnext<enter>', { noremap = false })
-vim.keymap.set('n', 'td', ':bdelete<enter>', { noremap = false })
+-- vim.keymap.set('n', '<leader>b[', ':bfirst<enter>', { noremap = false })
+-- vim.keymap.set('n', '<leader>b]', ':blast<enter>', { noremap = false })
+vim.keymap.set('n', '[b', ':bprev<enter>', { noremap = false })
+vim.keymap.set('n', ']b', ':bnext<enter>', { noremap = false })
+vim.keymap.set('n', '|d', ':bdelete<enter>', { noremap = false })
 
 -- opening files in the same directory
 vim.keymap.set('n', '<leader>es', ':sp <C-R>=expand("%:p:h") . "/" <CR>')
