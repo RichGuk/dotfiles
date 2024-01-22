@@ -1,16 +1,15 @@
 # vim: ft=gitconfig:
-[merge]
-  tool = fugitive
-[mergetool]
-  keepBackup = false
 [color]
   status = auto
   branch = auto
   diff = auto
   interactive = auto
+[interactive]
+    diffFilter = delta --color-only
 [core]
   excludesfile = ~/.config/git/globalignore
   editor = "nvim"
+  pager = delta
 [apply]
   whitespace = nowarn
 [help]
@@ -34,12 +33,33 @@
   wt = worktree
   trust = "!mkdir -p .git/safe"
   work = !"git config user.email 'rich@zeneducate.com'"
+  dt = "! args=$@; shift $#; nvim -c \"DiffviewOpen $args\""
 [push]
   default = current
-[mergetool "fugitive"]
-  cmd = "nvim -f -c \"Gvdiffsplit!\" \"$MERGED\""
+[diff]
+  colorMoved = default
+[delta]
+  navigate = true
+  side-by-side = true
+  line-numbers = true
+  features = catppuccin-mocha
+  hunk-header-style = omit-code-fragment
+[merge]
+  tool = nvimdiff
+ conflictstyle = diff3
+[difftool]
+  tool = nvimdiff
+  prompt = false
+[mergetool]
+  prompt = false
+  keepBackup = false
+[mergetool "nvimdiff"]
+  cmd = nvim -d $LOCAL $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'
+[difftool "nvimdiff"]
+  cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
 [include]
   path = .gitconfig.local
+  path = ~/Downloads/delta/themes/mocha.gitconfig
 [commit]
   template = ~/.config/git/message
 [github]
