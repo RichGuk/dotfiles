@@ -41,6 +41,11 @@ vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufRead' }, {
   command = "setfiletype htmldjango"
 })
 
+vim.api.nvim_create_autocmd({ 'BufWinEnter' }, {
+  pattern = '*.mjml',
+  command = "setfiletype eruby.html"
+})
+
 vim.api.nvim_create_autocmd('FileType', {
   pattern = 'markdown',
   callback = function()

@@ -53,8 +53,6 @@ return {
         auto_install = true,
         highlight = {
           enable = true,
-          disable = { 'json' },
-          additional_vim_regex_highlighting = false,
         },
         indent = {
           enable = true,
@@ -64,10 +62,18 @@ return {
             enable = true,
             lookahead = true,
             keymaps = {
+
+              ["a="] = { query = '@assignment.outer' },
+              ["i="] = { query = '@assignment.inner' },
+              ["l="] = { query = '@assignment.lhs' },
+              ["r="] = { query = '@assignment.rhs' },
+
               ['aa'] = '@parameter.outer',
               ['ia'] = '@parameter.inner',
+
               ['af'] = '@function.outer',
               ['if'] = '@function.inner',
+
               ['ac'] = '@class.outer',
               ['ic'] = '@class.inner',
             },
@@ -97,9 +103,9 @@ return {
             },
           },
         },
-        endwise = {
-          enable = true,
-        },
+        -- endwise = {
+        --   enable = true,
+        -- },
       })
     end
   },

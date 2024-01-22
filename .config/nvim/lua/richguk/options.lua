@@ -5,7 +5,6 @@ o.cursorline = true
 o.number = true
 o.relativenumber = true
 o.history = 500
-o.pastetoggle = '<F2>'
 o.lazyredraw = true
 o.colorcolumn = '100'
 -- o.clipboard = 'unnamedplus'

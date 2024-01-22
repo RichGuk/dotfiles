@@ -10,7 +10,12 @@ return {
       require('lualine').setup({
         options = { theme = custom_catppuccin },
         globalstatus = true,
+        tabline = {
+          lualine_a = { 'tabs' },
+          lualine_z = { 'branch' }
+        },
         sections = {
+          lualine_a = { 'mode' },
           lualine_b = { 'diff', 'diagnostics' },
           lualine_c = {
             {
@@ -18,6 +23,9 @@ return {
               path = 1,
             }
           },
+          lualine_x = { 'encoding', 'fileformat', 'filetype' },
+          lualine_y = { 'progress' },
+          lualine_z = { 'location' }
         },
         inactive_sections = {
           lualine_c = {

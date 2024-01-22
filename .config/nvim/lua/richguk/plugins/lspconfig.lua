@@ -38,7 +38,7 @@ return {
         handlers = {
           function(server)
             require('lspconfig')[server].setup({
-              capabilities = lsp_capabilities,
+              capabilities = lsp_capabilities
             })
           end,
           lua_ls = function()
@@ -56,6 +56,7 @@ return {
         }
       })
       require('lspconfig').solargraph.setup({})
+      -- require('lspconfig').ruby_ls.setup({})
 
       local cmp = require('cmp')
       local luasnip = require('luasnip')

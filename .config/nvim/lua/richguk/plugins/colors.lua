@@ -14,11 +14,11 @@ return {
         native_lsp = {
           enabled = true,
         },
-        highlight_overrides = {
-          all = function()
-            return {}
-          end,
-        }
+        custom_highlights = function()
+          return {
+            ['@lsp.type.namespace.ruby'] = { link = '@structure' }
+          }
+        end
       })
 
       vim.cmd.colorscheme 'catppuccin'
