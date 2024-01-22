@@ -143,19 +143,23 @@
             ]
           },
           {
-            "description": "Ctrl + Opt + Cmd + [ to Esc",
-            "from": {
-              "key_code": "open_bracket",
-              "modifiers": {
-                "mandatory": ["left_control", "left_option", "left_command"]
-              }
-            },
-            "to": [
+            "manipulators": [
               {
-                "key_code": "escape"
+                "description": "Ctrl + Opt + Cmd + [ to Esc",
+                "from": {
+                  "key_code": "open_bracket",
+                  "modifiers": {
+                    "mandatory": ["left_control", "left_option", "left_command"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "escape"
+                  }
+                ],
+                "type": "basic"
               }
-            ],
-            "type": "basic"
+            ]
           },
           {
             "manipulators": [
