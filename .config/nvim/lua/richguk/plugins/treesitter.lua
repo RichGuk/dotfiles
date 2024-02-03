@@ -103,9 +103,9 @@ return {
             },
           },
         },
-        -- endwise = {
-        --   enable = true,
-        -- },
+        endwise = {
+          enable = true,
+        },
       })
     end
   },

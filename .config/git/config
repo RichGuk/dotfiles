@@ -32,8 +32,7 @@
   s = switch
   wt = worktree
   trust = "!mkdir -p .git/safe"
-  work = !"git config user.email 'rich@zeneducate.com'"
-  dt = "! args=$@; shift $#; nvim -c \"DiffviewOpen $args\""
+  cb = "!f() { git checkout $(git branch | grep -v \"^\\*\" | fzf --height=20% --reverse --info=inline); }; f"
 [push]
   default = current
 [diff]
