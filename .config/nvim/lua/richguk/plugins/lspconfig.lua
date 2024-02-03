@@ -31,6 +31,24 @@ return {
         }
       end
 
+      vim.diagnostic.config({
+        virtual_text = false,
+        float = {
+          header = false,
+          border = 'rounded',
+          focusable = true,
+        },
+      })
+
+      vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
+        focusable = true,
+        border = 'rounded',
+      })
+      vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help, {
+        focusable = true,
+        border = 'rounded',
+      })
+
       local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
       require('mason').setup({})
       require('mason-lspconfig').setup({
@@ -70,7 +88,7 @@ return {
       cmp.setup({
         window = {
           completion = cmp.config.window.bordered(),
-          documentation = cmp.config.window.bordered()
+          documentation = cmp.config.window.bordered(),
         },
         snippet = {
           expand = function(args)

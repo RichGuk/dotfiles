@@ -1,38 +1,38 @@
-local o = vim.opt
-local g = vim.g
+vim.opt.cursorline = true -- Highlight the current line
+vim.opt.number = true -- Show line numbers
+vim.opt.numberwidth = 2
+vim.opt.relativenumber = true -- Show relative line numbers
+vim.opt.history = 500 -- Remember n lines in history
+vim.opt.lazyredraw = true -- Don't redraw while executing macros
+vim.opt.colorcolumn = '100' -- Show a column at 100 characters
+vim.opt.completeopt = { 'menu', 'menuone', 'noselect', 'noinsert' } -- Completion options
 
-o.cursorline = true
-o.number = true
-o.relativenumber = true
-o.history = 500
-o.lazyredraw = true
-o.colorcolumn = '100'
--- o.clipboard = 'unnamedplus'
-o.completeopt = { 'menu', 'menuone', 'noselect', 'noinsert' }
+-- Indentation
+vim.opt.softtabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.expandtab = true
 
-o.softtabstop = 2
-o.shiftwidth = 2
-o.expandtab = true
+vim.opt.ignorecase = true -- Ignore case when searching
+vim.opt.smartcase = true -- Override the 'ignorecase' option if the search pattern contains upper case characters
 
-o.ignorecase = true
-o.smartcase = true
+vim.opt.wildmode = 'list:longest,list:full' -- Command-line completion mode
 
-o.wildmode = 'list:longest,list:full'
+vim.opt.list = true -- Show invisible characters
+vim.opt.listchars:append('eol:¬') -- Show a special character at the end of each line
 
-o.list = true
-o.listchars:append('eol:¬')
+vim.opt.conceallevel = 0 -- Show concealed text
 
-o.conceallevel = 0
+vim.opt.swapfile = false -- Don't create swap files
 
-o.swapfile = false
+vim.opt.spell = false -- Don't spell check
+vim.opt.spelllang = 'en_gb' -- Set the spell check language
 
-o.spell = false
-o.spelllang = 'en_gb'
+vim.opt.shortmess:append "sI" -- Disable intro message
 
-g.ruby_indent_assignment_style = 'variable'
+vim.opt.termguicolors = true -- Enable 24-bit RGB color
+vim.opt.timeoutlen = 400 -- Time in milliseconds to wait for a mapped sequence to complete
+vim.opt.undofile = true -- Enable persistent undo
+vim.opt.updatetime = 500 -- Faster completion
 
-o.termguicolors = true
+vim.opt.mouse = 'v' -- Enable mouse support in the TUI
 
-o.mouse = 'v'
-
-o.updatetime = 500

@@ -46,17 +46,6 @@ vim.api.nvim_create_autocmd({ 'BufWinEnter' }, {
   command = "setfiletype eruby.html"
 })
 
-vim.api.nvim_create_autocmd('FileType', {
-  pattern = 'markdown',
-  callback = function()
-    vim.opt_local.colorcolumn = '80'
-    vim.opt_local.textwidth = 80
-
-    -- Used for my notes to jump to the file with <tab>.
-    vim.keymap.set('n', '<tab>', '^f(lgf<CR>')
-  end
-})
-
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
 vim.api.nvim_create_autocmd('TextYankPost', {
   callback = function()

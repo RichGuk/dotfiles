@@ -1,10 +1,6 @@
-vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
-
 vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv") -- move line up
 vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv") -- move line down
-vim.keymap.set('n', 'J', 'mzJ`z')            -- move line below to end of current
+vim.keymap.set('n', 'J', 'mzJ`z')            -- move line below to end of current, but keep cursor in place
 vim.keymap.set('n', '<C-d>', '<C-d>zz')      -- scroll down but keep cursor central
 vim.keymap.set('n', '<C-u>', '<C-u>zz')      -- scroll up ^
 vim.keymap.set('n', 'n', 'nzzzv')            -- search but keep cursor central

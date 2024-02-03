@@ -48,32 +48,36 @@ shift + alt - z : yabai -m space --layout bsp
 shift + alt - x : yabai -m space --layout float
 shift + alt - c : yabai -m space --layout stack
 
-# Focusing the monitors / workspaces
-ctrl + alt + cmd - w: index=$(yabai -m query --displays | jq '.[] | select(.uuid == "2D12CFBC-8C0E-433D-B208-2FDA452BA74A").index') && yabai -m display --focus $index 
-ctrl + alt + cmd - q: index=$(yabai -m query --displays | jq '.[] | select(.uuid == "14FC0FF3-E4A5-498F-989D-9930C4D41436").index') && yabai -m display --focus $index 
-ctrl + alt + cmd - e: index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").index') && yabai -m display --focus $index 
-ctrl + alt + cmd - 1 : index=$(yabai -m query --spaces --display | jq '.[0].index') && yabai -m space --focus $index
-ctrl + alt + cmd - 2 : index=$(yabai -m query --spaces --display | jq '.[1].index') && yabai -m space --focus $index
-ctrl + alt + cmd - 3 : index=$(yabai -m query --spaces --display | jq '.[2].index') && yabai -m space --focus $index
-ctrl + alt + cmd - 4 : index=$(yabai -m query --spaces --display | jq '.[3].index') && yabai -m space --focus $index
-ctrl + alt + cmd - 5 : index=$(yabai -m query --spaces --display | jq '.[4].index') && yabai -m space --focus $index
-ctrl + alt + cmd - 6 : index=$(yabai -m query --spaces --display | jq '.[5].index') && yabai -m space --focus $index
+shift + ctrl + alt - 1 : index=$(yabai -m query --spaces --display | jq '.[0].index') && yabai -m space --focus $index
+shift + ctrl + alt - 2 : index=$(yabai -m query --spaces --display | jq '.[1].index') && yabai -m space --focus $index
+shift + ctrl + alt - 3 : index=$(yabai -m query --spaces --display | jq '.[2].index') && yabai -m space --focus $index
+shift + ctrl + alt - 4 : index=$(yabai -m query --spaces --display | jq '.[3].index') && yabai -m space --focus $index
+shift + ctrl + alt - 5 : index=$(yabai -m query --spaces --display | jq '.[4].index') && yabai -m space --focus $index
+shift + ctrl + alt - 6 : index=$(yabai -m query --spaces --display | jq '.[5].index') && yabai -m space --focus $index
+shift + ctrl + alt - 7 : index=$(yabai -m query --spaces --display | jq '.[6].index') && yabai -m space --focus $index
+shift + ctrl + alt - 8 : index=$(yabai -m query --spaces --display | jq '.[7].index') && yabai -m space --focus $index
+
+ ctrl + alt + cmd - a: index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").index') && yabai -m display --focus $index 
+ ctrl + alt + cmd - s: index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").index') && yabai -m display --focus $index 
 
 # # Direct workspace focus
-shift + ctrl + alt - 1 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "2D12CFBC-8C0E-433D-B208-2FDA452BA74A").spaces[0]') && yabai -m space --focus $index
-shift + ctrl + alt - 2 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "2D12CFBC-8C0E-433D-B208-2FDA452BA74A").spaces[1]') && yabai -m space --focus $index
-shift + ctrl + alt - 3 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "2D12CFBC-8C0E-433D-B208-2FDA452BA74A").spaces[2]') && yabai -m space --focus $index
-shift + ctrl + alt - 4 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "2D12CFBC-8C0E-433D-B208-2FDA452BA74A").spaces[3]') && yabai -m space --focus $index
-shift + ctrl + alt - 5 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "2D12CFBC-8C0E-433D-B208-2FDA452BA74A").spaces[4]') && yabai -m space --focus $index
-shift + ctrl + alt - 6 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "2D12CFBC-8C0E-433D-B208-2FDA452BA74A").spaces[5]') && yabai -m space --focus $index
+ctrl + alt + cmd - 1 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").spaces[0]') && yabai -m space --focus $index
+ctrl + alt + cmd - 2 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").spaces[1]') && yabai -m space --focus $index
+ctrl + alt + cmd - 3 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").spaces[2]') && yabai -m space --focus $index
+ctrl + alt + cmd - 4 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").spaces[3]') && yabai -m space --focus $index
+ctrl + alt + cmd - 5 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").spaces[4]') && yabai -m space --focus $index
+ctrl + alt + cmd - 6 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").spaces[5]') && yabai -m space --focus $index
+ctrl + alt + cmd - 7 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").spaces[6]') && yabai -m space --focus $index
+ctrl + alt + cmd - 8 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").spaces[7]') && yabai -m space --focus $index
 
-shift + ctrl + alt + cmd - 1 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "14FC0FF3-E4A5-498F-989D-9930C4D41436").spaces[0]') && yabai -m space --focus $index
-shift + ctrl + alt + cmd - 2 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "14FC0FF3-E4A5-498F-989D-9930C4D41436").spaces[1]') && yabai -m space --focus $index
-shift + ctrl + alt + cmd - 3 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "14FC0FF3-E4A5-498F-989D-9930C4D41436").spaces[2]') && yabai -m space --focus $index
-shift + ctrl + alt + cmd - 4 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "14FC0FF3-E4A5-498F-989D-9930C4D41436").spaces[3]') && yabai -m space --focus $index
+ctrl + alt + cmd - q : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").spaces[0]') && yabai -m space --focus $index
+ctrl + alt + cmd - w : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").spaces[1]') && yabai -m space --focus $index
+ctrl + alt + cmd - e : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").spaces[2]') && yabai -m space --focus $index
+ctrl + alt + cmd - r : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").spaces[3]') && yabai -m space --focus $index
+ctrl + alt + cmd - t : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").spaces[5]') && yabai -m space --focus $index
+ctrl + alt + cmd - y : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").spaces[6]') && yabai -m space --focus $index
 
-# Tab + 1-8
-# Ultra to space X and follow
+# 'shift', 'ctrl', 'alt'
 #
 shift + ctrl + cmd - 1 : index=$(yabai -m query --spaces --display | jq '.[0].index') && yabai -m window --space $index && yabai -m space --focus $index
 shift + ctrl + cmd - 2 : index=$(yabai -m query --spaces --display | jq '.[1].index') && yabai -m window --space $index && yabai -m space --focus $index
@@ -83,9 +87,8 @@ shift + ctrl + cmd - 5 : index=$(yabai -m query --spaces --display | jq '.[4].in
 shift + ctrl + cmd - 6 : index=$(yabai -m query --spaces --display | jq '.[5].index') && yabai -m window --space $index && yabai -m space --focus $index
 # Move windows between displays:
 # Ultra + [q,w,e]
-shift + ctrl + cmd - q : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "14FC0FF3-E4A5-498F-989D-9930C4D41436").index') && yabai -m window --display $index; yabai -m display --focus $index
-shift + ctrl + cmd - w : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "2D12CFBC-8C0E-433D-B208-2FDA452BA74A").index') && yabai -m window --display $index; yabai -m display --focus $index
-shift + ctrl + cmd - e : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").index') && yabai -m window --display $index; yabai -m display --focus $index
+shift + ctrl + cmd - a : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").index') && yabai -m window --display $index; yabai -m display --focus $index
+shift + ctrl + cmd - s : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").index') && yabai -m window --display $index; yabai -m display --focus $index
 
 #
 # Shortcuts for opening apps
