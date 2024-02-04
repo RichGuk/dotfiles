@@ -6,33 +6,29 @@ xcode-select --install
 
 compaudit | xargs sudo chmod g-w
 
-brew tap homebrew/cask-fonts
-
-# Assumes homebrew is already installed.
 brew install zsh nvim tmux htop node coreutils curl gnupg \
-  rsync pv git svn fzf the_silver_searcher
+  rsync pv git svn fzf ripgrep jq neovim iproute2mac wakeonlan
 
-git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.10.0
+git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.0
 
 brew install --cask \
-  iterm2 \
   google-chrome \
+  karabiner-elements \
   firefox \
-  rectangle \
   linearmouse \
-  easy-move-plus-resize \
-  zoom \
   slack \
   spotify \
   vlc \
   zerotier-one \
   raycast \
-  dozer \
   shottr \
-  lulu \
   browserosaurus \
-  font-source-code-pro
+  obsidian \
+  docker \
+  bartender \
+  font-fira-code
 
+defaults write -g ApplePressAndHoldEnabled -bool false
 
 # Configuration things.
 defaults write -g com.apple.mouse.scaling -integer -1

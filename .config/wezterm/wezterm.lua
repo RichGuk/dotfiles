@@ -6,7 +6,7 @@ if wezterm.config_builder then
   config = wezterm.config_builder()
 end
 
-config.term = 'wezterm'
+-- config.term = 'wezterm'
 
 config.front_end = 'WebGpu'
 
