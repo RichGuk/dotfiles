@@ -34,7 +34,7 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "left_command",
+                                        "key_code": "left_shift",
                                         "lazy": true,
                                         "modifiers": [
                                             "left_control",
@@ -144,13 +144,36 @@
                     {
                         "manipulators": [
                             {
-                                "description": "Hyper + h",
+                                "description": "Caps + [ to Esc",
+                                "from": {
+                                    "key_code": "open_bracket",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "left_control",
+                                            "left_option",
+                                            "left_shift"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "escape"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "manipulators": [
+                            {
+                                "description": "Caps + h",
                                 "from": {
                                     "key_code": "h",
                                     "modifiers": {
                                         "mandatory": [
                                             "left_control",
-                                            "left_command",
+                                            "left_shift",
                                             "left_option"
                                         ]
                                     }
@@ -167,36 +190,13 @@
                     {
                         "manipulators": [
                             {
-                                "description": "Ctrl + Opt + Cmd + [ to Esc",
-                                "from": {
-                                    "key_code": "open_bracket",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "left_control",
-                                            "left_option",
-                                            "left_command"
-                                        ]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "escape"
-                                    }
-                                ],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
-                        "manipulators": [
-                            {
-                                "description": "Hyper + j",
+                                "description": "Caps + j",
                                 "from": {
                                     "key_code": "j",
                                     "modifiers": {
                                         "mandatory": [
                                             "left_control",
-                                            "left_command",
+                                            "left_shift",
                                             "left_option"
                                         ]
                                     }
@@ -213,13 +213,13 @@
                     {
                         "manipulators": [
                             {
-                                "description": "Hyper + k",
+                                "description": "Caps + k",
                                 "from": {
                                     "key_code": "k",
                                     "modifiers": {
                                         "mandatory": [
                                             "left_control",
-                                            "left_command",
+                                            "left_shift",
                                             "left_option"
                                         ]
                                     }
@@ -236,13 +236,13 @@
                     {
                         "manipulators": [
                             {
-                                "description": "Hyper + l",
+                                "description": "Caps + l",
                                 "from": {
                                     "key_code": "l",
                                     "modifiers": {
                                         "mandatory": [
                                             "left_control",
-                                            "left_command",
+                                            "left_shift",
                                             "left_option"
                                         ]
                                     }
@@ -259,13 +259,13 @@
                     {
                         "manipulators": [
                             {
-                                "description": "Hyper + equal_sign == F12",
+                                "description": "Caps + equal_sign == F12",
                                 "from": {
                                     "key_code": "equal_sign",
                                     "modifiers": {
                                         "mandatory": [
                                             "left_control",
-                                            "left_command",
+                                            "left_shift",
                                             "left_option"
                                         ]
                                     }

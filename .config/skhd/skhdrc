@@ -1,30 +1,104 @@
-# Caps - Hyper: ['ctrl', 'alt', 'cmd'] = MOD_LCTL | MOD_LALT | MOD_LGUI
-# Tab - Ultra: ['shift', 'ctrl', 'alt'] = MOD_LSFT | MOD_LCTL | MOD_LALT
-# Tab + cmd - Ultimate: ['shift', 'ctrl', 'alt', 'cmd'] = MOD_LSFT | MOD_LCTL | MOD_LGUI | MOD_LALT
+# LCAG = ctrl + alt + cmd = MOD_LCTL | MOD_LALT | MOD_LGUI
+# MEH = shift + ctrl + alt = MOD_LSFT | MOD_LCTL | MOD_LALT
+# MEH2 = ctrl + shift + cmd = MOD_LSFT | MOD_LCTL | MOD_LGUI
+# HYPER = shift + ctrl + alt + cmd = MOD_LSFT | MOD_LCTL | MOD_LALT | MOD_LGUI
+
+# On Air60:
+# Hold tab = MEH
+# Hold | = MEH2
+# Right cmd = HYPER
+
+# On laptop:
+# caps lock = MEH
+# Right shift = MEH2
 #
-# Super: ['shift', 'alt', 'cmd'] = MOD_LSFT | MOD_LALT | MOD_LGUI
+#==================================================================================================
 
+#
+# ============ Navigation ============
+#
 
-# ==== Navigation ====
-alt - h : yabai -m window --focus west # || (yabai -m display --focus west && yabai -m window --focus last)
+# Focus on window down/up/left/right
+alt - h : yabai -m window --focus west
 alt - j : yabai -m window --focus south
 alt - k : yabai -m window --focus north
-alt - l : yabai -m window --focus east # || (yabai -m display --focus east && yabai -m window --focus first)
+alt - l : yabai -m window --focus east
 
-# Move to window to down/up/left/right
+# Move to window down/up/left/right
 shift + alt - h : yabai -m window --swap west
 shift + alt - j : yabai -m window --swap south
 shift + alt - k : yabai -m window --swap north
 shift + alt - l : yabai -m window --swap east
 
+# Focus on window in the stack
 alt - tab : yabai -m window --focus stack.next || yabai -m window --focus stack.first
 shift + alt - tab : yabai -m window --focus stack.prev || yabai -m window --focus stack.last
 
-# ==== Resize windows =====
+#
+# Relative focus for when on laptop screen.
+# Uses Tab + [a,s] to focus between displays.
+# Uses Tab + [1,2,3,4,5,6] to focus on the corresponding workspace
+#
+ctrl + alt + cmd - a: yabai -m display --focus west 
+ctrl + alt + cmd - s: yabai -m display --focus east 
+shift + ctrl + alt - 1 : index=$(yabai -m query --spaces --display | jq '.[0].index') && yabai -m space --focus $index
+shift + ctrl + alt - 2 : index=$(yabai -m query --spaces --display | jq '.[1].index') && yabai -m space --focus $index
+shift + ctrl + alt - 3 : index=$(yabai -m query --spaces --display | jq '.[2].index') && yabai -m space --focus $index
+shift + ctrl + alt - 4 : index=$(yabai -m query --spaces --display | jq '.[3].index') && yabai -m space --focus $index
+shift + ctrl + alt - 5 : index=$(yabai -m query --spaces --display | jq '.[4].index') && yabai -m space --focus $index
+shift + ctrl + alt - 6 : index=$(yabai -m query --spaces --display | jq '.[5].index') && yabai -m space --focus $index
+shift + ctrl + alt - 7 : index=$(yabai -m query --spaces --display | jq '.[6].index') && yabai -m space --focus $index
+shift + ctrl + alt - 8 : index=$(yabai -m query --spaces --display | jq '.[7].index') && yabai -m space --focus $index
+
+# Direct focus for when on external displays.
+# Uses Caps + [1,2,3,4,5,6,7,8] to focus on main display.
+# Uses Caps + [q,w,e,r,t,y] to focus on the second display.
+# Primary display
+ctrl + alt + cmd - 1 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").spaces[0]') && yabai -m space --focus $index
+ctrl + alt + cmd - 2 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").spaces[1]') && yabai -m space --focus $index
+ctrl + alt + cmd - 3 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").spaces[2]') && yabai -m space --focus $index
+ctrl + alt + cmd - 4 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").spaces[3]') && yabai -m space --focus $index
+ctrl + alt + cmd - 5 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").spaces[4]') && yabai -m space --focus $index
+ctrl + alt + cmd - 6 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").spaces[5]') && yabai -m space --focus $index
+ctrl + alt + cmd - 7 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").spaces[6]') && yabai -m space --focus $index
+ctrl + alt + cmd - 8 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").spaces[7]') && yabai -m space --focus $index
+# Second display
+ctrl + alt + cmd - q : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").spaces[0]') && yabai -m space --focus $index
+ctrl + alt + cmd - w : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").spaces[1]') && yabai -m space --focus $index
+ctrl + alt + cmd - e : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").spaces[2]') && yabai -m space --focus $index
+ctrl + alt + cmd - r : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").spaces[3]') && yabai -m space --focus $index
+ctrl + alt + cmd - t : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").spaces[5]') && yabai -m space --focus $index
+ctrl + alt + cmd - y : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").spaces[6]') && yabai -m space --focus $index
+
+#
+# ============ Moving windows ============
+#
+
+# Uses Right shift on laptop screen and \| on external displays.
+#
+# Move window between external displays
+shift + ctrl + cmd - a : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").index') && yabai -m window --display $index; yabai -m display --focus $index
+shift + ctrl + cmd - s : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").index') && yabai -m window --display $index; yabai -m display --focus $index
+
+# Move windows between relative workspaces. 
+# i.e on display 2 it will use its workspaces, on display 1 it will use its workspaces.
+shift + ctrl + cmd - 1 : index=$(yabai -m query --spaces --display | jq '.[0].index') && yabai -m window --space $index && yabai -m space --focus $index
+shift + ctrl + cmd - 2 : index=$(yabai -m query --spaces --display | jq '.[1].index') && yabai -m window --space $index && yabai -m space --focus $index
+shift + ctrl + cmd - 3 : index=$(yabai -m query --spaces --display | jq '.[2].index') && yabai -m window --space $index && yabai -m space --focus $index
+shift + ctrl + cmd - 4 : index=$(yabai -m query --spaces --display | jq '.[3].index') && yabai -m window --space $index && yabai -m space --focus $index
+shift + ctrl + cmd - 5 : index=$(yabai -m query --spaces --display | jq '.[4].index') && yabai -m window --space $index && yabai -m space --focus $index
+shift + ctrl + cmd - 6 : index=$(yabai -m query --spaces --display | jq '.[5].index') && yabai -m window --space $index && yabai -m space --focus $index
+shift + ctrl + cmd - 7 : index=$(yabai -m query --spaces --display | jq '.[6].index') && yabai -m window --space $index && yabai -m space --focus $index
+shift + ctrl + cmd - 8 : index=$(yabai -m query --spaces --display | jq '.[7].index') && yabai -m window --space $index && yabai -m space --focus $index
+
+#
+# ============ Resizing/Layout changes ============
+#
+
 alt - 4 : yabai -m window --ratio abs:0.66
 alt - 5 : yabai -m window --ratio abs:0.5
 alt - 6 : yabai -m window --ratio abs:0.33
-alt - 0x18 : yabai -m space --balance # alt - =
+alt - 0x18 : yabai -m space --balance
 
 alt - r : yabai -m space --rotate 90
 alt - y : yabai -m space --mirror y-axis
@@ -42,56 +116,15 @@ shift + alt - s : yabai -m window --toggle sticky; yabai -m window --toggle topm
 shift + alt - p : yabai -m window --toggle sticky; yabai -m window --toggle topmost; yabai -m window --grid 5:5:4:0:1:1
 
 #
-# Change layout / move display
+# Change workspace between bsp, float or stack
 #
 shift + alt - z : yabai -m space --layout bsp
 shift + alt - x : yabai -m space --layout float
 shift + alt - c : yabai -m space --layout stack
 
-shift + ctrl + alt - 1 : index=$(yabai -m query --spaces --display | jq '.[0].index') && yabai -m space --focus $index
-shift + ctrl + alt - 2 : index=$(yabai -m query --spaces --display | jq '.[1].index') && yabai -m space --focus $index
-shift + ctrl + alt - 3 : index=$(yabai -m query --spaces --display | jq '.[2].index') && yabai -m space --focus $index
-shift + ctrl + alt - 4 : index=$(yabai -m query --spaces --display | jq '.[3].index') && yabai -m space --focus $index
-shift + ctrl + alt - 5 : index=$(yabai -m query --spaces --display | jq '.[4].index') && yabai -m space --focus $index
-shift + ctrl + alt - 6 : index=$(yabai -m query --spaces --display | jq '.[5].index') && yabai -m space --focus $index
-shift + ctrl + alt - 7 : index=$(yabai -m query --spaces --display | jq '.[6].index') && yabai -m space --focus $index
-shift + ctrl + alt - 8 : index=$(yabai -m query --spaces --display | jq '.[7].index') && yabai -m space --focus $index
-
- ctrl + alt + cmd - a: index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").index') && yabai -m display --focus $index 
- ctrl + alt + cmd - s: index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").index') && yabai -m display --focus $index 
-
-# # Direct workspace focus
-ctrl + alt + cmd - 1 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").spaces[0]') && yabai -m space --focus $index
-ctrl + alt + cmd - 2 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").spaces[1]') && yabai -m space --focus $index
-ctrl + alt + cmd - 3 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").spaces[2]') && yabai -m space --focus $index
-ctrl + alt + cmd - 4 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").spaces[3]') && yabai -m space --focus $index
-ctrl + alt + cmd - 5 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").spaces[4]') && yabai -m space --focus $index
-ctrl + alt + cmd - 6 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").spaces[5]') && yabai -m space --focus $index
-ctrl + alt + cmd - 7 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").spaces[6]') && yabai -m space --focus $index
-ctrl + alt + cmd - 8 : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").spaces[7]') && yabai -m space --focus $index
-
-ctrl + alt + cmd - q : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").spaces[0]') && yabai -m space --focus $index
-ctrl + alt + cmd - w : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").spaces[1]') && yabai -m space --focus $index
-ctrl + alt + cmd - e : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").spaces[2]') && yabai -m space --focus $index
-ctrl + alt + cmd - r : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").spaces[3]') && yabai -m space --focus $index
-ctrl + alt + cmd - t : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").spaces[5]') && yabai -m space --focus $index
-ctrl + alt + cmd - y : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").spaces[6]') && yabai -m space --focus $index
-
-# 'shift', 'ctrl', 'alt'
 #
-shift + ctrl + cmd - 1 : index=$(yabai -m query --spaces --display | jq '.[0].index') && yabai -m window --space $index && yabai -m space --focus $index
-shift + ctrl + cmd - 2 : index=$(yabai -m query --spaces --display | jq '.[1].index') && yabai -m window --space $index && yabai -m space --focus $index
-shift + ctrl + cmd - 3 : index=$(yabai -m query --spaces --display | jq '.[2].index') && yabai -m window --space $index && yabai -m space --focus $index
-shift + ctrl + cmd - 4 : index=$(yabai -m query --spaces --display | jq '.[3].index') && yabai -m window --space $index && yabai -m space --focus $index
-shift + ctrl + cmd - 5 : index=$(yabai -m query --spaces --display | jq '.[4].index') && yabai -m window --space $index && yabai -m space --focus $index
-shift + ctrl + cmd - 6 : index=$(yabai -m query --spaces --display | jq '.[5].index') && yabai -m window --space $index && yabai -m space --focus $index
-# Move windows between displays:
-# Ultra + [q,w,e]
-shift + ctrl + cmd - a : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "7E399DCF-0C66-4429-8D86-54FCDC387927").index') && yabai -m window --display $index; yabai -m display --focus $index
-shift + ctrl + cmd - s : index=$(yabai -m query --displays | jq '.[] | select(.uuid == "A8208076-3109-4766-AC6C-1A16A9E3A23D").index') && yabai -m window --display $index; yabai -m display --focus $index
-
+# ============ Opening app shortcuts ============
 #
-# Shortcuts for opening apps
 #
 alt - down : open ~
 alt - return : osascript ~/Scripts/launch-term.scpt
