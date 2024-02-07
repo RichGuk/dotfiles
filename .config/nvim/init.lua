@@ -13,16 +13,16 @@ vim.opt.rtp:prepend(lazypath)
 
 vim.g.copilot_no_tab_map = true
 
-vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
+vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
 
-require('richguk.options')
-require('richguk.mappings')
-require('richguk.commands')
-require('lazy').setup('richguk.plugins', {
+require("richguk.options")
+require("richguk.mappings")
+require("richguk.commands")
+require("lazy").setup("richguk.plugins", {
   dev = {
-    path = '~/Projects/Neovim',
+    path = "~/Projects/Neovim",
   },
   change_detection = { notify = false },
 })

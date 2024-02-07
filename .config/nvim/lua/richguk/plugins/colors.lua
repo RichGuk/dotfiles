@@ -1,7 +1,7 @@
 return {
   {
-    'catppuccin/nvim',
-    name = 'catppuccin',
+    "catppuccin/nvim",
+    name = "catppuccin",
     lazy = false,
     priority = 1000,
     config = function()
@@ -16,12 +16,12 @@ return {
         },
         custom_highlights = function()
           return {
-            ['@lsp.type.namespace.ruby'] = { link = '@structure' }
+            ["@lsp.type.namespace.ruby"] = { link = "@structure" },
           }
-        end
+        end,
       })
 
-      vim.cmd.colorscheme 'catppuccin'
-    end
-  }
+      vim.cmd.colorscheme("catppuccin")
+    end,
+  },
 }

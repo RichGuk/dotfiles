@@ -1,9 +1,9 @@
 return {
   {
-    'nvim-lualine/lualine.nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    "nvim-lualine/lualine.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function()
-      local harpoon = require('harpoon')
+      local harpoon = require("harpoon")
 
       -- Thanks to: https://github.com/dmmulroy
       -- Updated for Harpoon 2
@@ -11,69 +11,71 @@ return {
         local total_marks = harpoon:list():length()
 
         if total_marks == 0 then
-          return '󱡅 -/0'
+          return "󱡅 -/0"
         end
 
         local index = harpoon:list():get_current_index()
-        local current_mark = '-'
+        local current_mark = "-"
         if index ~= -1 then
           current_mark = tostring(index)
         end
 
-        return string.format('󱡅 %s/%s', current_mark, total_marks)
+        return string.format("󱡅 %s/%s", current_mark, total_marks)
       end
 
-
-
-      require('lualine').setup({
+      require("lualine").setup({
         options = {
-          theme = 'catppuccin',
-          component_separators = { left = '', right = '' },
+          theme = "catppuccin",
+          component_separators = { left = "", right = "" },
           section_separators = { left = "", right = "" },
         },
         globalstatus = true,
         tabline = {
           lualine_a = {
             {
-              'tabs',
-              color = { bg = 'none' },
+              "tabs",
+              color = { bg = "none" },
               tabs_color = {
-                active = { bg = '#585b70', fg = '#bac2de', gui = 'bold' },
-                inactive = { bg = '#1e1e2e', fg = '#a6adc8' }
-              }
-            }
+                active = {
+                  bg = "#585b70",
+                  fg = "#bac2de",
+                  gui = "bold",
+                },
+                inactive = { bg = "#1e1e2e", fg = "#a6adc8" },
+              },
+            },
           },
           lualine_z = {
             {
-              'branch',
-              icon = '',
-              color = { bg = '#181825', fg = '#a6adc8' },
-              section_separators = { left = '', right = '' }
-            }
-          }
+              "branch",
+              icon = "",
+              color = { bg = "#181825", fg = "#a6adc8" },
+              section_separators = { left = "", right = "" },
+            },
+          },
         },
         sections = {
           lualine_a = {},
-          lualine_b = { get_harpoon_status, 'diff', 'diagnostics' },
+          lualine_b = { get_harpoon_status, "diff", "diagnostics" },
           lualine_c = {
             {
-              'filename',
+              "filename",
               path = 1,
-            }
+            },
           },
-          lualine_x = { 'filetype' },
+          lualine_x = { "filetype" },
           lualine_y = {},
-          lualine_z = {}
+          lualine_z = {},
         },
         inactive_sections = {
           lualine_c = {
             {
-              'filename',
+              "filename",
               path = 1,
-            }
+            },
           },
         },
       })
-    end
+    end,
   },
 }

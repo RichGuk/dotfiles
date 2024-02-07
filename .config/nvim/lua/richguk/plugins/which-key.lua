@@ -7,10 +7,10 @@ return {
   end,
   opts = {
     disable = {
-      filetypes = { 'markdown' },
+      filetypes = { "markdown" },
     },
     triggers_blacklist = {
-      i = { '<leader>q' },
+      i = { "<leader>q" },
     },
-  }
+  },
 }
