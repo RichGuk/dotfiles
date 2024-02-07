@@ -37,6 +37,9 @@ vim.keymap.set('n', '<leader>r', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><
 
 vim.keymap.set('c', 'w!!', '%!sudo tee > /dev/null %') -- forgot to start with sudo
 
+vim.keymap.set({ 'n', 'v' }, 'L', '$')
+vim.keymap.set({ 'n', 'v' }, 'H', '^')
+
 vim.keymap.set('', '<leader>f', function()
   require('conform').format({ async = true, lsp_fallback = true })
 end, { desc = 'Format file' })

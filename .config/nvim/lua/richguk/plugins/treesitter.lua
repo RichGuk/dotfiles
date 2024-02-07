@@ -62,7 +62,6 @@ return {
             enable = true,
             lookahead = true,
             keymaps = {
-
               ["a="] = { query = '@assignment.outer' },
               ["i="] = { query = '@assignment.inner' },
               ["l="] = { query = '@assignment.lhs' },
@@ -104,7 +103,7 @@ return {
           },
         },
         endwise = {
-          enable = true,
+          enable = false,
         },
       })
     end

@@ -21,5 +21,8 @@ require('richguk.options')
 require('richguk.mappings')
 require('richguk.commands')
 require('lazy').setup('richguk.plugins', {
+  dev = {
+    path = '~/Projects/Neovim',
+  },
   change_detection = { notify = false },
 })

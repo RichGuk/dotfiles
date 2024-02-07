@@ -36,3 +36,9 @@ vim.opt.updatetime = 500 -- Faster completion
 
 vim.opt.mouse = 'v' -- Enable mouse support in the TUI
 
+vim.opt.splitbelow = true -- Open new split windows below the current window
+vim.opt.splitright = true -- Open new split windows to the right of the current window
+
+vim.opt.signcolumn = 'yes' -- Show the sign column
+
+vim.opt.scrolloff = 8 -- Keep no lines above and below the cursor when scrolling
