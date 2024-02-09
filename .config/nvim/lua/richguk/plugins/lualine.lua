@@ -23,9 +23,13 @@ return {
         return string.format("󱡅 %s/%s", current_mark, total_marks)
       end
 
+      local custom_catppuccin = require("lualine.themes.catppuccin")
+      custom_catppuccin.normal.c.bg = "#181825"
+      custom_catppuccin.inactive.c.bg = "#313244"
+
       require("lualine").setup({
         options = {
-          theme = "catppuccin",
+          theme = custom_catppuccin,
           component_separators = { left = "", right = "" },
           section_separators = { left = "", right = "" },
         },
