@@ -5,6 +5,8 @@ These are the dotfiles I use across various Linux/Mac machines. I use a git work
 and [here](https://www.atlassian.com/git/tutorials/dotfiles) to manage
 the dotfiles.
 
+<img src="Pictures/Screenshots/SCR-20240210-thcq.jpeg" />
+
 ## Setup
 
 Clone the files into a .dotfiles and set a temporary alias to manage the dotfiles.
