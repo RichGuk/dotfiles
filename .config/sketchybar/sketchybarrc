@@ -1,0 +1,58 @@
+#!/bin/bash
+
+source "$CONFIG_DIR/colors.sh"
+
+ITMES_DIR="$CONFIG_DIR/items"
+PLUGIN_DIR="$CONFIG_DIR/plugins"
+
+FONT="SF Pro"
+
+bar=(
+  position=top
+  height=30
+  blur_radius=30
+  color=$BAR_COLOR
+  border_color=$BAR_BORDER_COLOR
+  padding_left=10
+  padding_right=10
+)
+
+sketchybar --bar "${bar[@]}"
+
+default=(
+  padding_left=0
+  padding_right=0
+  icon.font="$FONT:Normal:16.0"
+  label.font="$FONT:Normal:14.0"
+  icon.color=$ICON_COLOR
+  label.color=$LABEL_COLOR
+  icon.padding_left=5
+  icon.padding_right=5
+  label.padding_left=5
+  label.padding_right=5
+  background.height=24
+)
+
+sketchybar --default "${default[@]}"
+
+source "$ITMES_DIR/apple.sh"
+source "$ITMES_DIR/spaces.sh"
+source "$ITMES_DIR/yabai.sh"
+
+
+source "$ITMES_DIR/clock.sh"
+source "$ITMES_DIR/battery.sh"
+source "$ITMES_DIR/slack.sh"
+
+source "$ITMES_DIR/spotify.sh"
+
+status_bracket=(
+  background.color=$BASE
+  background.corner_radius=4
+  background.height=24
+)
+sketchybar --add bracket status slack --set status "${status_bracket[@]}"
+
+sketchybar --hotload true
+
+sketchybar --update
