@@ -3,6 +3,7 @@
 source "$CONFIG_DIR/colors.sh"
 
 SPACE_ICONS=("1" "2" "3" "4" "5" "6" "7" "8" "9" "10" "11" "12")
+MAIN_DISPLAY=$(system_profiler SPDisplaysDataType | grep -B 3 'Main Display:' | awk '/Display Type/ {print $3}')
 
 spacelabel=0
 for i in "${!SPACE_ICONS[@]}"
@@ -10,7 +11,7 @@ do
   sid="$(($i+1))"
 
   spacelabel=$((spacelabel+1))
-  if [ "$spacelabel" -gt 6 ]; then
+  if [ "${MAIN_DISPLAY}" != "Built-in" ] && [ "$spacelabel" -gt 6 ]; then
     spacelabel=1
   fi
 
