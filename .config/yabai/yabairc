@@ -9,6 +9,7 @@ yabai -m config left_padding 2
 yabai -m config right_padding 2
 yabai -m config window_gap 10
 yabai -m config window_shadow float
+yabai -m config external_bar all:30:0
 
 yabai -m config window_opacity off
 
@@ -27,6 +28,9 @@ yabai -m mouse_drop_action swap
 
 yabai -m signal --add event=space_changed action="yabai -m window --focus \$(yabai -m query --windows --space | jq '.[0].id')"
 #yabai -m signal --add event=display_changed action="yabai -m window --focus \$(yabai -m query --windows --space | jq '.[0].id')"
+
+yabai -m signal --add event=window_focused action="sketchybar --trigger window_focus"
+yabai -m signal --add event=space_changed action="sketchybar --trigger space_changed"
 
 yabai -m rule --add app="^(DisplayCAL|LuLu|Calculator|Software Update|Dictionary|VLC|System Preferences|System Settings|zoom.us|Photo Booth|Archive Utility|App Store|Steam|Raycast|Activity Monitor|Finder|krisp|Shottr)$" manage=off
 yabai -m rule --add label="Firefox" app="^Firefox$" title="^(Library)$" manage=off
