@@ -43,6 +43,7 @@ source "$ITMES_DIR/yabai.sh"
 source "$ITMES_DIR/clock.sh"
 source "$ITMES_DIR/battery.sh"
 source "$ITMES_DIR/slack.sh"
+source "$ITMES_DIR/brew.sh"
 
 source "$ITMES_DIR/spotify.sh"
 
@@ -51,7 +52,7 @@ status_bracket=(
   background.corner_radius=4
   background.height=24
 )
-sketchybar --add bracket status slack --set status "${status_bracket[@]}"
+sketchybar --add bracket status slack brew --set status "${status_bracket[@]}"
 
 sketchybar --hotload true
 

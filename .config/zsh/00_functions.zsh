@@ -13,3 +13,11 @@ compdef g=git
 function mcd() {
   mkdir -p "$1" && cd "$1";
 }
+
+function brew() {
+  command brew "$@"
+
+  if [[ $* =~ "upgrade" ]] || [[ $* =~ "update" ]] || [[ $* =~ "outdated" ]]; then
+    sketchybar --trigger brew_update
+  fi
+}
