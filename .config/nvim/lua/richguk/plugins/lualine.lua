@@ -47,6 +47,9 @@ return {
                 },
                 inactive = { bg = "#1e1e2e", fg = "#a6adc8" },
               },
+              cond = function()
+                return #vim.fn.gettabinfo() > 1
+              end,
             },
           },
           lualine_z = {
