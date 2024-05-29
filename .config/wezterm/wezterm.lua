@@ -8,27 +8,17 @@ end
 
 -- config.term = 'wezterm'
 
-config.front_end = "WebGpu"
-config.max_fps = 144
+config.front_end = "OpenGL"
+-- config.max_fps = 144
 
 config.font = wezterm.font("FiraCode Nerd Font")
 config.harfbuzz_features = { "calt=0", "clig=0", "liga=0" }
 config.font_size = 16
 
--- config.window_background_opacity = 0.90
--- config.macos_window_background_blur = 60
+config.window_background_opacity = 0.95
+config.macos_window_background_blur = 30
 
 config.send_composed_key_when_left_alt_is_pressed = true
-
-config.background = {
-  {
-    source = {
-      File = "/Users/rich/Pictures/Wallpapers/terminal4.png",
-    },
-    width = "Cover",
-    horizontal_align = "Center",
-  },
-}
 
 local schemec = wezterm.get_builtin_color_schemes()["Catppuccin Mocha"]
 schemec.background = "#1e1e2e"
@@ -40,8 +30,8 @@ config.color_schemes = {
 config.color_scheme = "Catppuccin Mocha"
 
 config.window_frame = {
-  active_titlebar_bg = "rgba(30, 30, 46, 0.5)",
-  inactive_titlebar_bg = "rgba(30, 30, 46, 0.5)",
+  active_titlebar_bg = "rgba(30, 30, 46, 0.95)",
+  inactive_titlebar_bg = "rgba(30, 30, 46, 0.95)",
 }
 
 config.colors = {
