@@ -75,6 +75,9 @@ return {
 
               ["ac"] = "@class.outer",
               ["ic"] = "@class.inner",
+
+              ["ab"] = "@block.outer",
+              ["ib"] = "@block.inner",
             },
           },
           move = {

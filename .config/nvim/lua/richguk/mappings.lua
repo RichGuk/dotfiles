@@ -17,7 +17,7 @@ vim.keymap.set(
 )
 vim.keymap.set("n", "<leader>Y", [["+Y]], { desc = "Yank line into system clip" })
 
-vim.keymap.set("n", "<leader>t", "<cmd>ToggleBlame<CR>", { desc = "Toggle blame" })
+vim.keymap.set("n", "<leader>t", "<cmd>BlameToggle<CR>", { desc = "Toggle blame" })
 
 vim.keymap.set("n", "]b", ":bprev<enter>", { noremap = false, desc = "Previous buffer" })
 vim.keymap.set("n", "[b", ":bnext<enter>", { noremap = false, desc = "Next buffer" })
