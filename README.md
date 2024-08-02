@@ -15,8 +15,8 @@ Clone the files into a .dotfiles and set a temporary alias to manage the dotfile
 git clone --bare --recursive https://github.com/RichGuk/dotfiles.git $HOME/.dotfiles
 alias dots='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 
-config checkout
-config submodule update
+dots checkout
+dots submodule update
 
 dots config --local status.showUntrackedFiles no
 ```
@@ -32,7 +32,6 @@ dots add .config/new-config-file
 dots add .new-dotfile-to-track
 dots commit -m 'Added new config files'
 dots push
-
 ```
 
 To remove a file from being tracked, but keep it locally, use:
@@ -41,10 +40,11 @@ To remove a file from being tracked, but keep it locally, use:
 dots rm --cached .remove-this-dotfile
 dots push
 ```
+
 There are some files part of this repo that I don't actually want in my home dir. e.g. README.md. You can remove it, and tell git to assume it has no changes:
 
 ```bash
-config update-index --assume-unchanged README.md
+dots update-index --assume-unchanged README.md
 rm README.md
 ```
 _(can always do updates via web)_
@@ -52,9 +52,9 @@ _(can always do updates via web)_
 To undo this:
 
 ```bash
-config update-index --no-assume-unchanged README.md
-config checkout README.md
-config add  README.md
-config commit -m 'Updated README.md'
-config push
+dots update-index --no-assume-unchanged README.md
+dots checkout README.md
+dots add README.md
+dots commit -m 'Updated README.md'
+dots push
 ```
