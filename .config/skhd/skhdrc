@@ -49,6 +49,9 @@ ctrl + alt + cmd - 3 : SPACES=($(yabai -m query --displays --display | jq '.spac
 ctrl + alt + cmd - 4 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n $SPACES[4] ]] && yabai -m space --focus $SPACES[4]
 ctrl + alt + cmd - 5 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n $SPACES[5] ]] && yabai -m space --focus $SPACES[5]
 ctrl + alt + cmd - 6 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n $SPACES[6] ]] && yabai -m space --focus $SPACES[6]
+ctrl + alt + cmd - 7 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n $SPACES[7] ]] && yabai -m space --focus $SPACES[7]
+ctrl + alt + cmd - 8 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n $SPACES[8] ]] && yabai -m space --focus $SPACES[8]
+ctrl + alt + cmd - 9 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n $SPACES[9] ]] && yabai -m space --focus $SPACES[9]
 
 # Move window between external displays
 #

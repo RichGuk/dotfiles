@@ -44,7 +44,6 @@ return {
     event = { "BufReadPost", "BufNewFile" },
     dependencies = {
       "nvim-treesitter/nvim-treesitter-textobjects",
-      "RRethy/nvim-treesitter-endwise",
     },
     config = function()
       require("nvim-treesitter.configs").setup({
@@ -140,9 +139,6 @@ return {
               },
             },
           },
-        },
-        endwise = {
-          enable = false,
         },
       })
     end,
