@@ -6,15 +6,15 @@ xcode-select --install
 
 compaudit | xargs sudo chmod g-w
 
-brew install zsh nvim tmux htop node coreutils curl gnupg \
-  rsync pv git svn fzf ripgrep jq neovim iproute2mac wakeonlan
-
-git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.0
+brew install neovim tmux htop node coreutils curl gnupg zstd \
+  rsync pv git svn fzf ripgrep jq neovim iproute2mac wakeonlan yt-dlp tldr \
+  yabai sketchybar borgbackup borgbackup-fuse 
 
 brew install --cask \
+  discord \
   google-chrome \
-  karabiner-elements \
   firefox \
+  karabiner-elements \
   linearmouse \
   slack \
   spotify \
@@ -22,11 +22,19 @@ brew install --cask \
   zerotier-one \
   raycast \
   shottr \
-  browserosaurus \
   obsidian \
   docker \
   bartender \
-  font-fira-code
+  font-fira-code \
+  font-fira-code-nerd-font \
+  sf-symbols \
+  wezterm \
+  aldente \
+  macfuse \
+  vorta
+
+brew install --cask \
+  1password
 
 defaults write -g ApplePressAndHoldEnabled -bool false
 
@@ -69,3 +77,6 @@ defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool false
 
 defaults write ~/Library/Preferences/ByHost/com.apple.controlcenter.plist BatteryShowPercentage -bool true
 defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
+
+echo "curl https://mise.run | sh"
+echo "https://github.com/AlexStrNik/Browserino/"

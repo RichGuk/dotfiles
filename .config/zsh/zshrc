@@ -7,8 +7,11 @@ export DEFAULT_USER=`whoami`
 for config_file ($HOME/.config/zsh/*.zsh) source $config_file
 
 # asdf version manager (for ruby, node, elixir, etc).
-[[ -f $HOME/.asdf/asdf.sh ]] && source $HOME/.asdf/asdf.sh
-[[ -f $HOME/.asdf/completions/asdf.bash ]] && source $HOME/.asdf/completions/asdf.bash
+# [[ -f $HOME/.asdf/asdf.sh ]] && source $HOME/.asdf/asdf.sh
+# [[ -f $HOME/.asdf/completions/asdf.bash ]] && source $HOME/.asdf/completions/asdf.bash
+eval "$($HOME/.local/bin/mise activate zsh)"
+eval "$(mise activate)"
+eval "$(mise completion zsh)"
 
 if ! pgrep -u "$USER" ssh-agent > /dev/null; then
     ssh-agent -t 1h > "$HOME/.cache/ssh-agent.env"

@@ -24,7 +24,7 @@ return {
       local ensure_installed = {}
       if os.getenv("FULL_DOTFILES") then
         ensure_installed = {
-          "tsserver",
+          "ts_ls",
           "eslint",
           "golangci_lint_ls",
           "gopls",
@@ -91,8 +91,9 @@ return {
           end,
         },
       })
+
       require("lspconfig").solargraph.setup({})
-      -- require('lspconfig').ruby_ls.setup({})
+      -- require("lspconfig").ruby_lsp.setup({})
 
       local cmp = require("cmp")
       local luasnip = require("luasnip")

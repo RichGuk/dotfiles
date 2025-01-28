@@ -1,7 +1,7 @@
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "*",
   callback = function()
-    vim.opt.formatoptions:remove("t")
+    vim.opt.formatoptions:remove("t") -- Do not auto-wrap text
   end,
 })
 
@@ -33,7 +33,7 @@ vim.api.nvim_create_autocmd("FileType", {
 
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "ruby",
-  command = "setlocal indentkeys-=.",
+  command = "setlocal indentkeys-=.", -- Do not auto-indent after typing a period
 })
 
 vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
@@ -58,4 +58,14 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
   pattern = "*/app/{components,hooks}/**/*.js",
   command = "setfiletype javascriptreact",
+})
+
+vim.api.nvim_create_autocmd({ "BufWritePre" }, {
+  callback = function(event)
+    if event.match:match("^%w%w+:[\\/][\\/]") then
+      return
+    end
+    local file = vim.uv.fs_realpath(event.match) or event.match
+    vim.fn.mkdir(vim.fn.fnamemodify(file, ":p:h"), "p")
+  end,
 })

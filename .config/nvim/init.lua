@@ -11,6 +11,8 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+vim.env.PATH = vim.env.HOME .. "/.local/share/mise/shims:" .. vim.env.PATH
+
 vim.g.copilot_no_tab_map = true
 
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })

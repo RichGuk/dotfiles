@@ -74,6 +74,11 @@ vim.keymap.set("", "<leader>f", function()
   require("conform").format({ async = true, lsp_fallback = true })
 end, { desc = "Format file" })
 
+-- Format visual selection
+vim.keymap.set("v", "<leader>f", function()
+  require("conform").format({ async = true, lsp_fallback = true })
+end, { desc = "Format selection" })
+
 vim.api.nvim_create_autocmd("LspAttach", {
   desc = "LSP actions",
   callback = function(event)

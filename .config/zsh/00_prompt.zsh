@@ -2,7 +2,7 @@ setopt prompt_subst
 setopt auto_name_dirs
 
 PROMPT='%(?.%F{blue}.%F{red})$(prompt_context)%(?.%F{blue}.%F{red})❯%{$reset_color%} %f'
-RPROMPT='%{$reset_color%}%F{248} %50<...<%~ $(git_prompt_info)%{$reset_color%} '
+RPROMPT='%{$reset_color%}%F{248} %50<...<${PWD/~/~} $(git_prompt_info)%{$reset_color%} '
 
 prompt_context () {
   if [[ "$USER" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
