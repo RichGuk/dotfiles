@@ -42,7 +42,7 @@
   side-by-side = true
   line-numbers = true
   features = catppuccin-mocha
-  hunk-header-style = omit-code-fragment
+  #hunk-header-style = omit-code-fragment
 [merge]
   tool = nvimdiff
  conflictstyle = diff3
@@ -58,7 +58,7 @@
   cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
 [include]
   path = .gitconfig.local
-  path = ~/Downloads/delta/themes/mocha.gitconfig
+  path = ~/.config/git/catppuccin.gitconfig
 [commit]
   template = ~/.config/git/message
 [github]
@@ -66,7 +66,7 @@
 [user]
   name = Rich Grundy
   email = rich@grundy.io
-  signingkey = 6C855408C8D031F5
+  signingkey = 1C4A386A1ED649A6
 [credential]
  helper = cache --timeout=3600
 [init]
