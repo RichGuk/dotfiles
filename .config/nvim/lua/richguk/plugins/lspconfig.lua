@@ -92,8 +92,8 @@ return {
         },
       })
 
-      require("lspconfig").solargraph.setup({})
-      -- require("lspconfig").ruby_lsp.setup({})
+      -- require("lspconfig").solargraph.setup({})
+      require("lspconfig").ruby_lsp.setup({})
 
       local cmp = require("cmp")
       local luasnip = require("luasnip")

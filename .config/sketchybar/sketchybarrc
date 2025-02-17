@@ -33,6 +33,7 @@ default=(
   background.height=24
 )
 
+sketchybar --bar display=main
 sketchybar --default "${default[@]}"
 
 source "$ITMES_DIR/apple.sh"
@@ -57,3 +58,4 @@ sketchybar --add bracket status slack brew --set status "${status_bracket[@]}"
 sketchybar --hotload true
 
 sketchybar --update
+

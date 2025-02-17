@@ -98,6 +98,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
       vim.lsp.buf.definition,
       { buffer = event.buf, desc = "Go to definition" }
     )
+    vim.keymap.set(
+      "n",
+      "<leader>gd",
+      vim.lsp.buf.type_definition,
+      { buffer = event.buf, desc = "Go to type definition" }
+    )
     vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = event.buf, desc = "Hover" })
     vim.keymap.set(
       "n",
