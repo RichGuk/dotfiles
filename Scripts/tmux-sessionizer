@@ -5,7 +5,7 @@ if [[ $# -eq 1 ]]; then
 elif [[ -z $FULL_DOTFILES ]]; then
     selected=$(find ~/ ~/.config -mindepth 1 -maxdepth 1 -type d | fzf)
 else
-    selected=$(find ~/Projects/Work ~/Projects/Personal ~/ ~/.config -mindepth 1 -maxdepth 1 -type d | fzf)
+    selected=$(find ~/Projects/Work ~/Projects/Personal ~/dev/work ~/ ~/.config -mindepth 1 -maxdepth 1 -type d 2>/dev/null | fzf)
 fi
 
 if [[ -z $selected ]]; then
