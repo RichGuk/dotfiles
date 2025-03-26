@@ -42,7 +42,6 @@
   side-by-side = true
   line-numbers = true
   features = catppuccin-mocha
-  #hunk-header-style = omit-code-fragment
 [merge]
   tool = nvimdiff
  conflictstyle = diff3

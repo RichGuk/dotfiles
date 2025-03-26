@@ -10,90 +10,69 @@
 # caps lock = MEH
 #
 #==================================================================================================
-
-#
-# ============ Navigation ============
 #
 
-# Focus on window down/up/left/right
+#
+# ============ Change workspace between layouts ============
+#
+shift + alt - z : yabai -m space --layout bsp; sketchybar --trigger mode_change
+shift + alt - x : yabai -m space --layout float; sketchybar --trigger mode_change
+shift + alt - c : yabai -m space --layout stack; sketchybar --trigger mode_change
+
+#
+# ============ Navigation/Movement ============
+#
+
+# Focus windows
 alt - h : yabai -m window --focus west || yabai -m display --focus west
 alt - j : yabai -m window --focus south || yabai -m display --focus south
 alt - k : yabai -m window --focus north || yabai -m display --focus north
 alt - l : yabai -m window --focus east || yabai -m display --focus east
 
-# Move window down/up/left/right
+# Move windows
 shift + alt - h : yabai -m window --swap west
 shift + alt - j : yabai -m window --swap south
 shift + alt - k : yabai -m window --swap north
 shift + alt - l : yabai -m window --swap east
 
-shift + ctrl + alt - h : yabai -m window --warp west
-shift + ctrl + alt - j : yabai -m window --warp south
-shift + ctrl + alt - k : yabai -m window --warp north
-shift + ctrl + alt - l : yabai -m window --warp east
-
-# Focus on window in the stack
+# Focus in stacked
 alt - tab : yabai -m window --focus stack.next || yabai -m window --focus stack.first
 shift + alt - tab : yabai -m window --focus stack.prev || yabai -m window --focus stack.last
 
-#
-# Focus workspaces.
-# Uses Caps + [q,w] to focus between displays.
-# Uses Caps + [1,2,3,4,5,6] to focus on the corresponding workspace
-#
-ctrl + alt + cmd - q: yabai -m display --focus west 
-ctrl + alt + cmd - w: yabai -m display --focus east 
-ctrl + alt + cmd - 1 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n $SPACES[1] ]] && yabai -m space --focus $SPACES[1]
-ctrl + alt + cmd - 2 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n $SPACES[2] ]] && yabai -m space --focus $SPACES[2]
-ctrl + alt + cmd - 3 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n $SPACES[3] ]] && yabai -m space --focus $SPACES[3]
-ctrl + alt + cmd - 4 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n $SPACES[4] ]] && yabai -m space --focus $SPACES[4]
-ctrl + alt + cmd - 5 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n $SPACES[5] ]] && yabai -m space --focus $SPACES[5]
-ctrl + alt + cmd - 6 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n $SPACES[6] ]] && yabai -m space --focus $SPACES[6]
-ctrl + alt + cmd - 7 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n $SPACES[7] ]] && yabai -m space --focus $SPACES[7]
-ctrl + alt + cmd - 8 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n $SPACES[8] ]] && yabai -m space --focus $SPACES[8]
-ctrl + alt + cmd - 9 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n $SPACES[9] ]] && yabai -m space --focus $SPACES[9]
+# Focus workspaces
+ctrl + alt + cmd - 1 : yabai -m space --focus 1
+ctrl + alt + cmd - 2 : yabai -m space --focus 2
+ctrl + alt + cmd - 3 : yabai -m space --focus 3
+ctrl + alt + cmd - 4 : yabai -m space --focus 4
+ctrl + alt + cmd - 5 : yabai -m space --focus 5
+ctrl + alt + cmd - 6 : yabai -m space --focus 6
+ctrl + alt + cmd - 7 : yabai -m space --focus 7
+ctrl + alt + cmd - q: yabai -m space --focus 8
+ctrl + alt + cmd - w: yabai -m space --focus 9
 
-# Move window between external displays
-#
-shift + ctrl + alt - q : yabai -m window --display west; yabai -m display --focus west
-shift + ctrl + alt - w : yabai -m window --display east; yabai -m display --focus east
-
-shift + ctrl + alt - a : yabai -m window --display north; yabai -m display --focus north
-shift + ctrl + alt - s : yabai -m window --display south; yabai -m display --focus south
-
-shift + ctrl + alt - 1 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n $SPACES[1] ]] && yabai -m window --space $SPACES[1] && yabai -m space --focus $SPACES[1]
-shift + ctrl + alt - 2 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n $SPACES[1] ]] && yabai -m window --space $SPACES[2] && yabai -m space --focus $SPACES[2]
-shift + ctrl + alt - 3 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n $SPACES[1] ]] && yabai -m window --space $SPACES[3] && yabai -m space --focus $SPACES[3]
-shift + ctrl + alt - 4 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n $SPACES[1] ]] && yabai -m window --space $SPACES[4] && yabai -m space --focus $SPACES[4]
-shift + ctrl + alt - 5 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n $SPACES[1] ]] && yabai -m window --space $SPACES[5] && yabai -m space --focus $SPACES[5]
-shift + ctrl + alt - 6 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n $SPACES[1] ]] && yabai -m window --space $SPACES[6] && yabai -m space --focus $SPACES[6]
+# Move windows between spaces.
+shift + ctrl + alt - 1 : yabai -m window --space 1 && yabai -m space --focus 1
+shift + ctrl + alt - 2 : yabai -m window --space 2 && yabai -m space --focus 2
+shift + ctrl + alt - 3 : yabai -m window --space 3 && yabai -m space --focus 3
+shift + ctrl + alt - 4 : yabai -m window --space 4 && yabai -m space --focus 4
+shift + ctrl + alt - 5 : yabai -m window --space 5 && yabai -m space --focus 5
+shift + ctrl + alt - 6 : yabai -m window --space 6 && yabai -m space --focus 6
+shift + ctrl + alt - 7 : yabai -m window --space 7 && yabai -m space --focus 7
+shift + ctrl + alt - q : yabai -m window --space 8 && yabai -m space --focus 8
+shift + ctrl + alt - w : yabai -m window --space 9 && yabai -m space --focus 9
 
 #
 # ============ Resizing/Layout changes ============
 #
 
-alt - 4 : yabai -m window --ratio abs:0.66
-alt - 5 : yabai -m window --ratio abs:0.5
-alt - 6 : yabai -m window --ratio abs:0.33
+alt - f : yabai -m window --toggle float --grid 4:4:1:1:2:2
 alt - 0x18 : yabai -m space --balance # alt + equals
-
-alt - r : yabai -m space --rotate 90
 alt - y : yabai -m space --mirror y-axis
 alt - x : yabai -m space --mirror x-axis
-alt - t: yabai -m window --toggle split
+alt - 0x2C : yabai -m window --toggle split # alt + /
 alt - m : yabai -m window --toggle zoom-fullscreen
 shift + alt - m: yabai -m window --toggle zoom-parent
 
-alt - f : yabai -m window --toggle float --grid 4:4:1:1:2:2
-alt - s : yabai -m window --insert east;  skhd -k "cmd - n"
-alt - v : yabai -m window --insert south; skhd -k "cmd - n"
-
-#
-# Change workspace between bsp, float or stack
-#
-shift + alt - z : yabai -m space --layout bsp; sketchybar --trigger mode_change
-shift + alt - x : yabai -m space --layout float; sketchybar --trigger mode_change
-shift + alt - c : yabai -m space --layout stack; sketchybar --trigger mode_change
 
 #
 # ============ Opening app shortcuts ============
