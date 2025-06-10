@@ -93,7 +93,24 @@ return {
       })
 
       -- require("lspconfig").solargraph.setup({})
-      require("lspconfig").ruby_lsp.setup({})
+    local util = require("lspconfig.util")
+
+    require("lspconfig").ruby_lsp.setup({
+      cmd = (function()
+        local cwd = vim.fn.getcwd()
+        local local_bin = cwd .. "/bin/docker-ruby-lsp"
+        local safe_marker = cwd .. "/.git/safe"
+
+        if vim.fn.executable(local_bin) == 1 and vim.fn.isdirectory(safe_marker) == 1 then
+          return { local_bin }
+        else
+          return { "ruby-lsp" }
+        end
+      end)(),
+      root_dir = util.root_pattern("Gemfile", ".git"),
+      capabilities = lsp_capabilities,
+    })
+
 
       local cmp = require("cmp")
       local luasnip = require("luasnip")
