@@ -48,6 +48,8 @@ source "$ITMES_DIR/brew.sh"
 
 source "$ITMES_DIR/spotify.sh"
 
+sketchybar --add alias "MeetingBar" right
+
 status_bracket=(
   background.color=$BASE
   background.corner_radius=4
@@ -58,4 +60,5 @@ sketchybar --add bracket status slack brew --set status "${status_bracket[@]}"
 sketchybar --hotload true
 
 sketchybar --update
+
 
