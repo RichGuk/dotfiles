@@ -32,4 +32,12 @@ yabai -m rule --add app="^(DisplayCAL|LuLu|Calculator|Software Update|Dictionary
 yabai -m rule --add label="Firefox" app="^Firefox$" title="^(Library)$" manage=off
 yabai -m rule --add label="About This Mac" app="System Information" title="About This Mac" manage=off
 
-#borders active_color=0xffcba6f7 inactive_color=0xff1e1e2e width=5.0 blacklist="Finder,System Settings,VLC,Loom,Todoist" &
+
+n=$(yabai -m query --spaces --space | jq '.windows | length')
+if [ $n = 1 ]; then
+    borders active_color=0x00000000 inactive_color=0x00000000 width=3.0 blacklist="Finder,System Settings,VLC,Loom,Todoist" &
+else
+    borders active_color=0xffcba6f7 inactive_color=0xff1e1e2e width=3.0 blacklist="Finder,System Settings,VLC,Loom,Todoist" &
+fi
+
+yabai -m signal --add event=window_focused action="$HOME/.config/yabai/update_border_color.sh"
