@@ -31,24 +31,21 @@ return {
         }
       end
 
-      local signs = {
-        { name = "DiagnosticSignError", text = "" },
-        { name = "DiagnosticSignWarn", text = "" },
-        { name = "DiagnosticSignHint", text = "" },
-        { name = "DiagnosticSignInfo", text = "" },
-      }
-
-      for _, sign in ipairs(signs) do
-        vim.fn.sign_define(
-          sign.name,
-          { text = sign.text, texthl = sign.name, linehl = "", numhl = "" }
-        )
-      end
-
       vim.diagnostic.config({
         virtual_text = false,
         signs = {
-          active = signs,
+          text = {
+            [vim.diagnostic.severity.ERROR] = " ",
+            [vim.diagnostic.severity.WARN] = " ",
+            [vim.diagnostic.severity.INFO] = "󰋼 ",
+            [vim.diagnostic.severity.HINT] = "󰌵 ",
+          },
+          numhl = {
+            [vim.diagnostic.severity.ERROR] = "",
+            [vim.diagnostic.severity.WARN] = "",
+            [vim.diagnostic.severity.HINT] = "",
+            [vim.diagnostic.severity.INFO] = "",
+          },
         },
         float = {
           header = false,
@@ -93,24 +90,23 @@ return {
       })
 
       -- require("lspconfig").solargraph.setup({})
-    local util = require("lspconfig.util")
+      local util = require("lspconfig.util")
 
-    require("lspconfig").ruby_lsp.setup({
-      cmd = (function()
-        local cwd = vim.fn.getcwd()
-        local local_bin = cwd .. "/bin/docker-ruby-lsp"
-        local safe_marker = cwd .. "/.git/safe"
+      require("lspconfig").ruby_lsp.setup({
+        cmd = (function()
+          local cwd = vim.fn.getcwd()
+          local local_bin = cwd .. "/bin/docker-ruby-lsp"
+          local safe_marker = cwd .. "/.git/safe"
 
-        if vim.fn.executable(local_bin) == 1 and vim.fn.isdirectory(safe_marker) == 1 then
-          return { local_bin }
-        else
-          return { "ruby-lsp" }
-        end
-      end)(),
-      root_dir = util.root_pattern("Gemfile", ".git"),
-      capabilities = lsp_capabilities,
-    })
-
+          if vim.fn.executable(local_bin) == 1 and vim.fn.isdirectory(safe_marker) == 1 then
+            return { local_bin }
+          else
+            return { "ruby-lsp" }
+          end
+        end)(),
+        root_dir = util.root_pattern("Gemfile", ".git"),
+        capabilities = lsp_capabilities,
+      })
 
       local cmp = require("cmp")
       local luasnip = require("luasnip")
