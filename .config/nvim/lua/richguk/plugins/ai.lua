@@ -13,19 +13,19 @@ return {
       )
     end,
   },
-  {
-    "yetone/avante.nvim",
-    lazy = false,
-    version = false,
-    build = "make",
-    opts = {
-      hints = { enabled = false }
-    },
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter",
-      "stevearc/dressing.nvim",
-      "nvim-lua/plenary.nvim",
-      "MunifTanjim/nui.nvim",
-    }
-  }
+  -- {
+  --   "yetone/avante.nvim",
+  --   lazy = false,
+  --   version = false,
+  --   build = "make",
+  --   opts = {
+  --     hints = { enabled = false }
+  --   },
+  --   dependencies = {
+  --     "nvim-treesitter/nvim-treesitter",
+  --     "stevearc/dressing.nvim",
+  --     "nvim-lua/plenary.nvim",
+  --     "MunifTanjim/nui.nvim",
+  --   }
+  -- }
 }

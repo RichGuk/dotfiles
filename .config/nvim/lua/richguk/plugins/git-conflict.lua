@@ -12,6 +12,24 @@
 return {
   "sindrets/diffview.nvim",
   config = function()
-    require("diffview").setup({})
+    local actions = require("diffview.actions")
+
+    require("diffview").setup({
+      view = {
+        default = {
+          disable_diagnostics = true,
+        },
+        merge_tool = {
+          layout = "diff3_mixed",
+        },
+      },
+      keymaps = {
+        view = {
+          { "n", "co",  actions.conflict_choose("ours"),        { desc = "Choose the OURS version of a conflict" } },
+          { "n", "ct",  actions.conflict_choose("theirs"),      { desc = "Choose the THEIRS version of a conflict" } },
+          { "n", "ce",  actions.conflict_choose("base"),        { desc = "Choose the BASE version of a conflict" } },
+        },
+      },
+    })
   end,
 }
