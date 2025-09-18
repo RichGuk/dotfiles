@@ -5,7 +5,7 @@ source "$CONFIG_DIR/colors.sh"
 ITMES_DIR="$CONFIG_DIR/items"
 PLUGIN_DIR="$CONFIG_DIR/plugins"
 
-FONT="SF Pro"
+FONT="CaskaydiaCove Nerd Font"
 
 bar=(
   position=top
@@ -60,5 +60,3 @@ sketchybar --add bracket status slack brew --set status "${status_bracket[@]}"
 sketchybar --hotload true
 
 sketchybar --update
-
-
