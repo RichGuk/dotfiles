@@ -65,7 +65,7 @@ vim.keymap.set(
   { desc = "Rename word under cursor" }
 )
 
-vim.keymap.set("c", "w!!", "%!sudo tee > /dev/null %") -- forgot to start with sudo
+vim.cmd.cnoreabbrev("w!! w !sudo tee > /dev/null %")
 
 vim.keymap.set({ "n", "v" }, "L", "$")
 vim.keymap.set({ "n", "v" }, "H", "^")
