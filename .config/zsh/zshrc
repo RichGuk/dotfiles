@@ -25,4 +25,4 @@ export GPG_TTY=$(tty)
 # Local zsh settings.
 [[ -s "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
 
-export PATH=$PATH:/Users/rich/.spicetify
+export PATH=$PATH:$HOME/.spicetify

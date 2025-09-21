@@ -77,3 +77,5 @@
 
 [includeIf "gitdir:~/Dev/Work/"]
   path = ~/.config/git/work
+[fetch]
+	prune = true
