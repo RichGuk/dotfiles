@@ -5,9 +5,9 @@ source "$CONFIG_DIR/colors.sh"
 # Max number of characters so it fits nicely to the right of the notch
 # MAY NOT WORK WITH NON-ENGLISH CHARACTERS
 
-MAX_LENGTH=35
+MAX_LENGTH=100
 
-SPOT_BACKGROUND=$BASE
+SPOT_BACKGROUND=none
 
 # Logic starts here, do not modify
 HALF_LENGTH=$(((MAX_LENGTH + 1) / 2))

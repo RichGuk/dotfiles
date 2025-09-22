@@ -2,7 +2,8 @@
 #!/bin/bash
 #
 calendar=(
-  icon.font="$FONT:Bold:14.0"
+  icon.font="$FONT:Regular:16.0"
+  label.font="$FONT:bold:16.0"
   icon.padding_right=0
   label.width=50
   label.align=right
