@@ -3,7 +3,7 @@ alias po="popd"
 
 # alias history='fc -l l'
 
-alias ls='eza -l --icons=always'
+alias ls='eza --icons=always'
 alias ll='eza -al --icons=always'
 alias lt='eza -a --tree --level=1 --icons=always'
 
