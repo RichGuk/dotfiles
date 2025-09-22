@@ -1,0 +1,101 @@
+@define-color foreground #bac2de;
+@define-color background #11111b;
+
+* {
+  background-color: @background;
+  color: @foreground;
+
+  border: none;
+  border-radius: 0;
+  min-height: 0;
+  /* font-family: FiraCode Nerd Font; */
+  font-family: Source Code Pro;
+  font-size: 16px;
+}
+
+.modules-left {
+  margin-left: 10px;
+}
+
+.modules-right {
+  margin-right: 10px;
+}
+
+#custom-os_button {
+  margin-right: 20px;
+  font-size: 20px;
+}
+
+#workspaces {
+  font-size: 16px;
+}
+#workspaces button {
+  border-radius: 0;
+  margin: 0 2.5px;
+}
+
+#workspaces label {
+  background: transparent;
+  border: none;
+}
+
+#workspaces box {
+  background: transparent;
+}
+
+#workspaces button.active {
+  background-color: #1e1e2e;
+}
+#workspaces button.active label {
+  color: #b4befe;
+}
+
+#tray,
+#cpu,
+#battery,
+#network,
+#bluetooth,
+#pulseaudio
+ {
+  font-size: 18px;
+  min-width: 12px;
+  margin: 0 5px;
+  color: #a6adc8;
+}
+
+#custom-expand-icon {
+  margin-right: 7px;
+}
+
+tooltip {
+  padding: 2px;
+}
+
+#custom-update {
+  font-size: 10px;
+}
+
+#clock {
+  margin-left: 8.75px;
+}
+
+.hidden {
+  opacity: 0;
+}
+
+#mpris.paused {
+  color: #6c7086;
+}
+
+#clock {
+  margin-left: 20px;
+}
+#cpu {
+  margin-left: 10px;
+}
+#network {
+  margin-left: 0;
+}
+#bluetooth {
+  margin-left: 0;
+}
