@@ -1,3 +1,5 @@
+local mocha = require("catppuccin.palettes").get_palette "mocha"
+
 return {
   {
     "nvim-lualine/lualine.nvim",
@@ -24,8 +26,8 @@ return {
       end
 
       local custom_catppuccin = require("lualine.themes.catppuccin")
-      custom_catppuccin.normal.c.bg = "#181825"
-      custom_catppuccin.inactive.c.bg = "#313244"
+      custom_catppuccin.normal.c.bg = mocha.base
+      custom_catppuccin.inactive.c.bg = mocha.crust
 
       require("lualine").setup({
         options = {
@@ -41,11 +43,11 @@ return {
               color = { bg = "none" },
               tabs_color = {
                 active = {
-                  bg = "#585b70",
-                  fg = "#bac2de",
+                  bg = mocha.mantle,
+                  fg = mocha.rosewater,
                   gui = "bold",
                 },
-                inactive = { bg = "#1e1e2e", fg = "#a6adc8" },
+                inactive = { bg = mocha.base, fg = mocha.overlay0 },
               },
               cond = function()
                 return #vim.fn.gettabinfo() > 1
@@ -56,7 +58,7 @@ return {
             {
               "branch",
               icon = "",
-              color = { bg = "#181825", fg = "#a6adc8" },
+              color = { bg = mocha.base, fg = mocha.rosewater },
               section_separators = { left = "", right = "" },
             },
           },

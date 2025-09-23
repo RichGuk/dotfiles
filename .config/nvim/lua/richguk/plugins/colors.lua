@@ -14,8 +14,10 @@ return {
         native_lsp = {
           enabled = true,
         },
-        custom_highlights = function()
+        custom_highlights = function(colors)
           return {
+            TabLine = { bg = colors.base, fg = colors.overlay0 },
+            TabLineSel = { bg = colors.pink },
             ["@lsp.type.namespace.ruby"] = { link = "@structure" },
           }
         end,
