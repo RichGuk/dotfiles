@@ -8,7 +8,7 @@ return {
       require("catppuccin").setup({
         transparent_background = true,
         integrations = {
-          cmp = true,
+          blink_cmp = true,
         },
         no_italic = true,
         native_lsp = {
