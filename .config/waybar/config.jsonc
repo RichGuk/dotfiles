@@ -4,10 +4,9 @@
   "position": "top",
   "spacing": 0,
   "height": 32,
-  "modules-left": ["custom/os_button", "hyprland/workspaces"],
+  "modules-left": ["custom/os_button", "hyprland/workspaces", "custom/updates"],
   "modules-center": ["mpris"],
   "modules-right": [
-    "custom/updates",
     "group/tray-expander",
     "bluetooth",
     "network",

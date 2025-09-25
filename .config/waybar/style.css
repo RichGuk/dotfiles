@@ -8,8 +8,7 @@
   border: none;
   border-radius: 0;
   min-height: 0;
-  /* font-family: FiraCode Nerd Font; */
-  font-family: Source Code Pro;
+  font-family: FiraCode Nerd Font;
   font-size: 16px;
 }
 
@@ -59,46 +58,39 @@
  {
   font-size: 18px;
   min-width: 12px;
-  margin: 0 5px;
+  margin-left: 15px;
   color: #a6adc8;
 }
 
 #custom-expand-icon {
-  margin-right: 7px;
+}
+
+#cpu {
+  font-size: 22px;
 }
 
 tooltip {
   padding: 2px;
 }
 
-#custom-update {
-  font-size: 10px;
-}
-
-#clock {
-  margin-left: 8.75px;
-}
-
 .hidden {
   opacity: 0;
 }
-
+#mpris {
+  font-size: 14px;
+}
 #mpris.paused {
   color: #6c7086;
 }
 
 #clock {
   margin-left: 20px;
+  font-size: 15px;
 }
-#cpu {
-  margin-left: 10px;
-}
-#network {
-  margin-left: 0;
-}
-#bluetooth {
-  margin-left: 0;
-}
+
 #custom-updates {
-  margin-right: 25px;
+  margin-left: 25px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #b8c0e0;
 }

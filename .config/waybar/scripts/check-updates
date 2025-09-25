@@ -12,9 +12,11 @@ fi
 # yay_packages=5
 
 if [ "$updates" -gt 10 ] || [ "$yay_packages" -gt 10 ]; then
-  echo "<span color=\"#f38ba8\">󰮯 $updates - ${yay_packages}</span>"
+  echo "<span color=\"#f38ba8\">󰮯  $updates - ${yay_packages}</span>"
+elif [ "$updates" -gt 5 ] || [ "$yay_packages" -gt 5 ]; then
+  echo "<span color=\"#f5e0dc\">󰮯  $updates - ${yay_packages}</span>"
 elif [ "$updates" -gt 0 ] || [ "$yay_packages" -gt 0 ]; then
-  echo "󰮯 $updates - ${yay_packages}"
+  echo "󰮯  $updates - ${yay_packages}"
 else
   echo ""
 fi
