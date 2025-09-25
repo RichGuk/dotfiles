@@ -1,7 +1,7 @@
 return {
   {
     "neovim/nvim-lspconfig",
-    dev = true,
+    -- dev = true,
     event = { "BufReadPre", "BufNewFile" },
     dependencies = {
       "williamboman/mason.nvim",
@@ -76,6 +76,11 @@ return {
             },
           },
         },
+        reuse_client = function(client, config)
+          config.cmd_cwd = config.root_dir
+          return client.config.cmd_cwd == config.cmd_cwd
+        end
+
       })
       vim.lsp.enable("ruby_lsp")
     end,
