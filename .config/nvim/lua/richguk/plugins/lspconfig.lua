@@ -47,10 +47,10 @@ return {
         border = "rounded",
       })
       vim.lsp.handlers["textDocument/signatureHelp"] =
-          vim.lsp.with(vim.lsp.handlers.signature_help, {
-            focusable = true,
-            border = "rounded",
-          })
+        vim.lsp.with(vim.lsp.handlers.signature_help, {
+          focusable = true,
+          border = "rounded",
+        })
 
       require("mason").setup({})
       require("mason-lspconfig").setup({
@@ -61,13 +61,13 @@ return {
         settings = {
           Lua = {
             diagnostics = {
-              globals = { 'vim' },
+              globals = { "vim" },
             },
           },
         },
       })
 
-      vim.lsp.config('ruby_lsp', {
+      vim.lsp.config("ruby_lsp", {
         init_options = {
           formatter = "auto",
           addonSettings = {
@@ -76,11 +76,6 @@ return {
             },
           },
         },
-        reuse_client = function(client, config)
-          config.cmd_cwd = config.root_dir
-          return client.config.cmd_cwd == config.cmd_cwd
-        end
-
       })
       vim.lsp.enable("ruby_lsp")
     end,
