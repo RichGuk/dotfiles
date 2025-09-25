@@ -1,0 +1,179 @@
+@define-color window_bg_color #1e1e2e;
+@define-color accent_bg_color #89b4fa;
+@define-color theme_fg_color #cdd6f4;
+
+@define-color rosewater #f5e0dc;
+@define-color flamingo #f2cdcd;
+@define-color pink #f5c2e7;
+@define-color mauve #cba6f7;
+@define-color red #f38ba8;
+@define-color maroon #eba0ac;
+@define-color peach #fab387;
+@define-color yellow #f9e2af;
+@define-color green #a6e3a1;
+@define-color teal #94e2d5;
+@define-color sky #89dceb;
+@define-color sapphire #74c7ec;
+@define-color blue #89b4fa;
+@define-color lavender #b4befe;
+@define-color text #cdd6f4;
+@define-color subtext1 #bac2de;
+@define-color subtext0 #a6adc8;
+@define-color overlay2 #9399b2;
+@define-color overlay1 #7f849c;
+@define-color overlay0 #6c7086;
+@define-color surface2 #585b70;
+@define-color surface1 #45475a;
+@define-color surface0 #313244;
+@define-color base #1e1e2e;
+@define-color mantle #181825;
+@define-color crust #11111b;
+
+* {
+  all: unset;
+}
+
+.normal-icons {
+  -gtk-icon-size: 16px;
+}
+
+.large-icons {
+  -gtk-icon-size: 32px;
+}
+
+scrollbar {
+  opacity: 0;
+}
+
+.box-wrapper {
+  box-shadow:
+    0 19px 38px rgba(0, 0, 0, 0.3),
+    0 15px 12px rgba(0, 0, 0, 0.22);
+  background: alpha(@mantle, 0.95);
+  padding: 20px;
+  border-radius: 0;
+  border: 1px solid @overlay1;
+}
+
+.preview-box,
+.elephant-hint,
+.placeholder {
+  color: @theme_fg_color;
+}
+
+.box {
+}
+
+.search-container {
+  border-radius: 0;
+  border: 1px solid @surface1;
+  margin-bottom: 25px;
+}
+
+.input placeholder {
+  opacity: 0.5;
+}
+
+.input {
+  caret-color: @theme_fg_color;
+  background: @base;
+  padding: 10px;
+  color: @theme_fg_color;
+}
+
+.input:focus,
+.input:active {
+}
+
+.content-container {
+}
+
+.placeholder {
+}
+
+.scroll {
+}
+
+.list {
+  color: @theme_fg_color;
+}
+
+child {
+}
+
+.item-box {
+  border-radius: 0;
+  padding: 10px;
+}
+
+.item-quick-activation {
+  margin-left: 10px;
+  background: @surface0;
+  border-radius: 0;
+  padding: 10px;
+}
+
+child:hover .item-box,
+child:selected .item-box {
+  /* background: @base; */
+}
+
+.item-text-box {
+}
+
+.item-text {
+  color: @text;
+}
+child:selected .item-text {
+  color: @blue;
+  font-weight: bold;
+}
+
+.item-subtext {
+  font-size: 12px;
+  opacity: 0.5;
+}
+
+.item-image {
+  margin-right: 10px;
+}
+
+.keybind-hints {
+  font-size: 12px;
+  opacity: 0.5;
+  color: @subtext1;
+}
+
+.preview {
+  border: 1px solid alpha(@accent_bg_color, 0.25);
+  padding: 10px;
+  border-radius: 10px;
+  color: @theme_fg_color;
+}
+
+.calc .item-text {
+  font-size: 24px;
+}
+
+.calc .item-subtext {
+}
+
+.symbols .item-image {
+  font-size: 24px;
+}
+
+.todo.done .item-text-box {
+  opacity: 0.25;
+}
+
+.todo.urgent {
+  font-size: 24px;
+}
+
+.todo.active {
+  font-weight: bold;
+}
+
+.preview .large-icons {
+  -gtk-icon-size: 64px;
+}
