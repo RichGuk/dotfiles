@@ -24,9 +24,9 @@
     "on-click": "activate",
     "format": "{icon}",
     "format-icons": {
-      "1": "",
+      "1": "",
       "2": "",
-      "3": "",
+      "3": "",
       "4": "",
       "5": "󰻞",
       "6": "",
@@ -45,7 +45,7 @@
   },
   "cpu": {
     "interval": 5,
-    "format": "󰍛",
+    "format": "",
     "format-warning": "󰀨 {usage}%",
     "format-critical": "󰀨 {usage}%",
     "on-click": "kitty -e btop"
