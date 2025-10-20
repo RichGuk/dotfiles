@@ -1,5 +1,4 @@
-export PATH=$HOME/Scripts:$HOME/.local/bin:/usr/local/bin:/opt/homebrew/bin:$HOME/.cargo/bin:$PATH
-export PATH=.git/safe/../../bin::.git/safe/../../node_modules/.bin:$PATH
+export PATH=$HOME/Scripts:$HOME/.spicetify:$HOME/.local/bin:/usr/local/bin:/opt/homebrew/bin:$HOME/.cargo/bin:$PATH
 export TERMINFO_DIRS=$TERMINFO_DIRS:$HOME/.local/share/terminfo
 export EDITOR=nvim
 export DEFAULT_USER=`whoami`
@@ -9,20 +8,14 @@ for config_file ($HOME/.config/zsh/*.zsh) source $config_file
 # asdf version manager (for ruby, node, elixir, etc).
 # [[ -f $HOME/.asdf/asdf.sh ]] && source $HOME/.asdf/asdf.sh
 # [[ -f $HOME/.asdf/completions/asdf.bash ]] && source $HOME/.asdf/completions/asdf.bash
-eval "$($HOME/.local/bin/mise activate zsh)"
-eval "$(mise activate)"
+eval "$(mise activate zsh)"
 eval "$(mise completion zsh)"
 
-if ! pgrep -u "$USER" ssh-agent > /dev/null; then
-    ssh-agent -t 1h > "$HOME/.cache/ssh-agent.env"
-fi
-if [[ ! "$SSH_AUTH_SOCK" ]]; then
-  [ -f "$HOME/.cache/ssh-agent.env" ] && source "$HOME/.cache/ssh-agent.env" >/dev/null
+if [[ -z "$SSH_AUTH_SOCK" ]]; then
+  [ -f "$HOME/.cache/ssh-agent.env" ] && source "$HOME/.cache/ssh-agent.env"
 fi
 
 export GPG_TTY=$(tty)
 
 # Local zsh settings.
 [[ -s "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
-
-export PATH=$PATH:$HOME/.spicetify
