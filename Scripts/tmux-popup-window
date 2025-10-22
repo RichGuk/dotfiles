@@ -1,0 +1,24 @@
+#!/bin/bash
+
+window="$1"
+path=$(tmux display-message -p "#{pane_current_path}")
+git_root=$(git -C "$path" rev-parse --show-toplevel 2>/dev/null)
+
+if [ -n "$git_root" ]; then
+  path="$git_root"
+fi
+
+project=$(basename "$path")
+session="popup-$project"
+current_session=$(tmux display-message -p "#{session_name}")
+
+if [ "$current_session" = "$session" ]; then
+  tmux detach-client
+else
+  if ! tmux has-session -t "$session" 2>/dev/null; then
+    tmux new-session -d -s "$session" -c "$path"
+    tmux new-window -t "$session:2" -c "$path"
+    tmux new-window -t "$session:3" -c "$path"
+  fi
+  tmux display-popup -w 90% -h 80% -E "tmux attach -t $session:$window"
+fi
