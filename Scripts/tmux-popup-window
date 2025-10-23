@@ -13,7 +13,12 @@ session="popup-$project"
 current_session=$(tmux display-message -p "#{session_name}")
 
 if [ "$current_session" = "$session" ]; then
-  tmux detach-client
+  current_window=$(tmux display-message -p "#{window_index}")
+  if [ "$current_window" = "$window" ]; then
+    tmux detach-client
+  else
+    tmux select-window -t "$session:$window"
+  fi
 else
   if ! tmux has-session -t "$session" 2>/dev/null; then
     tmux new-session -d -s "$session" -c "$path"
