@@ -24,6 +24,7 @@ else
     tmux new-session -d -s "$session" -c "$path"
     tmux new-window -t "$session:2" -c "$path"
     tmux new-window -t "$session:3" -c "$path"
+    tmux new-window -t "$session:4" -c "$path" "nvim notes.txt"
   fi
   tmux display-popup -w 90% -h 80% -E "tmux attach -t $session:$window"
 fi
