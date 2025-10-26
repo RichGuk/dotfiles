@@ -1,3 +1,8 @@
 #!/bin/bash
 
-exec setsid uwsm app -- brave --app="$1" "${@:2}"
+url="$1"
+shift
+
+exec systemd-run --user --scope --description="WebApp: $url" \
+  brave --ozone-platform=x11 --app="$url" "$@"
+
