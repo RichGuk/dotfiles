@@ -12,7 +12,22 @@ eval "$(mise activate zsh)"
 eval "$(mise completion zsh)"
 
 if [[ -z "$SSH_AUTH_SOCK" ]]; then
-  [ -f "$HOME/.cache/ssh-agent.env" ] && source "$HOME/.cache/ssh-agent.env"
+  cache_file="$HOME/.cache/ssh-agent.env"
+
+  if [[ -f "$cache_file" ]]; then
+    source "$cache_file" >/dev/null 2>&1
+
+    if [[ -n "$SSH_AGENT_PID" ]] && ! kill -0 "$SSH_AGENT_PID" 2>/dev/null; then
+      rm -f "$cache_file"
+      unset SSH_AUTH_SOCK SSH_AGENT_PID
+    fi
+  fi
+
+  if [[ -z "$SSH_AUTH_SOCK" || ! -S "$SSH_AUTH_SOCK" ]]; then
+    mkdir -p "$HOME/.cache"
+    ssh-agent -s -t 1h >| "$cache_file"
+    source "$cache_file" >/dev/null 2>&1
+  fi
 fi
 
 export GPG_TTY=$(tty)
