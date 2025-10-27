@@ -5,9 +5,6 @@ export DEFAULT_USER=`whoami`
 
 for config_file ($HOME/.config/zsh/*.zsh) source $config_file
 
-# asdf version manager (for ruby, node, elixir, etc).
-# [[ -f $HOME/.asdf/asdf.sh ]] && source $HOME/.asdf/asdf.sh
-# [[ -f $HOME/.asdf/completions/asdf.bash ]] && source $HOME/.asdf/completions/asdf.bash
 eval "$(mise activate zsh)"
 eval "$(mise completion zsh)"
 
