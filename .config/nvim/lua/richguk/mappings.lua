@@ -19,8 +19,8 @@ vim.keymap.set("n", "<leader>Y", [["+Y]], { desc = "Yank line into system clip" 
 
 vim.keymap.set("n", "<leader>t", "<cmd>BlameToggle<CR>", { desc = "Toggle blame" })
 
-vim.keymap.set("n", "]b", ":bprev<enter>", { noremap = false, desc = "Previous buffer" })
-vim.keymap.set("n", "[b", ":bnext<enter>", { noremap = false, desc = "Next buffer" })
+vim.keymap.set("n", "]b", ":bnext<CR>", { desc = "Next buffer" })
+vim.keymap.set("n", "[b", ":bprev<CR>", { desc = "Previous buffer" })
 vim.keymap.set("n", "|d", ":bdelete<enter>", { noremap = false, desc = "Delete buffer" })
 
 vim.keymap.set(
@@ -128,6 +128,18 @@ vim.api.nvim_create_autocmd("LspAttach", {
       "<leader>vd",
       vim.diagnostic.open_float,
       { buffer = event.buf, desc = "Diagnostic float" }
+    )
+    vim.keymap.set(
+      "n",
+      "gr",
+      vim.lsp.buf.references,
+      { buffer = event.buf, desc = "Go to references" }
+    )
+    vim.keymap.set(
+      "n",
+      "gi",
+      vim.lsp.buf.implementation,
+      { buffer = event.buf, desc = "Go to implementation" }
     )
   end,
 })

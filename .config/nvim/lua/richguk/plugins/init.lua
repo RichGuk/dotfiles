@@ -8,9 +8,8 @@ return {
   { "echasnovski/mini.surround", version = false, config = true },
   {
     "FabijanZulj/blame.nvim",
-    config = function()
-      require("blame").setup()
-    end,
+    cmd = { "BlameToggle" },
+    opts = {},
   },
   "christoomey/vim-tmux-navigator",
 }
