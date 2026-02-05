@@ -1,0 +1,13 @@
+#!/bin/bash
+# Copy stdin to clipboard via OSC 52, bypassing tmux
+input=$(cat)
+encoded=$(printf '%s' "$input" | base64 | tr -d '\n')
+
+# Get the real TTY from the outer tmux client
+tty=$(tmux list-clients -F '#{client_tty}' | head -1)
+
+# Send OSC 52 directly to the terminal
+printf '\033]52;c;%s\a' "$encoded" > "$tty"
+
+# Also load into tmux buffer for paste within tmux
+printf '%s' "$input" | tmux load-buffer -

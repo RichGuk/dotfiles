@@ -1,0 +1,22 @@
+#!/bin/bash
+
+window_name="opencode"
+current_window=$(tmux display-message -p "#{window_name}")
+
+if [ "$current_window" = "$window_name" ]; then
+  tmux last-window
+else
+  # Check if opencode window exists
+  if tmux list-windows -F "#{window_name}" | grep -q "^${window_name}$"; then
+    tmux select-window -t "$window_name"
+  else
+    # Get project path (git root or current dir)
+    path=$(tmux display-message -p "#{pane_current_path}")
+    git_root=$(git -C "$path" rev-parse --show-toplevel 2>/dev/null)
+    if [ -n "$git_root" ]; then
+      path="$git_root"
+    fi
+    
+    tmux new-window -n "$window_name" -c "$path" "opencode"
+  fi
+fi
