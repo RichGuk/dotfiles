@@ -52,8 +52,8 @@ vim.keymap.set("n", "<leader>sc", ":nohls <CR>", { desc = "Clear search" })
 
 vim.keymap.set("n", "gf", ":e <cfile><CR>", { desc = "Open file under cursor" })
 
-vim.keymap.set("n", "<leader>m", "mA", { desc = "Mark current position" })
-vim.keymap.set("n", "<leader>0", "'A", { desc = "Jump to mark" })
+vim.keymap.set("n", "<leader>m", "m'", { desc = "Mark current position" })
+vim.keymap.set("n", "<leader>0", "''", { desc = "Jump to mark" })
 
 -- navigation around location/quick lists
 vim.keymap.set("n", "<C-n>", ":cnext<CR>zz", { noremap = true, desc = "Next location" })
