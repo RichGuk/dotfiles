@@ -26,13 +26,26 @@ return {
         return string.format("󱡅 %s/%s", current_mark, total_marks)
       end
 
-      local custom_catppuccin = require("lualine.themes.catppuccin")
-      custom_catppuccin.normal.c.bg = mocha.base
-      custom_catppuccin.inactive.c.bg = mocha.crust
+      -- catppuccin renamed its lualine theme module from `catppuccin` to
+      -- `catppuccin-nvim` in Aug 2026. Machines pin different commits, so try
+      -- both rather than break on whichever one a box happens to have.
+      local custom_catppuccin
+      for _, name in ipairs({ "lualine.themes.catppuccin-nvim", "lualine.themes.catppuccin" }) do
+        local ok, theme = pcall(require, name)
+        if ok then
+          custom_catppuccin = theme
+          break
+        end
+      end
+
+      if custom_catppuccin then
+        custom_catppuccin.normal.c.bg = mocha.base
+        custom_catppuccin.inactive.c.bg = mocha.crust
+      end
 
       require("lualine").setup({
         options = {
-          theme = custom_catppuccin,
+          theme = custom_catppuccin or "auto",
           globalstatus = true, -- belongs under `options`; ignored at top level
           component_separators = { left = "", right = "" },
           section_separators = { left = "", right = "" },
