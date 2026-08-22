@@ -1,13 +1,26 @@
 #!/bin/bash
-# Copy stdin to clipboard via OSC 52, bypassing tmux
+# Copy stdin to the system clipboard via OSC 52, written straight to the
+# terminal(s) tmux is attached to.
+#
+# tmux's own set-clipboard relay does not reach the terminal on this setup
+# (verified: OSC 52 emitted from inside a pane never lands in the clipboard,
+# while the same escape written directly to a client tty does), so we bypass it.
+#
+# Clients inside tmux must be skipped. The popup windows attach a *nested*
+# client whose tty is a tmux-owned pty; an OSC 52 written there goes nowhere.
+# The previous `list-clients | head -1` could pick that nested client, which is
+# why copying out of a popup worked only some of the time.
 input=$(cat)
 encoded=$(printf '%s' "$input" | base64 | tr -d '\n')
 
-# Get the real TTY from the outer tmux client
-tty=$(tmux list-clients -F '#{client_tty}' | head -1)
+tmux list-clients -F '#{client_tty} #{session_name}' |
+  while read -r tty session; do
+    case "$session" in
+      popup-*) continue ;; # nested client, not a real terminal
+    esac
+    [ -w "$tty" ] || continue
+    printf '\033]52;c;%s\a' "$encoded" >"$tty"
+  done
 
-# Send OSC 52 directly to the terminal
-printf '\033]52;c;%s\a' "$encoded" > "$tty"
-
-# Also load into tmux buffer for paste within tmux
+# Also load into the tmux buffer so paste works inside tmux.
 printf '%s' "$input" | tmux load-buffer -
