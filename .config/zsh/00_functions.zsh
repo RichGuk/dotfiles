@@ -26,7 +26,7 @@ function refresh-agent() {
   # Ensure zsh doesn't error if no matches
   setopt local_options no_nomatch 2>/dev/null
 
-  for sock in /tmp/ssh-*/agent.* /run/user/$UID/ssh-*/agent.*; do
+  for sock in $HOME/.ssh/agent/s.* /tmp/ssh-*/agent.* /run/user/$UID/ssh-*/agent.*; do
     # Skip literal patterns (means: no match happened)
     case "$sock" in
       *\**|"" ) continue ;;

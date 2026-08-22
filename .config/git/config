@@ -18,6 +18,30 @@
   lg1 = log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%cr)%C(reset) %C(white)%s%C(reset) %C(bold white)— %cn%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative
   lg2 = log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%cD%C(reset) %C(bold green)(%cr)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(bold white)— %cn%C(reset)' --abbrev-commit
   lg = !"git lg1"
+  lgs = !"f() { \
+    cur=$(git symbolic-ref --short HEAD 2>/dev/null) || cur=HEAD; \
+    base=${1:-$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo main)}; \
+    refs=$(git for-each-ref refs/heads --format='%(refname:short)' | while read b; do \
+      [ \"$b\" = \"$base\" ] && continue; \
+      [ \"$b\" = \"$cur\" ] && continue; \
+      if git merge-base --is-ancestor \"$b\" HEAD 2>/dev/null || git merge-base --is-ancestor HEAD \"$b\" 2>/dev/null; then \
+        echo \"$b\"; \
+      fi; \
+    done | tr '\\n' ' '); \
+    git log --graph --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%cr)%C(reset) %C(white)%s%C(reset) %C(bold white)— %cn%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative \"$base\" \"$cur\" $refs; \
+  }; f"
+  lgs2 = !"f() { \
+    cur=$(git symbolic-ref --short HEAD 2>/dev/null) || cur=HEAD; \
+    base=${1:-$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo main)}; \
+    refs=$(git for-each-ref refs/heads --format='%(refname:short)' | while read b; do \
+      [ \"$b\" = \"$base\" ] && continue; \
+      [ \"$b\" = \"$cur\" ] && continue; \
+      if git merge-base --is-ancestor \"$b\" HEAD 2>/dev/null || git merge-base --is-ancestor HEAD \"$b\" 2>/dev/null; then \
+        echo \"$b\"; \
+      fi; \
+    done | tr '\\n' ' '); \
+    git log --graph --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%cD%C(reset) %C(bold green)(%cr)%C(reset)%C(bold yellow)%d%C(reset)%n          %C(white)%s%C(reset) %C(bold white)— %cn%C(reset)' --abbrev-commit \"$base\" \"$cur\" $refs; \
+  }; f"
   ac = commit --amend
   pa = add --patch
   co = checkout
@@ -72,6 +96,7 @@
  defaultBranch = main
 [rebase]
   instructionFormat = (%an) %s
+	updateRefs = true
 [rerere]
   enabled = true
 

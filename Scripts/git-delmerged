@@ -1,9 +1,125 @@
-#!/bin/sh
-git checkout -q main
-git branch --merged | egrep -v '(\*|develop|master|main)' | xargs -I % git branch -d %
-git for-each-ref refs/heads/ "--format=%(refname:short)" | while read branch; do
-  mergeBase=$(git merge-base main $branch)
-  if [[ $(git cherry main $(git commit-tree $(git rev-parse $branch^{tree}) -p $mergeBase -m _)) == "-"* ]]; then
-    git branch -D $branch
-  fi
-done
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# git-delmerged — delete local branches whose work has landed on the base branch.
+#
+# Signals, in increasing authority:
+#   1. true merge    - branch is an ancestor of base
+#   2. squash merge  - a synthetic squash of the branch already exists in base (patch-id)
+#   3. PR state      - via gh, only when origin is github.com (Gogs etc fall back to 1+2).
+#                      MERGED marks for deletion; OPEN protects even if 1/2 matched.
+
+require 'optparse'
+require 'open3'
+require 'json'
+
+options = { dry_run: false, yes: false, gh: true, base: 'main' }
+OptionParser.new do |o|
+  o.banner = 'Usage: git-delmerged [options]'
+  o.on('-n', '--dry-run', 'Show what would be deleted, delete nothing') { options[:dry_run] = true }
+  o.on('-y', '--yes', 'Skip the confirmation prompt') { options[:yes] = true }
+  o.on('--no-gh', 'Skip the GitHub PR check') { options[:gh] = false }
+  o.on('--base BRANCH', "Base branch to compare against (default: #{options[:base]})") { |b| options[:base] = b }
+end.parse!
+
+# Runs a command without a shell; returns [stdout, success?]. Missing binaries
+# read as failure rather than raising, so optional tools (gh) degrade quietly.
+def run(*cmd)
+  out, _err, status = Open3.capture3(*cmd)
+  [out.strip, status.success?]
+rescue Errno::ENOENT
+  ['', false]
+end
+
+base = options[:base]
+_, base_exists = run('git', 'rev-parse', '--verify', '-q', base)
+abort "error: no '#{base}' branch here" unless base_exists
+
+if options[:gh]
+  _, gh_available = run('gh', '--version')
+  origin_url, = run('git', 'remote', 'get-url', 'origin')
+  options[:gh] = gh_available && origin_url.include?('github.com')
+end
+
+_, fetched = run('git', 'fetch', '-q', '--prune', 'origin', base)
+warn "warn: fetch failed, comparing against local '#{base}'" unless fetched
+
+current_branch, = run('git', 'branch', '--show-current')
+protected_branches = [base, current_branch, 'main', 'master', 'develop']
+
+def merge_evidence(branch, base)
+  _, ancestor = run('git', 'merge-base', '--is-ancestor', branch, base)
+  return "merged (ancestor of #{base})" if ancestor
+
+  merge_base, found = run('git', 'merge-base', base, branch)
+  return nil unless found
+
+  synthetic_squash, = run('git', 'commit-tree', "#{branch}^{tree}", '-p', merge_base, '-m', '_')
+  cherry, = run('git', 'cherry', base, synthetic_squash)
+  return "squash-merged (content already in #{base})" if cherry.start_with?('-')
+
+  nil
+end
+
+def pr_state(branch)
+  out, ok = run('gh', 'pr', 'list', '--head', branch, '--state', 'all', '--json', 'state,mergedAt')
+  return nil unless ok
+
+  pr = JSON.parse(out).first
+  return nil unless pr
+
+  pr['mergedAt'] ? 'MERGED' : pr['state']
+end
+
+to_delete = {}
+to_keep = {}
+
+branches, = run('git', 'for-each-ref', 'refs/heads/', '--format=%(refname:short)')
+branches.split("\n").each do |branch|
+  next if protected_branches.include?(branch)
+
+  reason = merge_evidence(branch, base)
+
+  if options[:gh]
+    case pr_state(branch)
+    when 'MERGED'
+      reason = ['PR merged', reason].compact.join('; ')
+    when 'OPEN'
+      to_keep[branch] = 'PR open — kept'
+      next
+    end
+  end
+
+  if reason
+    to_delete[branch] = reason
+  else
+    to_keep[branch] = 'no merge evidence'
+  end
+end
+
+width = (to_delete.keys + to_keep.keys).map(&:length).max.to_i + 2
+
+unless to_keep.empty?
+  puts 'Keeping:'
+  to_keep.each { |branch, reason| puts format("  %-#{width}s (%s)", branch, reason) }
+end
+
+if to_delete.empty?
+  puts 'Nothing to delete.'
+  exit
+end
+
+puts 'To delete:'
+to_delete.each { |branch, reason| puts format("  %-#{width}s (%s)", branch, reason) }
+
+if options[:dry_run]
+  puts '(dry run — nothing deleted)'
+  exit
+end
+
+unless options[:yes]
+  print "Delete #{to_delete.size} branch(es)? [y/N] "
+  exit unless $stdin.gets&.strip&.downcase == 'y'
+end
+
+system('git', 'branch', '-D', *to_delete.keys) || abort('error: git branch -D failed')
