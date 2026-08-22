@@ -1,6 +1,16 @@
+-- zsh's edit-command-line opens nvim on a $TMPPREFIX scratch file (zshXXXXXX.zsh);
+-- not worth booting a language server to edit a shell prompt.
+local function editing_shell_command()
+  return vim.fn.fnamemodify(vim.fn.argv(0), ":t"):match("^zsh%w+%.zsh$") ~= nil
+end
+
 return {
   {
     "github/copilot.vim",
+    event = "InsertEnter",
+    cond = function()
+      return not editing_shell_command()
+    end,
     config = function()
       vim.g.copilot_filetypes = {
         ["markdown"] = false,
