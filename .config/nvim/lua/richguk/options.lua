@@ -3,7 +3,6 @@ vim.opt.number = true -- Show line numbers
 vim.opt.numberwidth = 2
 vim.opt.relativenumber = true -- Show relative line numbers
 vim.opt.history = 500 -- Remember n lines in history
-vim.opt.lazyredraw = true -- Don't redraw while executing macros
 vim.opt.colorcolumn = "100" -- Show a column at 100 characters
 vim.opt.completeopt = { "menu", "menuone", "noselect", "noinsert" } -- Completion options
 

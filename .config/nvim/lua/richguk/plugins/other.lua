@@ -1,5 +1,11 @@
 return {
   "rgroli/other.nvim",
+  cmd = { "Other", "OtherSplit", "OtherVSplit" },
+  keys = {
+    { "<leader>ll", "<cmd>Other<CR>", desc = "Open alternate file" },
+    { "<leader>ls", "<cmd>OtherSplit<CR>", desc = "Open alternate file in split" },
+    { "<leader>lv", "<cmd>OtherVSplit<CR>", desc = "Open alternate file in vsplit" },
+  },
   config = function()
     local rails_alternative_targets = {
       {
@@ -26,7 +32,6 @@ return {
         context = "serializer",
         target = "/app/serializers/%1_serializer.rb",
       },
-      { context = "mailer", target = "/app/mailers/%1_mailer.rb" },
       { context = "service", target = "/app/services/%1_service.rb" },
       { context = "worker", target = "/app/workers/**/%1_worker.rb" },
       {
@@ -36,12 +41,12 @@ return {
       },
     }
 
-    local is_rspec = vim.fn.isdirectory(vim.fn.getcwd() .. "/spec")
+    -- isdirectory() returns 0/1 as a number, and 0 is truthy in Lua, so this
+    -- must compare explicitly or the minitest branch below is unreachable.
+    local is_rspec = vim.fn.isdirectory(vim.fn.getcwd() .. "/spec") == 1
 
     local main_targets = is_rspec
         and {
-          { context = "test", target = "/spec/%1/%2_spec.rb" },
-          { context = "test", target = "/spec/%2_spec.rb" },
           { context = "test", target = "/spec/%1/%2_spec.rb" },
           { context = "test", target = "/spec/%2_spec.rb" },
           {
@@ -186,18 +191,5 @@ return {
       mappings = mappings,
     })
 
-    vim.api.nvim_set_keymap("n", "<leader>ll", "<cmd>:Other<CR>", { noremap = true, silent = true })
-    vim.api.nvim_set_keymap(
-      "n",
-      "<leader>ls",
-      "<cmd>:OtherSplit<CR>",
-      { noremap = true, silent = true }
-    )
-    vim.api.nvim_set_keymap(
-      "n",
-      "<leader>lv",
-      "<cmd>:OtherVSplit<CR>",
-      { noremap = true, silent = true }
-    )
   end,
 }

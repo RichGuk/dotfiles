@@ -1,15 +1,16 @@
-local mocha = require("catppuccin.palettes").get_palette "mocha"
-
 return {
   {
     "nvim-lualine/lualine.nvim",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function()
-      local harpoon = require("harpoon")
+      -- Required here rather than at file scope: lazy.nvim evaluates spec files
+      -- during startup, before catppuccin is on the runtimepath.
+      local mocha = require("catppuccin.palettes").get_palette("mocha")
 
       -- Thanks to: https://github.com/dmmulroy
       -- Updated for Harpoon 2
       local function get_harpoon_status()
+        local harpoon = require("harpoon")
         local total_marks = harpoon:list():length()
 
         if total_marks == 0 then
@@ -32,10 +33,10 @@ return {
       require("lualine").setup({
         options = {
           theme = custom_catppuccin,
+          globalstatus = true, -- belongs under `options`; ignored at top level
           component_separators = { left = "", right = "" },
           section_separators = { left = "", right = "" },
         },
-        globalstatus = true,
         tabline = {
           lualine_a = {
             {

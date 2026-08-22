@@ -42,16 +42,6 @@ return {
         },
       })
 
-      vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
-        focusable = true,
-        border = "rounded",
-      })
-      vim.lsp.handlers["textDocument/signatureHelp"] =
-        vim.lsp.with(vim.lsp.handlers.signature_help, {
-          focusable = true,
-          border = "rounded",
-        })
-
       require("mason").setup({})
       require("mason-lspconfig").setup({
         ensure_installed = ensure_installed,

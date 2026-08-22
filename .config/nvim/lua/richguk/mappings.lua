@@ -56,10 +56,10 @@ vim.keymap.set("n", "<leader>m", "m'", { desc = "Mark current position" })
 vim.keymap.set("n", "<leader>0", "''", { desc = "Jump to mark" })
 
 -- navigation around location/quick lists
-vim.keymap.set("n", "<C-n>", ":cnext<CR>zz", { noremap = true, desc = "Next location" })
-vim.keymap.set("n", "<C-p>", ":cprev<CR>zz", { noremap = true, desc = "Previous location" })
-vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz", { desc = "Next quickfix" })
-vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz", { desc = "Previous quickfix" })
+vim.keymap.set("n", "<C-n>", ":cnext<CR>zz", { noremap = true, desc = "Next quickfix" })
+vim.keymap.set("n", "<C-p>", ":cprev<CR>zz", { noremap = true, desc = "Previous quickfix" })
+vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz", { desc = "Next location" })
+vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz", { desc = "Previous location" })
 
 vim.keymap.set(
   "n",
@@ -107,19 +107,19 @@ vim.api.nvim_create_autocmd("LspAttach", {
       vim.lsp.buf.type_definition,
       { buffer = event.buf, desc = "Go to type definition" }
     )
-    vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = event.buf, desc = "Hover" })
-    vim.keymap.set(
-      "n",
-      "[d",
-      vim.diagnostic.goto_prev,
-      { buffer = event.buf, desc = "Previous diagnostic" }
-    )
-    vim.keymap.set(
-      "n",
-      "]d",
-      vim.diagnostic.goto_next,
-      { buffer = event.buf, desc = "Next diagnostic" }
-    )
+    -- Border used to come from a vim.lsp.with() handler override, which is
+    -- deprecated; 0.11 takes it as an option here instead.
+    vim.keymap.set("n", "K", function()
+      vim.lsp.buf.hover({ border = "rounded", focusable = true })
+    end, { buffer = event.buf, desc = "Hover" })
+    -- goto_prev/goto_next are deprecated (removal in 0.13). jump() does not
+    -- open the float by default, so ask for it to keep the old behaviour.
+    vim.keymap.set("n", "[d", function()
+      vim.diagnostic.jump({ count = -1, float = true })
+    end, { buffer = event.buf, desc = "Previous diagnostic" })
+    vim.keymap.set("n", "]d", function()
+      vim.diagnostic.jump({ count = 1, float = true })
+    end, { buffer = event.buf, desc = "Next diagnostic" })
     vim.keymap.set(
       "n",
       "<leader>ca",

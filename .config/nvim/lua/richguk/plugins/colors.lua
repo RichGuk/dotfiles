@@ -11,9 +11,6 @@ return {
           blink_cmp = true,
         },
         no_italic = true,
-        native_lsp = {
-          enabled = true,
-        },
         custom_highlights = function(colors)
           return {
             TabLine = { bg = colors.base, fg = colors.overlay0 },
