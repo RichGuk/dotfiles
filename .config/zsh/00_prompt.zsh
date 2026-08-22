@@ -1,23 +1,23 @@
 setopt prompt_subst
-setopt auto_name_dirs
 
-PROMPT='%(?.%F{blue}.%F{red})$(prompt_context)%(?.%F{blue}.%F{red})❯%{$reset_color%} %f'
-RPROMPT='%{$reset_color%}%F{248} %50<...<${PWD/~/~} $(git_prompt_info)%{$reset_color%} '
+PROMPT='%(?.%F{blue}.%F{red})$(prompt_context)%(?.%F{blue}.%F{red})❯%f '
+RPROMPT='%F{248} %50<...<%~ $(git_prompt_info)%f '
 
 prompt_context () {
   if [[ "$USER" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
-    echo -n "%{$reset_color%}%F{005}$USER@%m%{$reset_color%} "
+    print -n "%F{005}$USER@%m%f "
   fi
 }
 
 # Checks if working tree is dirty
 function git_prompt_info() {
-  ref=$(git symbolic-ref HEAD 2> /dev/null) || return
+  local ref
+  ref=$(git symbolic-ref --short HEAD 2> /dev/null) || return
 
-  if [[ -n $(git status -s 2> /dev/null) ]]; then
-    echo "%F{red}\ue725 ${ref#refs/heads/}%{$reset_color%}"
+  if [[ -n $(git status --porcelain --ignore-submodules=dirty 2> /dev/null) ]]; then
+    echo "%F{red}\ue725 ${ref}%f"
   else
-    echo "%F{green}\ue725 ${ref#refs/heads/}%{$reset_color%}"
+    echo "%F{green}\ue725 ${ref}%f"
   fi
 }
 

@@ -1,9 +1,24 @@
-export PATH=$HOME/Scripts:$HOME/.spicetify:$HOME/.local/bin:/usr/local/bin:/opt/homebrew/bin:$HOME/.cargo/bin:$PATH
-export TERMINFO_DIRS=$TERMINFO_DIRS:$HOME/.local/share/terminfo
+# Dedupe on re-source: nested shells and `source ~/.zshrc` would otherwise stack
+# copies. Note -U only applies to *array* assignments, so build $path, not $PATH.
+typeset -U path fpath
+
+path=(
+  $HOME/Scripts
+  $HOME/.spicetify
+  $HOME/.local/bin
+  /usr/local/bin
+  /opt/homebrew/bin
+  $HOME/.cargo/bin
+  $path
+)
+export PATH
+[[ ":$TERMINFO_DIRS:" == *":$HOME/.local/share/terminfo:"* ]] ||
+  export TERMINFO_DIRS=$TERMINFO_DIRS:$HOME/.local/share/terminfo
 export EDITOR=nvim
-export DEFAULT_USER=`whoami`
+export DEFAULT_USER=$USERNAME
 
 for config_file ($HOME/.config/zsh/*.zsh) source $config_file
+unset config_file
 
 eval "$(mise activate zsh)"
 eval "$(mise completion zsh)"
@@ -27,7 +42,9 @@ if [[ -z "$SSH_AUTH_SOCK" ]]; then
   fi
 fi
 
-export GPG_TTY=$(tty)
+export GPG_TTY=$TTY
 
 # Local zsh settings.
 [[ -s "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
+
+path=($path) # re-apply -U over any scalar PATH= appends made above

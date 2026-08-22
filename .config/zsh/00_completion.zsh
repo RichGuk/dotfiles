@@ -1,9 +1,15 @@
-autoload -U compinit
-autoload -U bashcompinit
-compinit
+setopt extended_glob # shell-wide; also needed for the glob qualifier below
+
+autoload -Uz compinit bashcompinit
+
+# Full security check at most once a day, otherwise trust the cached dump.
+if [[ -n $ZDOTDIR/.zcompdump(#qN.mh+24) ]]; then
+  compinit
+else
+  compinit -C
+fi
 bashcompinit
 
-setopt menu_complete
 setopt auto_menu
 setopt complete_in_word
 setopt always_to_end
@@ -13,7 +19,7 @@ zstyle ':completion:*' list-colors ''
 
 zstyle ':completion:*:*:*:*:*' menu select
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
-zstyle ':completion:*:*:*:*:processes' command "ps -u `whoami` -o pid,user,comm -w -w"
+zstyle ':completion:*:*:*:*:processes' command "ps -u $USERNAME -o pid,user,comm -w -w"
 
 zstyle ':completion:*:cd:*' tag-order local-directories directory-stack path-directories
 
@@ -23,14 +29,14 @@ zstyle ':completion:*:cd:*' tag-order local-directories directory-stack path-dir
 hosts=(
   "$_ssh_hosts[@]"
   "$_etc_hosts[@]"
-  "$(hostname)"
+  "$HOST"
   localhost
 )
 zstyle ':completion:*:hosts' hosts $hosts
 
 # Cache completion stuff.
 zstyle ':completion:*' use-cache on
-zstyle ':completion:*' cache-path $ZSH/cache
+zstyle ':completion:*' cache-path $HOME/.cache/zsh/zcompcache
 
 # Make sure pasting with tabs doesn't autocomplete.
 zstyle ':completion:*' insert-tab pending

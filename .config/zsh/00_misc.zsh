@@ -1,6 +1,6 @@
-unsetopt correct_all # disable auto correct
-
-setopt multios # allow multiple redirections, command > file.txt 2>&1 becomes command >| file.txt
+setopt multios # tee to multiple targets, command > one.txt > two.txt
+setopt interactive_comments # allow # comments at the interactive prompt
+setopt no_beep
 setopt auto_cd # cd to directory without typing cd
 setopt auto_pushd # pushd when cd
 setopt pushd_ignore_dups # ignore duplicated directory when pushd
