@@ -4,7 +4,7 @@
 calendar=(
   icon.font="$FONT:Regular:16.0"
   label.font="$FONT:bold:16.0"
-  icon.padding_right=0
+  icon.padding_right=6 # gap between the date (icon) and the time (label)
   label.width=50
   label.align=right
   padding_left=0

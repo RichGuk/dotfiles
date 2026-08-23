@@ -13,7 +13,8 @@
 [apply]
   whitespace = nowarn
 [help]
-  autocorrect = 1
+  # `1` silently runs the guessed command after 0.1s; `prompt` asks first.
+  autocorrect = prompt
 [alias]
   lg1 = log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%cr)%C(reset) %C(white)%s%C(reset) %C(bold white)— %cn%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative
   lg2 = log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%cD%C(reset) %C(bold green)(%cr)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(bold white)— %cn%C(reset)' --abbrev-commit
@@ -59,6 +60,7 @@
   cb = "!f() { git checkout $(git branch | grep -v \"^\\*\" | fzf --height=20% --reverse --info=inline); }; f"
 [push]
   default = current
+  autoSetupRemote = true
 [diff]
   colorMoved = default
 [delta]
@@ -68,7 +70,7 @@
   features = catppuccin-mocha
 [merge]
   tool = nvimdiff
- conflictstyle = diff3
+  conflictstyle = zdiff3
 [difftool]
   tool = nvimdiff
   prompt = false

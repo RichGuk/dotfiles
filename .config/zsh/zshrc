@@ -3,6 +3,13 @@
 typeset -U path fpath
 
 path=(
+  # thoughtbot's .git/safe trick: a repo's bin/ and node_modules/.bin land on
+  # PATH only after `git trust` (which is just `mkdir -p .git/safe`). Safe
+  # despite being relative, because .git is created by clone and can never be
+  # shipped inside a repo -- only you can mark one trusted. First in the list
+  # so project binstubs shadow system ones. Only applies at the repo root.
+  .git/safe/../../bin
+  .git/safe/../../node_modules/.bin
   $HOME/Scripts
   $HOME/.spicetify
   $HOME/.local/bin

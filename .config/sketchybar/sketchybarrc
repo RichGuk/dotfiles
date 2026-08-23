@@ -5,7 +5,7 @@ source "$CONFIG_DIR/colors.sh"
 ITMES_DIR="$CONFIG_DIR/items"
 PLUGIN_DIR="$CONFIG_DIR/plugins"
 
-FONT="CaskaydiaCove Nerd Font"
+FONT="CaskaydiaMono Nerd Font"
 
 bar=(
   position=top
