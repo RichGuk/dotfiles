@@ -1,0 +1,14 @@
+# Custom compose sequences. Referenced by XCOMPOSEFILE in .config/hypr/envs.conf.
+# Linux only — macOS has no compose key and ignores this file entirely
+# (there, £ is Option+3 and accents are Option dead keys).
+#
+# Compose is tap-then-type: tap the compose key, release, then type the sequence.
+# On the Framework that's the real right-ctrl; on the Air60 it's Fn + the HYPER
+# key, since the Air60 has no right-ctrl of its own. Both via `compose:rctrl`.
+
+# Keep every default sequence (l- for £, 'e for é, --- for em dash, and so on).
+include "%L"
+
+# Memorable aliases, because "l -" for a pound sign is impossible to remember.
+<Multi_key> <p> <p>            : "£"   sterling
+<Multi_key> <g> <b> <p>        : "£"   sterling
