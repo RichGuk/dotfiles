@@ -22,23 +22,10 @@ function brew() {
   fi
 }
 
+# Wraps ~/Scripts/refresh-agent so the export lands in the current shell.
 function refresh-agent() {
-  # Ensure zsh doesn't error if no matches
-  setopt local_options no_nomatch 2>/dev/null
-
-  for sock in $HOME/.ssh/agent/s.* /tmp/ssh-*/agent.* /run/user/$UID/ssh-*/agent.*; do
-    # Skip literal patterns (means: no match happened)
-    case "$sock" in
-      *\**|"" ) continue ;;
-    esac
-
-    if SSH_AUTH_SOCK="$sock" ssh-add -l >/dev/null 2>&1; then
-      export SSH_AUTH_SOCK="$sock"
-      echo "SSH_AUTH_SOCK -> $SSH_AUTH_SOCK"
-      return 0
-    fi
-  done
-
-  echo "No valid SSH agent socket found." >&2
-  return 1
+  local assignment
+  assignment=$(command refresh-agent --export) || return 1
+  eval "$assignment"
+  echo "SSH_AUTH_SOCK -> $SSH_AUTH_SOCK"
 }

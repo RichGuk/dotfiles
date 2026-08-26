@@ -51,6 +51,8 @@ fi
 
 export GPG_TTY=$TTY
 
+eval "$(atuin init zsh)"
+
 # Local zsh settings.
 [[ -s "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
 
