@@ -6,6 +6,12 @@
 # only exist here: ssh config, shell history, macOS prefs/fonts, and a
 # record of what was installed. /data/WorkMBP is picked up by atlantis's
 # nightly restic run, which is where versioning comes from.
+#
+# Notifications are EDGE-TRIGGERED, not periodic: silence means healthy. Being
+# away from home is not a failure, so an outage is only reported once the gap
+# exceeds $OUTAGE_AFTER_H, and then exactly once -- with a matching message
+# when pushes resume. A heartbeat "still working" ping would just train you to
+# dismiss the one that matters.
 
 set -u
 
@@ -16,8 +22,14 @@ RSYNC=$BREW/bin/rsync                     # NOT /usr/bin/rsync: that's openrsync
 NOTIFIER=$BREW/bin/terminal-notifier
 LOG=$HOME/Library/Logs/mbp-push.log
 SNAP_MAX_MIN=180
+OUTAGE_AFTER_H=24
 
-mkdir -p "$(dirname "$LOG")"
+STATE=$HOME/.local/state/mbp-push
+LAST_OK=$STATE/last-ok                    # mtime = last successful push
+OUTAGE_FLAG=$STATE/outage-notified        # exists = user has been told
+SNAP_FLAG=$STATE/snapshot-notified
+
+mkdir -p "$(dirname "$LOG")" "$STATE"
 
 log() { printf '%s %s\n' "$(date -Iseconds)" "$*" >>"$LOG"; }
 
@@ -27,30 +39,51 @@ notify() {
     -group mbp-push -sound Basso -execute "open $LOG" >/dev/null 2>&1 || true
 }
 
-# --- Not on the home network is not a failure. Silent, exit 0.
+hours_since_ok() {
+  if [ -f "$LAST_OK" ]; then
+    echo $(( ( $(date +%s) - $(stat -f %m "$LAST_OK") ) / 3600 ))
+  else
+    echo 9999                             # never succeeded
+  fi
+}
+
+# --- Not on the home network is not a failure. Report only a long gap, once.
 if ! /usr/bin/nc -z -w2 "$DEST_HOST" 22 >/dev/null 2>&1; then
-  log "SKIP ${DEST_HOST}:22 unreachable"
+  h=$(hours_since_ok)
+  log "SKIP ${DEST_HOST}:22 unreachable (${h}h since last success)"
+  if [ "$h" -ge "$OUTAGE_AFTER_H" ] && [ ! -f "$OUTAGE_FLAG" ]; then
+    notify "No backup for ${h}h -- ${DEST_HOST} unreachable"
+    : >"$OUTAGE_FLAG"
+  fi
   exit 0
 fi
 
 # --- Cross-check the snapshot daemon. A job that isn't running can't report
-#     itself, and this is the only thing positioned to notice.
+#     itself, and this is the only thing positioned to notice. Also edge-
+#     triggered, or a stopped daemon would nag every four hours.
 newest=$(/usr/bin/tmutil listlocalsnapshots / 2>/dev/null \
          | grep 'com\.apple\.TimeMachine\.' \
          | sed 's/.*TimeMachine\.//; s/\..*$//' \
          | sort | tail -1)
+snap_bad=""
 if [ -z "$newest" ]; then
-  log "WARN no local snapshots at all"
-  notify "No local APFS snapshots -- is io.grundy.macbook-local-snapshot loaded?"
+  snap_bad="No local APFS snapshots at all"
 else
   ts=$(date -j -f '%Y-%m-%d-%H%M%S' "$newest" +%s 2>/dev/null || echo 0)
   if [ "$ts" -gt 0 ]; then
     age=$(( ( $(date +%s) - ts ) / 60 ))
-    if [ "$age" -gt "$SNAP_MAX_MIN" ]; then
-      log "WARN newest snapshot ${age}m old"
-      notify "No local snapshot for ${age}m -- is io.grundy.macbook-local-snapshot loaded?"
-    fi
+    [ "$age" -gt "$SNAP_MAX_MIN" ] && snap_bad="No local snapshot for ${age}m"
   fi
+fi
+if [ -n "$snap_bad" ]; then
+  log "WARN $snap_bad"
+  if [ ! -f "$SNAP_FLAG" ]; then
+    notify "$snap_bad -- is io.grundy.macbook-local-snapshot loaded?"
+    : >"$SNAP_FLAG"
+  fi
+elif [ -f "$SNAP_FLAG" ]; then
+  notify "Local snapshots are running again"
+  rm -f "$SNAP_FLAG"
 fi
 
 # --- Manifests, built in a temp dir so a failed dump can't overwrite a good
@@ -58,7 +91,10 @@ fi
 TMP=$(mktemp -d) || { log "FAIL mktemp"; notify "Push failed: mktemp"; exit 1; }
 trap 'rm -rf "$TMP"' EXIT
 
-"$BREW/bin/brew" bundle dump --force --file="$TMP/Brewfile" >>"$LOG" 2>&1 \
+# Without these, brew refreshes its API data on every run -- slow, and it
+# fills the log with download chatter.
+HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_ENV_HINTS=1 \
+  "$BREW/bin/brew" bundle dump --force --file="$TMP/Brewfile" >>"$LOG" 2>&1 \
   || log "WARN brew bundle dump failed"
 if [ -x "$BREW/bin/mas" ]; then
   "$BREW/bin/mas" list >"$TMP/mas-apps.txt" 2>>"$LOG" || log "WARN mas list failed"
@@ -85,7 +121,14 @@ push "$HOME/Library/Fonts/"        "$DEST/macos/Fonts/"
 if [ "$rc" -ne 0 ]; then
   log "FAIL rsync (${DEST_HOST} was reachable, so this is real)"
   notify "Push to atlantis FAILED -- see log"
+  : >"$OUTAGE_FLAG"                       # so recovery gets an all-clear too
   exit 1
 fi
 
+# --- Success. Announce recovery only if we had reported a problem.
+if [ -f "$OUTAGE_FLAG" ]; then
+  notify "Backups resumed after $(hours_since_ok)h"
+  rm -f "$OUTAGE_FLAG"
+fi
+touch "$LAST_OK"
 log "OK"
