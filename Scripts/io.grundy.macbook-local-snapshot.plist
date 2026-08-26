@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>io.grundy.macbook-local-snapshot</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/local/bin/macbook-local-snapshot</string>
+    </array>
+
+    <!-- Clock-aligned, unlike StartInterval which drifts from load time.
+         launchd runs a missed occurrence once on wake. -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>LowPriorityIO</key>
+    <true/>
+
+    <key>StandardErrorPath</key>
+    <string>/usr/local/var/log/macbook-local-snapshot.err</string>
+</dict>
+</plist>

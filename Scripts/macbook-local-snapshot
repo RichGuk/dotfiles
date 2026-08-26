@@ -1,0 +1,62 @@
+#!/bin/bash
+# Hourly APFS local snapshots of the boot volume, pruned to the newest $KEEP.
+# Installed as a root LaunchDaemon: io.grundy.macbook-local-snapshot
+# These live on the internal disk, so they cover mistakes -- not disk failure.
+
+set -u
+
+KEEP=12
+LOW_FREE_PCT=15
+THIN_BYTES=21474836480                    # 20 GiB
+LOG=/usr/local/var/log/macbook-local-snapshot.log
+NOTIFIER=/opt/homebrew/bin/terminal-notifier
+
+mkdir -p "$(dirname "$LOG")"
+
+log() { printf '%s %s\n' "$(date -Iseconds)" "$*" >>"$LOG"; }
+
+# Runs as root, which has no GUI session -- hop into the console user's.
+notify() {
+  uid=$(stat -f%u /dev/console 2>/dev/null)
+  [ -n "$uid" ] && [ "$uid" != "0" ] || return 0
+  [ -x "$NOTIFIER" ] || return 0
+  launchctl asuser "$uid" "$NOTIFIER" \
+    -title "MacBook snapshots" -message "$1" \
+    -group mbp-snapshots -sound Basso \
+    -execute "open $LOG" >/dev/null 2>&1 || true
+}
+
+# Timestamps only, newest last. Tolerates the .local / .backup suffix varying.
+list_snaps() {
+  /usr/bin/tmutil listlocalsnapshots / 2>/dev/null \
+    | grep 'com\.apple\.TimeMachine\.' \
+    | sed 's/.*TimeMachine\.//; s/\..*$//' \
+    | sort
+}
+
+if ! /usr/bin/tmutil localsnapshot >>"$LOG" 2>&1; then
+  log "FAIL tmutil localsnapshot"
+  notify "Hourly snapshot failed -- see log"
+  exit 1
+fi
+
+# Prune. /bin/bash here is 3.2 and BSD head has no negative -n, so count first.
+snaps=$(list_snaps)
+total=$(printf '%s\n' "$snaps" | grep -c '[0-9]')
+if [ "$total" -gt "$KEEP" ]; then
+  printf '%s\n' "$snaps" | sed -n "1,$((total - KEEP))p" | while read -r snap; do
+    [ -n "$snap" ] || continue
+    /usr/bin/tmutil deletelocalsnapshots "$snap" >>"$LOG" 2>&1 \
+      || log "WARN could not delete $snap"
+  done
+fi
+
+# Snapshots pin deleted blocks, so a churning disk can fill up quietly.
+free=$(df -P / | awk 'NR==2 {gsub("%","",$5); print 100-$5}')
+if [ -n "$free" ] && [ "$free" -lt "$LOW_FREE_PCT" ]; then
+  log "LOW boot volume ${free}% free -- thinning"
+  /usr/bin/tmutil thinlocalsnapshots / "$THIN_BYTES" 4 >>"$LOG" 2>&1
+  notify "Boot volume ${free}% free -- thinned snapshots"
+fi
+
+log "OK $(list_snaps | grep -c '[0-9]') snapshots retained"

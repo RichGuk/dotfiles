@@ -1,0 +1,100 @@
+#!/bin/bash
+# Mount an APFS local snapshot read-only so you can copy files out of it.
+#
+#   macbook-mount-snapshot        mount the newest snapshot
+#   macbook-mount-snapshot 2      mount the 3rd newest (0 = newest)
+#   macbook-mount-snapshot -l     list snapshots with their index
+#   macbook-mount-snapshot -u     unmount everything this script mounted
+#
+# Snapshots are of the DATA volume, so the mount source is
+# /System/Volumes/Data and paths inside start at /Users/... not
+# /System/Volumes/Data/Users/...
+#
+# Note TCC still applies to the contents: reading ~/Library/Mail, Messages or
+# the Photos library out of a snapshot needs Full Disk Access for your
+# terminal, exactly as it would on the live copy.
+
+set -u
+
+DATA_VOL=/System/Volumes/Data
+PREFIX=/tmp/snap-
+SELF=$(basename "$0")
+
+usage() {
+  sed -n '2,9p' "$0" | sed 's/^# \{0,1\}//'
+  exit "${1:-0}"
+}
+
+# Newest first. The timestamp is fixed-width, so a lexicographic sort works.
+snapshots() {
+  /usr/bin/tmutil listlocalsnapshots / 2>/dev/null \
+    | grep 'com\.apple\.TimeMachine\.' \
+    | sort -r
+}
+
+stamp_of() {
+  s=${1#com.apple.TimeMachine.}
+  echo "${s%%.*}"
+}
+
+is_mounted() {
+  mount | grep -qF " on $1 "
+}
+
+case "${1:-}" in
+  -h|--help) usage 0 ;;
+
+  -l|--list)
+    i=0
+    snapshots | while read -r s; do
+      printf '%2d  %s\n' "$i" "$(stamp_of "$s")"
+      i=$((i + 1))
+    done
+    exit 0
+    ;;
+
+  -u|--umount|--unmount)
+    found=0
+    for m in "$PREFIX"*; do
+      [ -d "$m" ] || continue
+      found=1
+      if is_mounted "$m"; then
+        sudo umount "$m" && echo "unmounted $m"
+      fi
+      sudo rmdir "$m" 2>/dev/null
+    done
+    [ "$found" = 0 ] && echo "nothing mounted"
+    exit 0
+    ;;
+esac
+
+idx=${1:-0}
+case "$idx" in
+  ''|*[!0-9]*) echo "$SELF: index must be a number" >&2; usage 1 ;;
+esac
+
+snap=$(snapshots | sed -n "$((idx + 1))p")
+if [ -z "$snap" ]; then
+  echo "$SELF: no snapshot at index $idx -- try '$SELF -l'" >&2
+  exit 1
+fi
+
+stamp=$(stamp_of "$snap")
+mnt="${PREFIX}${stamp}"
+
+if is_mounted "$mnt"; then
+  echo "already mounted"
+else
+  sudo mkdir -p "$mnt" || exit 1
+  if ! sudo mount_apfs -o nobrowse,ro -s "$snap" "$DATA_VOL" "$mnt"; then
+    sudo rmdir "$mnt" 2>/dev/null
+    exit 1
+  fi
+fi
+
+echo
+echo "  snapshot   $stamp"
+echo "  mounted at $mnt"
+echo "  your home  $mnt/Users/$(id -un)"
+echo "  unmount    $SELF -u"
+echo

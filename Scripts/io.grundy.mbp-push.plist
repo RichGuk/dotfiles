@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>io.grundy.mbp-push</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/rich/Scripts/mbp-push</string>
+    </array>
+
+    <!-- Every 4h at :20. The 20:20 slot lands 40 min before atlantis's 21:00
+         push to prometheus, so each day's changes make that night's chain. -->
+    <key>StartCalendarInterval</key>
+    <array>
+        <dict><key>Hour</key><integer>0</integer><key>Minute</key><integer>20</integer></dict>
+        <dict><key>Hour</key><integer>4</integer><key>Minute</key><integer>20</integer></dict>
+        <dict><key>Hour</key><integer>8</integer><key>Minute</key><integer>20</integer></dict>
+        <dict><key>Hour</key><integer>12</integer><key>Minute</key><integer>20</integer></dict>
+        <dict><key>Hour</key><integer>16</integer><key>Minute</key><integer>20</integer></dict>
+        <dict><key>Hour</key><integer>20</integer><key>Minute</key><integer>20</integer></dict>
+    </array>
+
+    <key>LowPriorityIO</key>
+    <true/>
+
+    <key>Nice</key>
+    <integer>10</integer>
+
+    <key>StandardErrorPath</key>
+    <string>/Users/rich/Library/Logs/mbp-push.err</string>
+</dict>
+</plist>
