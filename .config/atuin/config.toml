@@ -53,7 +53,7 @@ sync_address = "http://atlantis.lan:8888"
 ## which search mode to use when atuin is invoked from a shell up-key binding
 ## the accepted values are identical to those of "search_mode"
 ## leave unspecified to use same mode set in "search_mode"
-# search_mode_shell_up_key_binding = "fuzzy"
+search_mode_shell_up_key_binding = "prefix"
 
 ## which filter mode to use for interactive search
 ## possible values: "global", "host", "session", "session-preload", "directory", "workspace"
@@ -63,7 +63,10 @@ filter_mode = "host"
 ## which filter mode to use when atuin is invoked from a shell up-key binding
 ## the accepted values are identical to those of "filter_mode"
 ## leave unspecified to use same mode set in "filter_mode"
-# filter_mode_shell_up_key_binding = "global"
+## "session" is only the current shell, so a fresh terminal starts empty.
+## "workspace" needs a recorded cwd, which imported history has none of --
+## revisit once atuin has captured a few weeks of its own entries.
+filter_mode_shell_up_key_binding = "host"
 
 ## With workspace filtering enabled, Atuin will filter for commands executed
 ## in any directory within a git repository tree (default: false).
@@ -84,7 +87,7 @@ filter_mode = "host"
 ## the maximum number of lines the interface should take up
 ## when atuin is invoked from a shell up-key binding
 ## the accepted values are identical to those of "inline_height"
-# inline_height_shell_up_key_binding = 0
+inline_height_shell_up_key_binding = 5
 
 ## Invert the UI - put the search bar at the top , Default to `false`
 # invert = false
