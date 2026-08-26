@@ -16,6 +16,8 @@ alias dots='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 alias vim='nvim'
 alias vi='nvim'
 
+alias ptemps='sensors k10temp-pci-00c3 it8665-isa-0290 nvme-pci-0100'
+
 # Separate herdr servers so work and personal project lists stay apart.
 # herdr-sessionizer scopes its picker to match HERDR_SESSION.
 alias hw='herdr --session work'
