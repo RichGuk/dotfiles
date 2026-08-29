@@ -1,0 +1,31 @@
+# Local-only overrides for this worktree. Gitignored (api/.gitignore).
+# `!reset` clears the base list; `!override` replaces it (plain merge appends).
+
+services:
+  api:
+    ports: !override
+      - "${API_PORT:-3000}:3000"
+
+  redis:
+    ports: !reset null
+
+  sidekiq:
+    ports: !reset null
+
+  sidekiq-shards:
+    ports: !reset null
+
+  elasticsearch:
+    ports: !reset null
+
+  kibana:
+    profiles: [search]
+
+  apm-server:
+    profiles: [search]
+
+  mailpit:
+    profiles: [mail]
+
+  spamassassin:
+    profiles: [mail]

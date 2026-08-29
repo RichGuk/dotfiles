@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+# Create a zeneducate worktree with an isolated dev environment, then open it as
+# a herdr workspace.
+#
+#   zen-worktree <branch> [--from <base>] [--repo <path>]
+#
+# Deliberately simpler than the team's ai_docs/skills/manage-worktree/setup.sh:
+# worktrees live outside the repo, every worktree gets its own database, and the
+# docker override drops every host port except the API — web reaches the API
+# through Vite's /dev-api proxy, so that is the only port that needs publishing.
+#
+# Ports are offset-based, matching the team convention:
+#   API  = 3000 + offset      (published, proxied to by Vite)
+#   WEB  = 8080 + offset      (Vite dev server, bound to all interfaces)
+# Everything else stays on the internal docker network.
+
+set -euo pipefail
+
+REPO="${HOME}/Dev/Work/zeneducate"
+WORKTREE_ROOT="${HOME}/Dev/Work/zeneducate-worktrees"
+OVERRIDE_SRC="${HOME}/Scripts/setup/zeneducate/docker-compose.override.yml"
+FROM_BASE=""
+BRANCH=""
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --from) FROM_BASE="$2"; shift 2 ;;
+        --repo) REPO="$2"; shift 2 ;;
+        -h | --help)
+            # BSD and GNU sed both understand this; \? would be GNU-only.
+            sed -n '2,17p' "$0" | sed -e 's/^# //' -e 's/^#$//'
+            exit 0
+            ;;
+        -*) echo "unknown flag: $1" >&2; exit 1 ;;
+        *) BRANCH="$1"; shift ;;
+    esac
+done
+
+[[ -n $BRANCH ]] || { echo "usage: zen-worktree <branch> [--from <base>]" >&2; exit 1; }
+[[ -d $REPO/.git ]] || { echo "not a git repo: $REPO" >&2; exit 1; }
+[[ -f $OVERRIDE_SRC ]] || { echo "missing override template: $OVERRIDE_SRC" >&2; exit 1; }
+
+# Branch names contain slashes; directories and postgres identifiers cannot.
+SLUG=$(printf '%s' "$BRANCH" | tr '/' '-' | tr -cd '[:alnum:]-_' | tr '[:upper:]' '[:lower:]')
+DB_SLUG=$(printf '%s' "$SLUG" | tr '-' '_')
+WORKTREE="$WORKTREE_ROOT/$SLUG"
+
+[[ -e $WORKTREE ]] && { echo "worktree already exists: $WORKTREE" >&2; exit 1; }
+
+# Lowest offset not already claimed by another worktree's API_PORT.
+offset=1
+while :; do
+    claimed=false
+    for env_file in "$WORKTREE_ROOT"/*/api/.env; do
+        [[ -f $env_file ]] || continue
+        if grep -qx "API_PORT=$((3000 + offset))" "$env_file" 2>/dev/null; then
+            claimed=true
+            break
+        fi
+    done
+    [[ $claimed == false ]] && break
+    ((offset++))
+done
+
+API_PORT=$((3000 + offset))
+WEB_PORT=$((8080 + offset))
+
+# Vite's allowedHosts matches the Host header, so allow both the bare hostname
+# and the .lan form — which one you get depends on how you typed the URL.
+HOSTNAME_SHORT=$(hostname -s 2>/dev/null || hostname)
+ALLOWED_HOSTS="localhost,${HOSTNAME_SHORT},${HOSTNAME_SHORT}.lan"
+
+# Upsert KEY=VALUE, replacing any existing definition.
+set_env_var() {
+    local file=$1 key=$2 value=$3
+    touch "$file"
+    if grep -q "^${key}=" "$file"; then
+        sed -i.bak "s|^${key}=.*|${key}=${value}|" "$file" && rm -f "${file}.bak"
+    else
+        printf '%s=%s\n' "$key" "$value" >>"$file"
+    fi
+}
+
+echo "worktree : $WORKTREE"
+echo "branch   : $BRANCH  (offset $offset)"
+echo "api      : $API_PORT   web: $WEB_PORT"
+
+mkdir -p "$WORKTREE_ROOT"
+
+if git -C "$REPO" show-ref --verify --quiet "refs/heads/$BRANCH"; then
+    git -C "$REPO" worktree add "$WORKTREE" "$BRANCH"
+elif [[ -n $FROM_BASE ]]; then
+    git -C "$REPO" worktree add "$WORKTREE" -b "$BRANCH" "$FROM_BASE"
+else
+    git -C "$REPO" worktree add "$WORKTREE" -b "$BRANCH"
+fi
+
+# --- api ---------------------------------------------------------------------
+if [[ -f $REPO/api/.env ]]; then
+    cp "$REPO/api/.env" "$WORKTREE/api/.env"
+fi
+set_env_var "$WORKTREE/api/.env" API_PORT "$API_PORT"
+set_env_var "$WORKTREE/api/.env" COMPOSE_PROJECT_NAME "zen_${DB_SLUG}"
+set_env_var "$WORKTREE/api/.env" DB_NAME "zen_${DB_SLUG}"
+set_env_var "$WORKTREE/api/.env" ALLOWED_HOSTS "$ALLOWED_HOSTS"
+
+cp "$OVERRIDE_SRC" "$WORKTREE/api/docker-compose.override.yml"
+
+# --- web ---------------------------------------------------------------------
+mkdir -p "$WORKTREE/web"
+set_env_var "$WORKTREE/web/.env.local" PORT "$WEB_PORT"
+set_env_var "$WORKTREE/web/.env.local" API_HOST "http://localhost:${API_PORT}"
+set_env_var "$WORKTREE/web/.env.local" ALLOWED_HOSTS "$ALLOWED_HOSTS"
+
+echo
+echo "  http://${HOSTNAME_SHORT}:${WEB_PORT}"
+echo "  cd $WORKTREE/api && bin/dc up      # if this branch needs its own API"
+echo
+
+# Reuse the sessionizer so the tab layout is defined in exactly one place.
+exec herdr-sessionizer "$WORKTREE"
