@@ -1,0 +1,58 @@
+# herdr configuration
+# Mapped to match the tmux muscle memory in .config/tmux/tmux.conf.
+
+[theme]
+name = "catppuccin"
+
+[keys]
+# tmux prefix is ^A, so keep it.
+prefix = "ctrl+a"
+
+# --- splits, matching tmux ---
+# tmux: bind v split-window -h  -> pane to the right
+split_vertical = "prefix+v"
+# tmux: bind s split-window -v  -> pane below.
+# herdr binds prefix+s to settings by default, so settings moves aside.
+split_horizontal = "prefix+s"
+settings = "prefix+shift+s"
+
+# tmux: bind x kill-pane
+close_pane = "prefix+x"
+
+# --- freeing up g and n for the popups below ---
+# herdr defaults: goto = prefix+g, next_tab = prefix+n. Both are herdr concepts
+# with no existing muscle memory, so they move rather than the popups.
+goto = "prefix+f"
+next_tab = "prefix+ctrl+n"
+
+# Jump straight to a workspace (project) by number, alongside prefix+1..9 for tabs.
+switch_workspace = "prefix+shift+1..9"
+
+# Cycle agents directly — the reason for using herdr at all.
+next_agent = "prefix+a"
+previous_agent = "prefix+shift+a"
+focus_agent = "prefix+alt+1..9"
+
+# --- popups, replacing the tmux display-popup workflow ---
+# tmux had prefix+g for a scratch terminal and prefix+n for notes, both via
+# ~/Scripts/tmux-popup-window attaching to a persistent popup-<project> session.
+# NOTE: herdr popups look to be ephemeral — a fresh process each time — rather
+# than reattaching to a persistent session, so shell history and nvim state may
+# not carry over between invocations. Worth checking in use.
+[[keys.command]]
+key = "prefix+g"
+type = "popup"
+command = "/bin/zsh"
+width = "90%"
+height = "80%"
+
+[[keys.command]]
+key = "prefix+n"
+type = "popup"
+command = "nvim notes.txt"
+width = "90%"
+height = "80%"
+
+[ui]
+# Sidebar is the whole point — keep it visible.
+sidebar_start_collapsed = false
