@@ -59,3 +59,7 @@ height = "80%"
 [ui]
 # Sidebar is the whole point — keep it visible.
 sidebar_start_collapsed = false
+
+show_agent_labels_on_pane_borders = false
+[ui.toast]
+delivery = "off"
