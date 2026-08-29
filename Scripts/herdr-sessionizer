@@ -35,10 +35,22 @@ existing=$(herdr workspace list 2>/dev/null |
         '.result.workspaces[]? | select(.label == $l) | .workspace_id' |
     head -1)
 
+# Tab layout for a fresh workspace. A new workspace already comes with one tab,
+# so the first name is a rename and the rest are creates.
+TABS=(Servers NeoVim Terminal Agent)
+
 if [[ -n $existing ]]; then
     herdr workspace focus "$existing" >/dev/null
 else
-    herdr workspace create --cwd "$selected" --label "$selected_name" --focus >/dev/null
+    created=$(herdr workspace create --cwd "$selected" --label "$selected_name" --focus)
+    workspace_id=$(jq -r '.result.workspace.workspace_id' <<<"$created")
+    first_tab=$(jq -r '.result.tab.tab_id' <<<"$created")
+
+    herdr tab rename "$first_tab" "${TABS[0]}" >/dev/null
+    for label in "${TABS[@]:1}"; do
+        herdr tab create --workspace "$workspace_id" --cwd "$selected" --label "$label" >/dev/null
+    done
+    herdr tab focus "$first_tab" >/dev/null
 fi
 
 # Run from a normal shell rather than inside herdr? Attach a client.
