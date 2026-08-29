@@ -8,3 +8,5 @@ export ZDOTDIR=${ZDOTDIR:=${HOME}/.config/zsh}
 typeset -U path
 path=($HOME/.local/bin $path)
 export PATH
+
+export LANG=${LANG:-en_GB.UTF-8}

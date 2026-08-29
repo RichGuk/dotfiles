@@ -4,6 +4,9 @@
 [theme]
 name = "catppuccin"
 
+[terminal]
+shell_mode = "login"
+
 [keys]
 # tmux prefix is ^A, so keep it.
 prefix = "ctrl+a"
