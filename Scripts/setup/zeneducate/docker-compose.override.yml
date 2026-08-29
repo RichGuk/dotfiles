@@ -6,6 +6,12 @@ services:
     ports: !override
       - "${API_PORT:-3000}:3000"
 
+  # The base file publishes ${DB_PORT:-5432}, so without this every worktree
+  # fights over host port 5432. Reach the database with api/bin/docker-psql
+  # instead of a published port.
+  db:
+    ports: !reset null
+
   redis:
     ports: !reset null
 
