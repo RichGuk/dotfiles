@@ -20,3 +20,13 @@ tmux-sessionizer-widget() {
 }
 zle -N tmux-sessionizer-widget
 bindkey '^f' tmux-sessionizer-widget
+
+# Same again for herdr, on the next key along. ^g's default is list-expand,
+# which is the cheapest binding to give up. Both exist while herdr is on trial.
+herdr-sessionizer-widget() {
+  zle push-line
+  BUFFER='herdr-sessionizer'
+  zle accept-line
+}
+zle -N herdr-sessionizer-widget
+bindkey '^g' herdr-sessionizer-widget
