@@ -74,12 +74,25 @@ else
 fi
 echo "removed  : worktree"
 
-if [[ -n $BRANCH ]]; then
-    if [[ $FORCE == true ]]; then
+# The repo squash-merges, so a merged branch is never an ancestor of main and
+# `git branch -d` always refuses. gh knows the PR state; ancestry is the fallback.
+branch_merged() {
+    local b=$1 state
+    if command -v gh >/dev/null 2>&1; then
+        state=$(cd "$REPO" && gh pr view "$b" --json state --jq .state 2>/dev/null || true)
+        [[ $state == MERGED ]] && return 0
+        [[ -n $state ]] && return 1
+    fi
+    git -C "$REPO" merge-base --is-ancestor "$b" origin/main 2>/dev/null
+}
+
+DEFAULT_BRANCH=$(git -C "$REPO" symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null | sed 's|^origin/||')
+
+if [[ -n $BRANCH && $BRANCH != "${DEFAULT_BRANCH:-main}" && $BRANCH != master ]]; then
+    git -C "$REPO" fetch --prune -q origin 2>/dev/null || true
+    if [[ $FORCE == true ]] || branch_merged "$BRANCH"; then
         git -C "$REPO" branch -D "$BRANCH" >/dev/null && echo "removed  : branch $BRANCH"
-    elif git -C "$REPO" branch -d "$BRANCH" >/dev/null 2>&1; then
-        echo "removed  : branch $BRANCH"
     else
-        echo "kept     : branch $BRANCH (unmerged — delete with -D)"
+        echo "kept     : branch $BRANCH (not merged — delete with --force)"
     fi
 fi
