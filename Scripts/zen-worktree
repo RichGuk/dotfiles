@@ -106,14 +106,19 @@ if command -v mise >/dev/null 2>&1; then
     mise trust --all --cd "$WORKTREE" >/dev/null
 fi
 
+# --- env files ---------------------------------------------------------------
+for dir in api web; do
+    [[ -d $REPO/$dir ]] || continue
+    mkdir -p "$WORKTREE/$dir"
+    for env_file in "$REPO/$dir"/.env*; do
+        [[ -f $env_file ]] || continue
+        case "$env_file" in *.example | *.sample) continue ;; esac
+        cp -p "$env_file" "$WORKTREE/$dir/$(basename "$env_file")"
+    done
+done
+
 # --- api ---------------------------------------------------------------------
-if [[ -f $REPO/api/.env ]]; then
-    cp "$REPO/api/.env" "$WORKTREE/api/.env"
-fi
 set_env_var "$WORKTREE/api/.env" API_PORT "$API_PORT"
-# Docker prefixes named volumes with the project name, so this alone gives the
-# worktree its own db-data and its own empty postgres — no DB_NAME needed. The
-# main checkout's 42GB production copy stays untouched.
 set_env_var "$WORKTREE/api/.env" COMPOSE_PROJECT_NAME "zen_${DB_SLUG}"
 set_env_var "$WORKTREE/api/.env" ALLOWED_HOSTS "$ALLOWED_HOSTS"
 
@@ -122,10 +127,6 @@ cp "$OVERRIDE_SRC" "$WORKTREE/api/docker-compose.override.yml"
 # --- web ---------------------------------------------------------------------
 mkdir -p "$WORKTREE/web"
 
-# node_modules is ~1.8G. If this branch has the same lockfile as the main
-# checkout the dependency trees are identical, so symlink rather than duplicate.
-# A differing lockfile gets its own install — npm writing into a shared tree
-# would corrupt the main checkout.
 if [[ -d $REPO/web/node_modules && ! -e $WORKTREE/web/node_modules ]]; then
     if cmp -s "$REPO/web/package-lock.json" "$WORKTREE/web/package-lock.json"; then
         ln -s "$REPO/web/node_modules" "$WORKTREE/web/node_modules"
