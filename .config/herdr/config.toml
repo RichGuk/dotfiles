@@ -8,30 +8,21 @@ name = "catppuccin"
 shell_mode = "login"
 
 [keys]
-# tmux prefix is ^A, so keep it.
-prefix = "ctrl+a"
+# ctrl+a stays free for beginning-of-line; herdr has no send-prefix, so sharing
+# it the way tmux did is not possible. Needs `stty -ixon` (see 00_misc.zsh).
+prefix = "ctrl+s"
 
-# --- splits, matching tmux ---
-# tmux: bind v split-window -h  -> pane to the right
 split_vertical = "prefix+v"
-# tmux: bind s split-window -v  -> pane below.
-# herdr binds prefix+s to settings by default, so settings moves aside.
 split_horizontal = "prefix+s"
 settings = "prefix+shift+s"
-
-# tmux: bind x kill-pane
 close_pane = "prefix+x"
 
-# --- freeing up g and n for the popups below ---
-# herdr defaults: goto = prefix+g, next_tab = prefix+n. Both are herdr concepts
-# with no existing muscle memory, so they move rather than the popups.
+# g and n belong to the popups below.
 goto = "prefix+f"
 next_tab = "prefix+ctrl+n"
 
-# Jump straight to a workspace (project) by number, alongside prefix+1..9 for tabs.
 switch_workspace = "prefix+shift+1..9"
 
-# Cycle agents directly — the reason for using herdr at all.
 next_agent = "prefix+a"
 previous_agent = "prefix+shift+a"
 focus_agent = "prefix+alt+1..9"
