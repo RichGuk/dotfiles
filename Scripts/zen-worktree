@@ -2,12 +2,16 @@
 # Create a zeneducate worktree with an isolated dev environment, then open it as
 # a herdr workspace.
 #
-#   zen-worktree <branch> [--from <base>] [--repo <path>]
+#   zen-worktree <branch> [--from <base>] [--repo <path>] [--no-shared-gems]
 #
 # Deliberately simpler than the team's ai_docs/skills/manage-worktree/setup.sh:
 # worktrees live outside the repo, every worktree gets its own database, and the
 # docker override drops every host port except the API — web reaches the API
 # through Vite's /dev-api proxy, so that is the only port that needs publishing.
+#
+# Gems are shared with the main checkout by default, since bundler installs
+# versions side by side and most branches do not touch the Gemfile. Pass
+# --no-shared-gems for a private volume when churn is likely (Rails upgrades).
 #
 # Ports are offset-based, matching the team convention:
 #   API  = 3000 + offset      (published, proxied to by Vite)
@@ -21,14 +25,16 @@ WORKTREE_ROOT="${HOME}/Dev/Work/zeneducate-worktrees"
 OVERRIDE_SRC="${HOME}/Scripts/setup/zeneducate/docker-compose.override.yml"
 FROM_BASE=""
 BRANCH=""
+SHARED_GEMS=true
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --from) FROM_BASE="$2"; shift 2 ;;
         --repo) REPO="$2"; shift 2 ;;
+        --no-shared-gems) SHARED_GEMS=false; shift ;;
         -h | --help)
             # BSD and GNU sed both understand this; \? would be GNU-only.
-            sed -n '2,17p' "$0" | sed -e 's/^# //' -e 's/^#$//'
+            sed -n '2,21p' "$0" | sed -e 's/^# //' -e 's/^#$//'
             exit 0
             ;;
         -*) echo "unknown flag: $1" >&2; exit 1 ;;
@@ -123,6 +129,33 @@ set_env_var "$WORKTREE/api/.env" COMPOSE_PROJECT_NAME "zen_${DB_SLUG}"
 set_env_var "$WORKTREE/api/.env" ALLOWED_HOSTS "$ALLOWED_HOSTS"
 
 cp "$OVERRIDE_SRC" "$WORKTREE/api/docker-compose.override.yml"
+
+# Point bundle_path at the main checkout's gem volume rather than installing
+# ~1.2GB again. Named after main's COMPOSE_PROJECT_NAME, since that is what
+# docker prefixes its volumes with.
+if [[ $SHARED_GEMS == true ]]; then
+    main_project=$(sed -n 's/^COMPOSE_PROJECT_NAME=//p' "$REPO/api/.env" 2>/dev/null | head -1)
+    main_project=${main_project:-$(basename "$REPO")}
+    shared_volume="${main_project}_bundle_path"
+
+    if docker volume inspect "$shared_volume" >/dev/null 2>&1; then
+        cat >>"$WORKTREE/api/docker-compose.override.yml" <<EOF
+
+# Share the main checkout's gems. Bundler installs versions side by side, so a
+# branch with extra gems adds to the pool rather than breaking main. Delete this
+# block (or re-run with --no-shared-gems) for a private volume.
+volumes:
+  bundle_path:
+    external: true
+    name: ${shared_volume}
+EOF
+        echo "gems     : shared from ${shared_volume}"
+    else
+        echo "gems     : ${shared_volume} not found — using a private volume"
+    fi
+else
+    echo "gems     : private volume (--no-shared-gems)"
+fi
 
 # --- web ---------------------------------------------------------------------
 mkdir -p "$WORKTREE/web"
