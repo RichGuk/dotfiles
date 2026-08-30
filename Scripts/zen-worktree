@@ -85,12 +85,18 @@ echo "api      : $API_PORT   web: $WEB_PORT"
 
 mkdir -p "$WORKTREE_ROOT"
 
-if git -C "$REPO" show-ref --verify --quiet "refs/heads/$BRANCH"; then
+if [[ -n $FROM_BASE ]]; then
+    git -C "$REPO" rev-parse --verify --quiet "$FROM_BASE^{commit}" >/dev/null ||
+        { echo "unknown base: $FROM_BASE" >&2; exit 1; }
+    if git -C "$REPO" show-ref --verify --quiet "refs/heads/$BRANCH"; then
+        echo "branch $BRANCH already exists — drop --from to use it, or delete it first" >&2
+        exit 1
+    fi
+    git -C "$REPO" worktree add "$WORKTREE" -b "$BRANCH" "$FROM_BASE"
+elif git -C "$REPO" show-ref --verify --quiet "refs/heads/$BRANCH"; then
     git -C "$REPO" worktree add "$WORKTREE" "$BRANCH"
 elif git -C "$REPO" show-ref --verify --quiet "refs/remotes/origin/$BRANCH"; then
     git -C "$REPO" worktree add --track -b "$BRANCH" "$WORKTREE" "origin/$BRANCH"
-elif [[ -n $FROM_BASE ]]; then
-    git -C "$REPO" worktree add "$WORKTREE" -b "$BRANCH" "$FROM_BASE"
 else
     git -C "$REPO" worktree add "$WORKTREE" -b "$BRANCH"
 fi

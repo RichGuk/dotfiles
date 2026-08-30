@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+# Tear down a zeneducate worktree: docker volumes, herdr workspace, checkout,
+# branch. The shared gem volume is external, so `down -v` leaves it alone.
+#
+#   zen-worktree-cleanup <branch|slug> [--force] [--repo <path>]
+#
+# Without --force this refuses to drop uncommitted changes or unmerged branches.
+
+set -euo pipefail
+
+REPO="${HOME}/Dev/Work/zeneducate"
+WORKTREE_ROOT="${HOME}/Dev/Work/zeneducate-worktrees"
+FORCE=false
+TARGET=""
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --repo) REPO="$2"; shift 2 ;;
+        --force | -f) FORCE=true; shift ;;
+        -h | --help)
+            sed -n '2,7p' "$0" | sed -e 's/^# //' -e 's/^#$//'
+            exit 0
+            ;;
+        -*) echo "unknown flag: $1" >&2; exit 1 ;;
+        *) TARGET="$1"; shift ;;
+    esac
+done
+
+[[ -n $TARGET ]] || { echo "usage: zen-worktree-cleanup <branch|slug> [--force]" >&2; exit 1; }
+
+SLUG=$(printf '%s' "$TARGET" | tr '/' '-' | tr -cd '[:alnum:]-_' | tr '[:upper:]' '[:lower:]')
+WORKTREE="$WORKTREE_ROOT/$SLUG"
+
+[[ -d $WORKTREE ]] || { echo "no worktree at $WORKTREE" >&2; exit 1; }
+[[ $WORKTREE == "$WORKTREE_ROOT"/* ]] || { echo "refusing: $WORKTREE is outside $WORKTREE_ROOT" >&2; exit 1; }
+[[ $(realpath "$WORKTREE") != $(realpath "$REPO") ]] || { echo "refusing to remove the main checkout" >&2; exit 1; }
+
+BRANCH=$(git -C "$WORKTREE" branch --show-current 2>/dev/null || true)
+
+DIRTY=$(git -C "$WORKTREE" status --porcelain 2>/dev/null || true)
+if [[ -n $DIRTY && $FORCE == false ]]; then
+    echo "$WORKTREE has uncommitted changes — commit them or pass --force" >&2
+    exit 1
+fi
+
+echo "worktree : $WORKTREE"
+echo "branch   : ${BRANCH:-<detached>}"
+[[ -n $DIRTY ]] && echo "changes  : UNCOMMITTED (discarding)"
+docker volume ls -q 2>/dev/null | grep -E "^zen_$(printf '%s' "$SLUG" | tr '-' '_')_" | sed 's/^/volume   : /' || true
+
+if [[ $FORCE == false ]]; then
+    [[ -t 0 ]] || { echo "not a tty — pass --force" >&2; exit 1; }
+    read -r -p "remove all of the above? [y/N] " reply
+    [[ $reply == [yY] ]] || { echo "aborted"; exit 0; }
+fi
+
+if [[ -f $WORKTREE/api/docker-compose.yml ]]; then
+    (cd "$WORKTREE/api" && docker compose down -v --remove-orphans >/dev/null 2>&1) || true
+    echo "removed  : containers and volumes"
+fi
+
+if command -v herdr >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
+    ws=$(herdr workspace list 2>/dev/null |
+        jq -r --arg l "$SLUG" '.result.workspaces[]? | select(.label == $l) | .workspace_id' | head -1)
+    if [[ -n ${ws:-} ]]; then
+        herdr workspace close "$ws" >/dev/null 2>&1 && echo "removed  : herdr workspace $ws"
+    fi
+fi
+
+if [[ $FORCE == true ]]; then
+    git -C "$REPO" worktree remove --force "$WORKTREE"
+else
+    git -C "$REPO" worktree remove "$WORKTREE"
+fi
+echo "removed  : worktree"
+
+if [[ -n $BRANCH ]]; then
+    if [[ $FORCE == true ]]; then
+        git -C "$REPO" branch -D "$BRANCH" >/dev/null && echo "removed  : branch $BRANCH"
+    elif git -C "$REPO" branch -d "$BRANCH" >/dev/null 2>&1; then
+        echo "removed  : branch $BRANCH"
+    else
+        echo "kept     : branch $BRANCH (unmerged — delete with -D)"
+    fi
+fi
