@@ -1,22 +1,11 @@
 #!/usr/bin/env bash
-# Create a zeneducate worktree with an isolated dev environment, then open it as
-# a herdr workspace.
+# Create a zeneducate worktree with an isolated dev env, then open it in herdr.
 #
 #   zen-worktree <branch> [--from <base>] [--repo <path>] [--no-shared-gems]
 #
-# Deliberately simpler than the team's ai_docs/skills/manage-worktree/setup.sh:
-# worktrees live outside the repo, every worktree gets its own database, and the
-# docker override drops every host port except the API — web reaches the API
-# through Vite's /dev-api proxy, so that is the only port that needs publishing.
-#
-# Gems are shared with the main checkout by default, since bundler installs
-# versions side by side and most branches do not touch the Gemfile. Pass
-# --no-shared-gems for a private volume when churn is likely (Rails upgrades).
-#
-# Ports are offset-based, matching the team convention:
-#   API  = 3000 + offset      (published, proxied to by Vite)
-#   WEB  = 8080 + offset      (Vite dev server, bound to all interfaces)
-# Everything else stays on the internal docker network.
+# Ports are offset-based: API 3000+n (published), web 8080+n. Everything else
+# stays on the docker network — web reaches the API via Vite's /dev-api proxy.
+# Gems are shared with the main checkout unless --no-shared-gems.
 
 set -euo pipefail
 
@@ -33,8 +22,7 @@ while [[ $# -gt 0 ]]; do
         --repo) REPO="$2"; shift 2 ;;
         --no-shared-gems) SHARED_GEMS=false; shift ;;
         -h | --help)
-            # BSD and GNU sed both understand this; \? would be GNU-only.
-            sed -n '2,21p' "$0" | sed -e 's/^# //' -e 's/^#$//'
+            sed -n '2,8p' "$0" | sed -e 's/^# //' -e 's/^#$//'
             exit 0
             ;;
         -*) echo "unknown flag: $1" >&2; exit 1 ;;
@@ -46,37 +34,41 @@ done
 [[ -d $REPO/.git ]] || { echo "not a git repo: $REPO" >&2; exit 1; }
 [[ -f $OVERRIDE_SRC ]] || { echo "missing override template: $OVERRIDE_SRC" >&2; exit 1; }
 
-# Branch names contain slashes; directories and postgres identifiers cannot.
 SLUG=$(printf '%s' "$BRANCH" | tr '/' '-' | tr -cd '[:alnum:]-_' | tr '[:upper:]' '[:lower:]')
 DB_SLUG=$(printf '%s' "$SLUG" | tr '-' '_')
 WORKTREE="$WORKTREE_ROOT/$SLUG"
 
 [[ -e $WORKTREE ]] && { echo "worktree already exists: $WORKTREE" >&2; exit 1; }
 
-# Lowest offset not already claimed by another worktree's API_PORT.
-offset=1
-while :; do
-    claimed=false
-    for env_file in "$WORKTREE_ROOT"/*/api/.env; do
-        [[ -f $env_file ]] || continue
-        if grep -qx "API_PORT=$((3000 + offset))" "$env_file" 2>/dev/null; then
-            claimed=true
-            break
-        fi
-    done
-    [[ $claimed == false ]] && break
-    ((offset++))
+# Offset is derived, not stored, so removing a worktree frees its number.
+# Sibling checkouts are scanned too — hand-made worktrees live beside the repo.
+claimed_ports=" "
+for env_file in "$WORKTREE_ROOT"/*/api/.env "$(dirname "$REPO")"/*/api/.env; do
+    [[ -f $env_file ]] || continue
+    port=$(sed -n 's/^API_PORT=//p' "$env_file" | head -1)
+    [[ -n $port ]] && claimed_ports+="$port "
 done
+
+port_taken() {
+    local p=$1
+    [[ $claimed_ports == *" $p "* ]] && return 0
+    if command -v ss >/dev/null 2>&1; then
+        ss -ltn 2>/dev/null | grep -qE "[:.]${p}[[:space:]]" && return 0
+    elif command -v lsof >/dev/null 2>&1; then
+        lsof -nP -iTCP:"$p" -sTCP:LISTEN >/dev/null 2>&1 && return 0
+    fi
+    return 1
+}
+
+offset=1
+while port_taken $((3000 + offset)); do ((offset++)); done
 
 API_PORT=$((3000 + offset))
 WEB_PORT=$((8080 + offset))
 
-# Vite's allowedHosts matches the Host header, so allow both the bare hostname
-# and the .lan form — which one you get depends on how you typed the URL.
 HOSTNAME_SHORT=$(hostname -s 2>/dev/null || hostname)
 ALLOWED_HOSTS="localhost,${HOSTNAME_SHORT},${HOSTNAME_SHORT}.lan"
 
-# Upsert KEY=VALUE, replacing any existing definition.
 set_env_var() {
     local file=$1 key=$2 value=$3
     touch "$file"
@@ -94,11 +86,8 @@ echo "api      : $API_PORT   web: $WEB_PORT"
 mkdir -p "$WORKTREE_ROOT"
 
 if git -C "$REPO" show-ref --verify --quiet "refs/heads/$BRANCH"; then
-    # Existing local branch.
     git -C "$REPO" worktree add "$WORKTREE" "$BRANCH"
 elif git -C "$REPO" show-ref --verify --quiet "refs/remotes/origin/$BRANCH"; then
-    # Exists on origin only — create a local branch that tracks it, rather than
-    # an unrelated branch that happens to share the name.
     git -C "$REPO" worktree add --track -b "$BRANCH" "$WORKTREE" "origin/$BRANCH"
 elif [[ -n $FROM_BASE ]]; then
     git -C "$REPO" worktree add "$WORKTREE" -b "$BRANCH" "$FROM_BASE"
@@ -106,13 +95,11 @@ else
     git -C "$REPO" worktree add "$WORKTREE" -b "$BRANCH"
 fi
 
-# A fresh checkout's mise.toml and .tool-versions are untrusted, so mise ignores
-# them with a warning until told otherwise. --all covers both files at once.
 if command -v mise >/dev/null 2>&1; then
     mise trust --all --cd "$WORKTREE" >/dev/null
 fi
 
-# --- env files ---------------------------------------------------------------
+# --- env files ---
 for dir in api web; do
     [[ -d $REPO/$dir ]] || continue
     mkdir -p "$WORKTREE/$dir"
@@ -123,16 +110,13 @@ for dir in api web; do
     done
 done
 
-# --- api ---------------------------------------------------------------------
+# --- api ---
 set_env_var "$WORKTREE/api/.env" API_PORT "$API_PORT"
 set_env_var "$WORKTREE/api/.env" COMPOSE_PROJECT_NAME "zen_${DB_SLUG}"
 set_env_var "$WORKTREE/api/.env" ALLOWED_HOSTS "$ALLOWED_HOSTS"
 
 cp "$OVERRIDE_SRC" "$WORKTREE/api/docker-compose.override.yml"
 
-# Point bundle_path at the main checkout's gem volume rather than installing
-# ~1.2GB again. Named after main's COMPOSE_PROJECT_NAME, since that is what
-# docker prefixes its volumes with.
 if [[ $SHARED_GEMS == true ]]; then
     main_project=$(sed -n 's/^COMPOSE_PROJECT_NAME=//p' "$REPO/api/.env" 2>/dev/null | head -1)
     main_project=${main_project:-$(basename "$REPO")}
@@ -141,9 +125,7 @@ if [[ $SHARED_GEMS == true ]]; then
     if docker volume inspect "$shared_volume" >/dev/null 2>&1; then
         cat >>"$WORKTREE/api/docker-compose.override.yml" <<EOF
 
-# Share the main checkout's gems. Bundler installs versions side by side, so a
-# branch with extra gems adds to the pool rather than breaking main. Delete this
-# block (or re-run with --no-shared-gems) for a private volume.
+# Delete this block for a private gem volume.
 volumes:
   bundle_path:
     external: true
@@ -157,7 +139,7 @@ else
     echo "gems     : private volume (--no-shared-gems)"
 fi
 
-# --- web ---------------------------------------------------------------------
+# --- web ---
 mkdir -p "$WORKTREE/web"
 
 if [[ -d $REPO/web/node_modules && ! -e $WORKTREE/web/node_modules ]]; then
@@ -168,14 +150,14 @@ if [[ -d $REPO/web/node_modules && ! -e $WORKTREE/web/node_modules ]]; then
         echo "modules  : lockfile differs — run 'npm ci' in $WORKTREE/web"
     fi
 fi
+
 set_env_var "$WORKTREE/web/.env.local" PORT "$WEB_PORT"
 set_env_var "$WORKTREE/web/.env.local" API_HOST "http://localhost:${API_PORT}"
 set_env_var "$WORKTREE/web/.env.local" ALLOWED_HOSTS "$ALLOWED_HOSTS"
 
 echo
 echo "  http://${HOSTNAME_SHORT}:${WEB_PORT}"
-echo "  cd $WORKTREE/api && bin/dc up      # if this branch needs its own API"
+echo "  cd $WORKTREE/api && bin/dc up"
 echo
 
-# Reuse the sessionizer so the tab layout is defined in exactly one place.
 exec herdr-sessionizer "$WORKTREE"

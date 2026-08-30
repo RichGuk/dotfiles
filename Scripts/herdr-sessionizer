@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
-# herdr equivalent of tmux-sessionizer. Pick a project directory and jump to
-# (or create) a herdr workspace for it. Bind to ^f in zsh, same as the tmux one.
-#
-# tmux sessions map onto herdr *workspaces* — the per-project container.
-# Workspaces are addressed by id (w1, w2, ...), not by name, so this looks one
-# up by label before deciding whether to focus or create.
+# herdr equivalent of tmux-sessionizer. A tmux session maps onto a herdr
+# workspace, which is addressed by id rather than name — hence the lookup.
 
 if [[ $# -eq 1 ]]; then
     selected=$1
@@ -20,8 +16,6 @@ fi
 
 selected_name=$(basename "$selected" | tr . _)
 
-# The CLI talks to the server over a socket, so it needs one running before any
-# workspace command will work.
 if ! herdr status server 2>/dev/null | grep -q 'status: running'; then
     (herdr server >/dev/null 2>&1 &)
     for _ in 1 2 3 4 5 6 7 8 9 10; do
@@ -35,8 +29,6 @@ existing=$(herdr workspace list 2>/dev/null |
         '.result.workspaces[]? | select(.label == $l) | .workspace_id' |
     head -1)
 
-# Tab layout for a fresh workspace. A new workspace already comes with one tab,
-# so the first name is a rename and the rest are creates.
 TABS=(Servers NeoVim Terminal Agent)
 
 if [[ -n $existing ]]; then
@@ -53,8 +45,6 @@ else
     herdr tab focus "$first_tab" >/dev/null
 fi
 
-# Run from a normal shell rather than inside herdr? Attach a client.
-# HERDR_PANE_ID is herdr's equivalent of $TMUX.
 if [[ -z $HERDR_PANE_ID ]]; then
     exec herdr
 fi
