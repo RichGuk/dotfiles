@@ -10,3 +10,7 @@ path=($HOME/.local/bin $path)
 export PATH
 
 export LANG=${LANG:-en_GB.UTF-8}
+
+if [[ "$OSTYPE" != darwin* && -S "$HOME/.ssh/agent.sock" ]]; then
+  export SSH_AUTH_SOCK="$HOME/.ssh/agent.sock"
+fi

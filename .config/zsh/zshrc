@@ -30,7 +30,7 @@ unset config_file
 eval "$(mise activate zsh)"
 eval "$(mise completion zsh)"
 
-if [[ -z "$SSH_AUTH_SOCK" ]]; then
+if [[ -z "$SSH_AUTH_SOCK" || ! -S "$SSH_AUTH_SOCK" ]]; then
   cache_file="$HOME/.cache/ssh-agent.env"
 
   if [[ -f "$cache_file" ]]; then
