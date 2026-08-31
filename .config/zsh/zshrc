@@ -49,6 +49,21 @@ if [[ -z "$SSH_AUTH_SOCK" || ! -S "$SSH_AUTH_SOCK" ]]; then
   fi
 fi
 
+if [[ "$OSTYPE" != darwin* ]]; then
+  _agent_relink() {
+    local s="$HOME/.ssh/agent.sock"
+    if [[ -L $s && ! -S $s ]]; then
+      sh "$HOME/.ssh/rc" 2>/dev/null
+    fi
+    if [[ -S $s && $SSH_AUTH_SOCK != $s ]]; then
+      export SSH_AUTH_SOCK=$s
+    fi
+    return 0
+  }
+  autoload -Uz add-zsh-hook
+  add-zsh-hook precmd _agent_relink
+fi
+
 export GPG_TTY=$TTY
 
 (( $+commands[atuin] )) && eval "$(atuin init zsh)"
