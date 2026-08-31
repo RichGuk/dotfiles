@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -uo pipefail
+
+usage() {
+  cat <<'EOF'
+Usage: refresh-agent [--export|--print]
+
+Locates a live ssh-agent socket. Agent sockets move between SSH sessions, so an
+inherited SSH_AUTH_SOCK frequently points at a dead one and ssh then reports a
+missing identity rather than a stale socket.
+
+  --export  (default) emit an eval-able `export SSH_AUTH_SOCK=...`
+  --print   emit the bare socket path
+
+Exits 1 if no reachable agent holding identities is found.
+EOF
+}
+
+mode=export
+case "${1:-}" in
+  --print|-p) mode=print ;;
+  --export|-e|'') mode=export ;;
+  -h|--help) usage; exit 0 ;;
+  *) usage >&2; exit 2 ;;
+esac
+
+while IFS= read -r sock; do
+  [ -S "$sock" ] || continue
+  if SSH_AUTH_SOCK="$sock" ssh-add -l >/dev/null 2>&1; then
+    case "$mode" in
+      print) printf '%s\n' "$sock" ;;
+      export) printf 'export SSH_AUTH_SOCK=%q\n' "$sock" ;;
+    esac
+    exit 0
+  fi
+done < <(find "$HOME/.ssh/agent" /tmp "/run/user/$(id -u)" \
+           -maxdepth 2 -type s \( -name 's.*' -o -name 'agent.*' \) 2>/dev/null)
+
+echo "refresh-agent: no live SSH agent socket found." >&2
+exit 1
