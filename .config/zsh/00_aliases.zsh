@@ -15,3 +15,9 @@ alias dots='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 
 alias vim='nvim'
 alias vi='nvim'
+
+# Separate herdr servers so work and personal project lists stay apart.
+# herdr-sessionizer scopes its picker to match HERDR_SESSION.
+alias hw='herdr --session work'
+alias hp='herdr --session personal'
+alias hwr='herdr --remote atlantis.work --session work'

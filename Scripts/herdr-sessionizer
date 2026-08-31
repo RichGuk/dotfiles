@@ -2,12 +2,25 @@
 # herdr equivalent of tmux-sessionizer. A tmux session maps onto a herdr
 # workspace, which is addressed by id rather than name — hence the lookup.
 
+# Named sessions are separate servers, so scope the picker to match — otherwise
+# the work session still offers personal projects. Anything else keeps the
+# tmux-sessionizer behaviour, where FULL_DOTFILES adds the Dev directories.
+case "${HERDR_SESSION:-}" in
+    work) roots=(~/Dev/Work) ;;
+    personal) roots=(~/Dev/Personal) ;;
+    *)
+        if [[ -z $FULL_DOTFILES ]]; then
+            roots=(~/ ~/.config)
+        else
+            roots=(~/Dev/Work ~/Dev/Personal ~/ ~/.config)
+        fi
+        ;;
+esac
+
 if [[ $# -eq 1 ]]; then
     selected=$1
-elif [[ -z $FULL_DOTFILES ]]; then
-    selected=$(find ~/ ~/.config -mindepth 1 -maxdepth 1 -type d | fzf)
 else
-    selected=$(find ~/Dev/Work ~/Dev/Personal ~/ ~/.config -mindepth 1 -maxdepth 1 -type d 2>/dev/null | fzf)
+    selected=$(find "${roots[@]}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | fzf)
 fi
 
 if [[ -z $selected ]]; then
