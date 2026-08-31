@@ -148,10 +148,25 @@ fi
 # --- web ---
 mkdir -p "$WORKTREE/web"
 
+# A symlink resolves to a path outside the worktree, which Vite's
+# server.fs.allow rejects. A copy-on-write clone is a real directory inside it
+# and costs almost nothing: btrfs reflink, or clonefile on APFS.
+clone_dir() {
+    local src=$1 dst=$2
+    cp -a --reflink=always "$src" "$dst" 2>/dev/null && return 0
+    rm -rf "$dst"
+    cp -ac "$src" "$dst" 2>/dev/null && return 0
+    rm -rf "$dst"
+    return 1
+}
+
 if [[ -d $REPO/web/node_modules && ! -e $WORKTREE/web/node_modules ]]; then
     if cmp -s "$REPO/web/package-lock.json" "$WORKTREE/web/package-lock.json"; then
-        ln -s "$REPO/web/node_modules" "$WORKTREE/web/node_modules"
-        echo "modules  : symlinked from main (lockfiles match)"
+        if clone_dir "$REPO/web/node_modules" "$WORKTREE/web/node_modules"; then
+            echo "modules  : cloned from main (copy-on-write)"
+        else
+            echo "modules  : no CoW support here — run 'npm ci' in $WORKTREE/web"
+        fi
     else
         echo "modules  : lockfile differs — run 'npm ci' in $WORKTREE/web"
     fi
