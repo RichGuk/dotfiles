@@ -1,3 +1,4 @@
+onboarding = false
 # herdr configuration
 # Mapped to match the tmux muscle memory in .config/tmux/tmux.conf.
 
