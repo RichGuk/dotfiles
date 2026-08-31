@@ -1,6 +1,6 @@
 after-login-command = []
 after-startup-command = [
-  'exec-and-forget borders active_color=0xffcba6f7 inactive_color=0xff1e1e2e width=3.0 blacklist="Finder,System Settings,VLC,Loom,Todoist"'
+  'exec-and-forget borders active_color=0xffcba6f7 inactive_color=0xff1e1e2e width=5.0 blacklist="Finder,System Settings,VLC,Loom,Todoist"'
 ]
 
 exec-on-workspace-change = ['/bin/bash', '-c',
@@ -10,10 +10,7 @@ exec-on-workspace-change = ['/bin/bash', '-c',
 start-at-login = false
 
 # Normalizations. See: https://nikitabobko.github.io/AeroSpace/guide#normalization
-# Off so splits nest like yabai's bsp and Hyprland's dwindle: focus a window,
-# open another, and it splits that window rather than flattening to siblings.
-# Set back to true if trees start accumulating redundant containers.
-enable-normalization-flatten-containers = false
+enable-normalization-flatten-containers = true
 enable-normalization-opposite-orientation-for-nested-containers = true
 
 # See: https://nikitabobko.github.io/AeroSpace/guide#layouts
@@ -22,7 +19,7 @@ enable-normalization-opposite-orientation-for-nested-containers = true
 # Nothing is bound to accordion any more, but keep this non-zero so that if a
 # workspace ever ends up in it, the offset edges make it obvious rather than
 # looking like windows stacking behind each other.
-accordion-padding = 30
+accordion-padding = 300
 
 # Possible values: tiles|accordion
 default-root-container-layout = 'tiles'
@@ -136,14 +133,7 @@ automatically-unhide-macos-hidden-apps = true
     # while the normalizations are on, so toggle the container orientation
     # instead — same practical effect on where the next window lands.
     alt-slash = 'layout tiles horizontal vertical'
-
-    # yabai parity: shift+alt z/x switched the space layout (bsp/float).
-    # The stack/accordion binding is dropped — never used in yabai either, and
-    # it was easy to hit by accident.
-    # Note: yabai floated the whole space; AeroSpace only floats the focused
-    # window, so alt-shift-x is the closest available equivalent, not identical.
-    alt-shift-z = ['layout tiles horizontal vertical', 'exec-and-forget sketchybar --trigger mode_change']
-    alt-shift-x = ['layout floating', 'exec-and-forget sketchybar --trigger mode_change']
+    alt-comma = 'layout accordion horizontal vertical'
 
     # yabai parity: alt-f was `window --toggle float --grid 4:4:1:1:2:2`.
     # AeroSpace has no grid placement, so this is float/tile toggle only.
@@ -184,26 +174,6 @@ automatically-unhide-macos-hidden-apps = true
     ctrl-alt-cmd-9 = 'workspace 9'
     ctrl-alt-cmd-q = 'workspace Q'
     ctrl-alt-cmd-w = 'workspace W'
-    # ctrl-alt-cmd-e = 'workspace E'
-    # alt-a = 'workspace A' # In your config, you can drop workspace bindings that you don't need
-    # alt-b = 'workspace B'
-    # alt-c = 'workspace C'
-    # alt-d = 'workspace D'
-    # alt-f = 'workspace F'
-    # alt-g = 'workspace G'
-    # alt-i = 'workspace I'
-    # alt-m = 'workspace M'
-    # alt-n = 'workspace N'
-    # alt-o = 'workspace O'
-    # alt-p = 'workspace P'
-    # alt-r = 'workspace R'
-    # alt-s = 'workspace S'
-    # alt-t = 'workspace T'
-    # alt-u = 'workspace U'
-    # alt-v = 'workspace V'
-    # alt-x = 'workspace X'
-    # alt-y = 'workspace Y'
-    # alt-z = 'workspace Z'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
     # Moved off alt-shift-N onto ctrl-alt-cmd-shift-N (HYPER) to match the yabai binding
@@ -222,27 +192,6 @@ automatically-unhide-macos-hidden-apps = true
     ctrl-alt-cmd-shift-9 = ['move-node-to-workspace 9', 'workspace 9']
     ctrl-alt-cmd-shift-q = ['move-node-to-workspace Q', 'workspace Q']
     ctrl-alt-cmd-shift-w = ['move-node-to-workspace W', 'workspace W']
-    # alt-shift-e = ['move-node-to-workspace E', 'workspace E']
-
-    # alt-shift-a = 'move-node-to-workspace A'
-    # alt-shift-b = 'move-node-to-workspace B'
-    # alt-shift-c = 'move-node-to-workspace C'
-    # alt-shift-d = 'move-node-to-workspace D'
-    # alt-shift-f = 'move-node-to-workspace F'
-    # alt-shift-g = 'move-node-to-workspace G'
-    # alt-shift-i = 'move-node-to-workspace I'
-    # alt-shift-m = 'move-node-to-workspace M'
-    # alt-shift-n = 'move-node-to-workspace N'
-    # alt-shift-o = 'move-node-to-workspace O'
-    # alt-shift-p = 'move-node-to-workspace P'
-    # alt-shift-r = 'move-node-to-workspace R'
-    # alt-shift-s = 'move-node-to-workspace S'
-    # alt-shift-t = 'move-node-to-workspace T'
-    # alt-shift-u = 'move-node-to-workspace U'
-    # alt-shift-v = 'move-node-to-workspace V'
-    # alt-shift-x = 'move-node-to-workspace X'
-    # alt-shift-y = 'move-node-to-workspace Y'
-    # alt-shift-z = 'move-node-to-workspace Z'
 
     # alt-f = ['layout floating tiling', 'mode main']
     alt-m = 'fullscreen'

@@ -1,5 +1,12 @@
 setopt extended_glob # shell-wide; also needed for the glob qualifier below
 
+# Apple Silicon brew installs here, and it is not on the default fpath, so none
+# of its completions were reachable. An `if` rather than `&&` so the failed test
+# does not leave $? as 1 on Linux, which would make the first prompt red.
+if [[ -d /opt/homebrew/share/zsh/site-functions ]]; then
+  fpath=(/opt/homebrew/share/zsh/site-functions $fpath)
+fi
+
 autoload -Uz compinit bashcompinit
 
 # Full security check at most once a day, otherwise trust the cached dump.
