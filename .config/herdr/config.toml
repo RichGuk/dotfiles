@@ -17,35 +17,11 @@ split_horizontal = "prefix+s"
 settings = "prefix+shift+s"
 close_pane = "prefix+x"
 
-# g and n belong to the popups below.
-goto = "prefix+f"
-next_tab = "prefix+ctrl+n"
-
 switch_workspace = "prefix+shift+1..9"
 
 next_agent = "prefix+a"
 previous_agent = "prefix+shift+a"
 focus_agent = "prefix+alt+1..9"
-
-# --- popups, replacing the tmux display-popup workflow ---
-# tmux had prefix+g for a scratch terminal and prefix+n for notes, both via
-# ~/Scripts/tmux-popup-window attaching to a persistent popup-<project> session.
-# NOTE: herdr popups look to be ephemeral — a fresh process each time — rather
-# than reattaching to a persistent session, so shell history and nvim state may
-# not carry over between invocations. Worth checking in use.
-[[keys.command]]
-key = "prefix+g"
-type = "popup"
-command = "/bin/zsh"
-width = "90%"
-height = "80%"
-
-[[keys.command]]
-key = "prefix+n"
-type = "popup"
-command = "nvim notes.txt"
-width = "90%"
-height = "80%"
 
 [ui]
 # Sidebar is the whole point — keep it visible.
