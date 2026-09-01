@@ -31,3 +31,25 @@ sidebar_start_collapsed = false
 show_agent_labels_on_pane_borders = false
 [ui.toast]
 delivery = "off"
+
+# vim-herdr-navigation: ctrl+hjkl moves between nvim splits, then hands off to
+# herdr panes at the edge. Installed with `herdr plugin install`.
+[[keys.command]]
+key = "ctrl+h"
+type = "plugin_action"
+command = "vim-herdr-navigation.left"
+
+[[keys.command]]
+key = "ctrl+j"
+type = "plugin_action"
+command = "vim-herdr-navigation.down"
+
+[[keys.command]]
+key = "ctrl+k"
+type = "plugin_action"
+command = "vim-herdr-navigation.up"
+
+[[keys.command]]
+key = "ctrl+l"
+type = "plugin_action"
+command = "vim-herdr-navigation.right"
