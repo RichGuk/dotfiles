@@ -1,6 +1,14 @@
+-- nvim-treesitter `main` branch. The old `master` API (nvim-treesitter.configs
+-- with ensure_installed/highlight/indent/textobjects) is gone, and master itself
+-- stopped at Neovim 0.11 — it does not support 0.12.
+--
 -- Needs tree-sitter-cli 0.26.1+ on PATH: `brew install tree-sitter-cli` /
 -- `pacman -S tree-sitter-cli`. Not npm, and not a Neovim plugin.
 
+-- `main` has no auto_install, so anything not listed here simply has no
+-- highlighting. The git_* and config entries were picked up silently by
+-- auto_install under master — losing gitcommit is how that was noticed.
+-- jsonc and tmux had parsers under master but main does not support them.
 local ensure_installed = {
   "vim",
   "vimdoc",
@@ -13,6 +21,15 @@ local ensure_installed = {
   "markdown",
   "ruby",
   "yaml",
+  "toml",
+  "ini",
+  "diff",
+  "gitcommit",
+  "git_config",
+  "git_rebase",
+  "gitignore",
+  "ssh_config",
+  "query",
 }
 
 if os.getenv("FULL_DOTFILES") then
@@ -37,6 +54,28 @@ if os.getenv("FULL_DOTFILES") then
     "yaml",
     "go",
     "gomod",
+    "toml",
+    "ini",
+    "gitcommit",
+    "git_config",
+    "git_rebase",
+    "gitignore",
+    "ssh_config",
+    "query",
+    "python",
+    "sql",
+    "xml",
+    "tsx",
+    "rbs",
+    "embedded_template",
+    "c",
+    "csv",
+    "tsv", -- csv's grammar pulls this in; without it, every start retries the download
+    "gpg",
+    "nginx",
+    "pem",
+    "puppet",
+    "htmldjango",
   }
 end
 
