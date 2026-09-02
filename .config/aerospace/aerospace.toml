@@ -212,6 +212,11 @@ automatically-unhide-macos-hidden-apps = true
     # See: https://nikitabobko.github.io/AeroSpace/commands#mode
     alt-shift-semicolon = 'mode service'
 
+    # The Hyprland VM binds the same alt chords this config does, deliberately,
+    # so AeroSpace swallows every key the guest wants. Keys unbound in a mode are
+    # not intercepted, so vm mode is empty except the way back out.
+    alt-shift-v = 'mode vm'
+
     cmd-h = [] # Disable "hide application"
     cmd-alt-h = []
 
@@ -240,3 +245,8 @@ automatically-unhide-macos-hidden-apps = true
     down = 'volume down'
     up = 'volume up'
     shift-down = ['volume set 0', 'mode main']
+
+# Everything passes through to the focused window. For the Hyprland VM, whose
+# bindings mirror this config's and would otherwise be eaten by it.
+[mode.vm.binding]
+    alt-shift-v = 'mode main'

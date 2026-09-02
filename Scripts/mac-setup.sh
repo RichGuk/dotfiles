@@ -6,7 +6,7 @@ xcode-select --install
 
 compaudit | xargs sudo chmod g-w
 
-brew install neovim tmux htop node coreutils curl gnupg zstd \
+brew install neovim tree-sitter-cli tmux htop node coreutils curl gnupg zstd \
   rsync pv git svn fzf ripgrep jq neovim iproute2mac wakeonlan yt-dlp tldr \
   yabai sketchybar borgbackup borgbackup-fuse 
 

@@ -1,3 +1,6 @@
+-- Needs tree-sitter-cli 0.26.1+ on PATH: `brew install tree-sitter-cli` /
+-- `pacman -S tree-sitter-cli`. Not npm, and not a Neovim plugin.
+
 local ensure_installed = {
   "vim",
   "vimdoc",
@@ -37,110 +40,99 @@ if os.getenv("FULL_DOTFILES") then
   }
 end
 
+-- Was `keymaps = { ["af"] = "@function.outer" }` under textobjects.select.
+local select_textobjects = {
+  ["a="] = "@assignment.outer",
+  ["i="] = "@assignment.inner",
+  ["l="] = "@assignment.lhs",
+  ["r="] = "@assignment.rhs",
+  ["aa"] = "@parameter.outer",
+  ["ia"] = "@parameter.inner",
+  ["af"] = "@function.outer",
+  ["if"] = "@function.inner",
+  ["ac"] = "@class.outer",
+  ["ic"] = "@class.inner",
+  ["ab"] = "@block.outer",
+  ["ib"] = "@block.inner",
+}
+
+-- Was textobjects.move.goto_* . key -> { query, description }
+local move_textobjects = {
+  goto_next_start = {
+    ["]k"] = { "@block.outer", "Next block start" },
+    ["]f"] = { "@function.outer", "Next function start" },
+    ["]a"] = { "@parameter.inner", "Next argument start" },
+  },
+  goto_next_end = {
+    ["]K"] = { "@block.outer", "Next block end" },
+    ["]F"] = { "@function.outer", "Next function end" },
+    ["]A"] = { "@parameter.inner", "Next argument end" },
+  },
+  goto_previous_start = {
+    ["[k"] = { "@block.outer", "Previous block start" },
+    ["[f"] = { "@function.outer", "Previous function start" },
+    ["[a"] = { "@parameter.inner", "Previous argument start" },
+  },
+  goto_previous_end = {
+    ["[K"] = { "@block.outer", "Previous block end" },
+    ["[F"] = { "@function.outer", "Previous function end" },
+    ["[A"] = { "@parameter.inner", "Previous argument end" },
+  },
+}
+
 return {
   {
     "nvim-treesitter/nvim-treesitter",
+    branch = "main",
     build = ":TSUpdate",
-    event = { "BufReadPost", "BufNewFile" },
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter-textobjects",
-    },
+    -- main does not support lazy-loading; this replaces the old BufReadPost event.
+    lazy = false,
     config = function()
-      require("nvim-treesitter.configs").setup({
-        ensure_installed = ensure_installed,
-        sync_install = false,
-        auto_install = true,
-        highlight = {
-          enable = true,
-        },
-        indent = {
-          enable = true,
-        },
-        textobjects = {
-          select = {
-            enable = true,
-            lookahead = true,
-            keymaps = {
-              ["a="] = { query = "@assignment.outer" },
-              ["i="] = { query = "@assignment.inner" },
-              ["l="] = { query = "@assignment.lhs" },
-              ["r="] = { query = "@assignment.rhs" },
+      require("nvim-treesitter").install(ensure_installed)
 
-              ["aa"] = "@parameter.outer",
-              ["ia"] = "@parameter.inner",
-
-              ["af"] = "@function.outer",
-              ["if"] = "@function.inner",
-
-              ["ac"] = "@class.outer",
-              ["ic"] = "@class.inner",
-
-              ["ab"] = "@block.outer",
-              ["ib"] = "@block.inner",
-            },
-          },
-          move = {
-            enable = true,
-            set_jumps = true,
-            goto_next_start = {
-              ["]k"] = {
-                query = "@block.outer",
-                desc = "Next block start",
-              },
-              ["]f"] = {
-                query = "@function.outer",
-                desc = "Next function start",
-              },
-              ["]a"] = {
-                query = "@parameter.inner",
-                desc = "Next argument start",
-              },
-            },
-            goto_next_end = {
-              ["]K"] = {
-                query = "@block.outer",
-                desc = "Next block end",
-              },
-              ["]F"] = {
-                query = "@function.outer",
-                desc = "Next function end",
-              },
-              ["]A"] = {
-                query = "@parameter.inner",
-                desc = "Next argument end",
-              },
-            },
-            goto_previous_start = {
-              ["[k"] = {
-                query = "@block.outer",
-                desc = "Previous block start",
-              },
-              ["[f"] = {
-                query = "@function.outer",
-                desc = "Previous function start",
-              },
-              ["[a"] = {
-                query = "@parameter.inner",
-                desc = "Previous argument start",
-              },
-            },
-            goto_previous_end = {
-              ["[K"] = {
-                query = "@block.outer",
-                desc = "Previous block end",
-              },
-              ["[F"] = {
-                query = "@function.outer",
-                desc = "Previous function end",
-              },
-              ["[A"] = {
-                query = "@parameter.inner",
-                desc = "Previous argument end",
-              },
-            },
-          },
-        },
+      -- `highlight = { enable = true }` and `indent = { enable = true }` are no
+      -- longer modules — highlighting comes from Neovim itself, per buffer.
+      -- Guarded because a filetype with no installed parser is not an error.
+      vim.api.nvim_create_autocmd("FileType", {
+        group = vim.api.nvim_create_augroup("richguk_treesitter", { clear = true }),
+        callback = function(ev)
+          -- get_lang falls back to the filetype name, so it returns "fzf" for a
+          -- plugin buffer with no parser. language.add returns false rather than
+          -- erroring in that case, so guard on start() itself — it is the call
+          -- that asserts.
+          local lang = vim.treesitter.language.get_lang(ev.match)
+          if not lang or not pcall(vim.treesitter.start, ev.buf, lang) then
+            return
+          end
+          vim.bo[ev.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        end,
       })
+    end,
+  },
+  {
+    "nvim-treesitter/nvim-treesitter-textobjects",
+    branch = "main",
+    dependencies = { "nvim-treesitter/nvim-treesitter" },
+    lazy = false,
+    config = function()
+      require("nvim-treesitter-textobjects").setup({
+        select = { lookahead = true },
+        move = { set_jumps = true },
+      })
+
+      for key, query in pairs(select_textobjects) do
+        vim.keymap.set({ "x", "o" }, key, function()
+          require("nvim-treesitter-textobjects.select").select_textobject(query, "textobjects")
+        end, { desc = "Select " .. query })
+      end
+
+      for direction, maps in pairs(move_textobjects) do
+        for key, spec in pairs(maps) do
+          vim.keymap.set({ "n", "x", "o" }, key, function()
+            require("nvim-treesitter-textobjects.move")[direction](spec[1], "textobjects")
+          end, { desc = spec[2] })
+        end
+      end
     end,
   },
 }
