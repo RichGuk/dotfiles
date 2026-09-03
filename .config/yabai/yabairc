@@ -1,5 +1,7 @@
-yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
-sudo yabai --load-sa
+# SA-only — dead once SIP is enabled. Delete this block, and every other
+# "SA-only" marked line below, after SIP has been on for good.
+#yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+#sudo yabai --load-sa
 
 yabai -m config layout bsp
 yabai -m config window_placement second_child
@@ -8,7 +10,8 @@ yabai -m config bottom_padding 2
 yabai -m config left_padding 2
 yabai -m config right_padding 2
 yabai -m config window_gap 10
-yabai -m config window_shadow float
+# SA-only — accepted but never applied, so tiled windows keep their shadows.
+#yabai -m config window_shadow float
 yabai -m config external_bar main:30:0
 
 yabai -m config window_opacity off
@@ -31,11 +34,9 @@ yabai -m signal --add event=window_focused action="sketchybar --trigger window_f
 yabai -m signal --add event=space_changed action="sketchybar --trigger space_changed"
 
 yabai -m rule --add app="^(DisplayCAL|LuLu|Calculator|Software Update|Dictionary|VLC|System Preferences|System Settings|zoom.us|Photo Booth|Archive Utility|App Store|Steam|Raycast|Activity Monitor|Finder|krisp|Shottr|Browserosaurus)$" manage=off
-# Float these *and* keep them above the tiled windows. Later rules take
-# precedence, so this refines the manage=off list above.
-# NB: sub-layer requires the scripting addition (SIP partially disabled), and
-# is broken on yabai 7.1.17+ — see https://github.com/asmvik/yabai/issues/2747
-yabai -m rule --add label="float-above" app="^(Finder|Calculator|Shottr)$" manage=off sub-layer=above
+# SA-only — sub-layer was the whole point of this rule; without it these three
+# are already covered by the manage=off list above.
+#yabai -m rule --add label="float-above" app="^(Finder|Calculator|Shottr)$" manage=off sub-layer=above
 
 yabai -m rule --add label="Firefox" app="^Firefox$" title="^(Library)$" manage=off
 yabai -m rule --add label="About This Mac" app="System Information" title="About This Mac" manage=off

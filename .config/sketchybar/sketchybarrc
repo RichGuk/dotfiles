@@ -60,7 +60,3 @@ sketchybar --add bracket status slack brew --set status "${status_bracket[@]}"
 sketchybar --hotload true
 
 sketchybar --update
-
-# Seed the workspace highlight; nothing has fired the event yet at startup.
-sketchybar --trigger aerospace_workspace_change \
-  FOCUSED_WORKSPACE="$(aerospace list-workspaces --focused 2>/dev/null)"

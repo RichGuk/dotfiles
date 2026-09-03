@@ -52,7 +52,7 @@ automatically-unhide-macos-hidden-apps = true
 # than bundle id, and has no equivalent of sub-layer=above, so Finder floats but
 # will not stay on top of tiled windows.
 [[on-window-detected]]
-  if.app-name-regex-substring = '(?i)(displaycal|lulu|calculator|software update|dictionary|vlc|system preferences|system settings|zoom\.us|photo booth|archive utility|app store|steam|raycast|activity monitor|finder|krisp|shottr|browserosaurus|system information)'
+  if.app-name-regex-substring = '(?i)(displaycal|lulu|calculator|software update|dictionary|vlc|system preferences|system settings|zoom\.us|photo booth|archive utility|app store|steam|raycast|activity monitor|finder|krisp|shottr|browserosaurus|system information|WireGuard)'
   run = 'layout floating'
 
 # yabai floated only Firefox's Library window, not Firefox itself.

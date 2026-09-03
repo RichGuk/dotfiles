@@ -51,8 +51,9 @@ ctrl + alt + cmd - 4 : yabai -m space --focus 4
 ctrl + alt + cmd - 5 : yabai -m space --focus 5
 ctrl + alt + cmd - 6 : yabai -m space --focus 6
 ctrl + alt + cmd - 7 : yabai -m space --focus 7
-ctrl + alt + cmd - q: yabai -m space --focus 8
-ctrl + alt + cmd - w: yabai -m space --focus 9
+ctrl + alt + cmd - 8 : yabai -m space --focus 8
+ctrl + alt + cmd - q: yabai -m space --focus 9
+ctrl + alt + cmd - w: yabai -m space --focus 10
 
 shift + alt - 1 : yabai -m space --focus 9
 
