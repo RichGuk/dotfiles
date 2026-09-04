@@ -21,7 +21,7 @@ export PINK=0xfff5c2e7
 export FLAMINGO=0xfff2cdcd
 export ROSEWATER=0xfff5e0dc
 
-export TEXT=$SUBTEXT0
+export TEXT=$BASE_TEXT # everything on the bar reads from this; SUBTEXT0 was dimmer
 export BAR_COLOR=$CRUST
 export BAR_BORDER_COLOR=$MANTLE
 export BACKGROUND0=$CRUST

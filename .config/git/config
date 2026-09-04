@@ -58,6 +58,7 @@
   wt = worktree
   trust = "!mkdir -p .git/safe"
   cb = "!f() { git checkout $(git branch | grep -v \"^\\*\" | fzf --height=20% --reverse --info=inline); }; f"
+	mt = !nvim -c DiffviewOpen
 [push]
   default = current
   autoSetupRemote = true
@@ -69,7 +70,7 @@
   line-numbers = true
   features = catppuccin-mocha
 [merge]
-  tool = nvimdiff
+	tool = nvimdiff
   conflictstyle = zdiff3
 [difftool]
   tool = nvimdiff
@@ -77,8 +78,6 @@
 [mergetool]
   prompt = false
   keepBackup = false
-[mergetool "nvimdiff"]
-  cmd = nvim -d $LOCAL $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'
 [difftool "nvimdiff"]
   cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
 [include]
@@ -101,8 +100,11 @@
 	updateRefs = true
 [rerere]
   enabled = true
+	autoupdate = true
 
 [includeIf "gitdir:~/Dev/Work/"]
   path = ~/.config/git/work
 [fetch]
 	prune = true
+[mergetool "nvimdiff"]
+	layout = LOCAL,BASE,REMOTE / MERGED

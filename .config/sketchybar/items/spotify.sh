@@ -16,5 +16,5 @@ spotify=(
   script="$PLUGIN_DIR/spotify.sh"
 )
 
-sketchybar --add event spotify_change $SPOTIFY_EVENT --add item spotify right \
+sketchybar --add event spotify_change $SPOTIFY_EVENT --add item spotify center \
   --set spotify "${spotify[@]}" --subscribe spotify spotify_change

@@ -15,18 +15,36 @@ HALF_LENGTH=$(((MAX_LENGTH + 1) / 2))
 # Spotify JSON / $INFO comes in malformed, line below sanitizes it
 SPOTIFY_JSON="$INFO"
 
+# Spotify only posts PlaybackStateChanged on a change, so after a sketchybar
+# reload there is no $INFO and the item would sit blank until the next track.
+# "is running" matters: without it, osascript launches Spotify.
+query_spotify() {
+    osascript 2>/dev/null <<'APPLESCRIPT'
+if application "Spotify" is running then
+    tell application "Spotify"
+        return (player state as text) & "	" & (artist of current track) & "	" & (name of current track)
+    end tell
+end if
+APPLESCRIPT
+}
+
 update_track() {
 
-    if [[ -z $SPOTIFY_JSON ]]; then
+    if [[ -n $SPOTIFY_JSON ]]; then
+        PLAYER_STATE=$(echo "$SPOTIFY_JSON" | jq -r '.["Player State"]')
+        TRACK="$(echo "$SPOTIFY_JSON" | jq -r .Name)"
+        ARTIST="$(echo "$SPOTIFY_JSON" | jq -r .Artist)"
+    else
+        IFS=$'\t' read -r PLAYER_STATE ARTIST TRACK <<< "$(query_spotify)"
+        PLAYER_STATE="${(C)PLAYER_STATE}" # applescript says "playing", the event says "Playing"
+    fi
+
+    if [[ -z $PLAYER_STATE ]]; then
         sketchybar --set $NAME background.color=$SPOT_BACKGROUND label.drawing=no icon.padding_right=8
         return
     fi
 
-    PLAYER_STATE=$(echo "$SPOTIFY_JSON" | jq -r '.["Player State"]')
-
     if [ $PLAYER_STATE = "Playing" ]; then
-        TRACK="$(echo "$SPOTIFY_JSON" | jq -r .Name)"
-        ARTIST="$(echo "$SPOTIFY_JSON" | jq -r .Artist)"
 
         # Calculations so it fits nicely
         TRACK_LENGTH=${#TRACK}
