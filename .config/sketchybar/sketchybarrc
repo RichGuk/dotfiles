@@ -5,7 +5,7 @@ source "$CONFIG_DIR/colors.sh"
 ITMES_DIR="$CONFIG_DIR/items"
 PLUGIN_DIR="$CONFIG_DIR/plugins"
 
-FONT="CaskaydiaMono Nerd Font"
+FONT="JetBrainsMono Nerd Font Propo"
 
 bar=(
   position=top
@@ -48,7 +48,7 @@ source "$ITMES_DIR/brew.sh"
 
 source "$ITMES_DIR/spotify.sh"
 
-sketchybar --add alias "MeetingBar" right
+source "$ITMES_DIR/meeting.sh"
 
 status_bracket=(
   background.color=$BASE
@@ -58,5 +58,10 @@ status_bracket=(
 sketchybar --add bracket status slack brew --set status "${status_bracket[@]}"
 
 sketchybar --hotload true
+
+sketchybar --add item notch left \
+  --set notch drawing=off script="$PLUGIN_DIR/notch.sh" \
+  --subscribe notch display_change
+"$PLUGIN_DIR/notch.sh"
 
 sketchybar --update

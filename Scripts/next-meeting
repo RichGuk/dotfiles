@@ -1,0 +1,135 @@
+#!/usr/bin/env python3
+"""Upcoming meetings, for a status bar.
+
+    next-meeting            "MV standup in 20m" / "MV standup now (19m left)"
+    next-meeting --json     the same meeting as an object, {} when none
+    next-meeting --list     every meeting in the fetch window, as an array
+    next-meeting --url      the meet link for the current meeting
+
+Plain output is empty when the next meeting is more than LOOKAHEAD away, so a
+bar item can hide itself on empty output. --list ignores LOOKAHEAD, since a
+popout wants the whole day rather than the imminent one.
+
+Events are cached so the countdown can tick without hitting the API every poll;
+a stale cache is preferred over a blank bar when the network is down.
+"""
+
+import json
+import os
+import subprocess
+import sys
+import time
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+
+LOOKAHEAD = timedelta(minutes=int(os.environ.get("NEXT_MEETING_LOOKAHEAD", "60")))
+CACHE_TTL = int(os.environ.get("NEXT_MEETING_CACHE_TTL", "300"))
+WINDOW_HOURS = int(os.environ.get("NEXT_MEETING_WINDOW", "8"))
+MAX_TITLE = 30
+
+CACHE = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "next-meeting.json"
+
+
+def fetch():
+    now = datetime.now(timezone.utc)
+    cmd = [
+        "gog", "calendar", "events", "--json", "--max", "50",
+        "--from", now.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "--to", (now + timedelta(hours=WINDOW_HOURS)).strftime("%Y-%m-%dT%H:%M:%SZ"),
+    ]
+    try:
+        out = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+        if out.returncode != 0:
+            return None
+        return json.loads(out.stdout or "{}").get("events", [])
+    except (OSError, subprocess.TimeoutExpired, json.JSONDecodeError):
+        return None
+
+
+def cached_events():
+    try:
+        blob = json.loads(CACHE.read_text())
+        if time.time() - blob["at"] < CACHE_TTL:
+            return blob["events"]
+        stale = blob["events"]
+    except (OSError, ValueError, KeyError):
+        stale = None
+
+    events = fetch()
+    if events is None:
+        return stale or []
+
+    try:
+        CACHE.parent.mkdir(parents=True, exist_ok=True)
+        CACHE.write_text(json.dumps({"at": time.time(), "events": events}))
+    except OSError:
+        pass
+    return events
+
+
+def is_meeting(event):
+    # workingLocation/outOfOffice entries and all-day events are not meetings.
+    if event.get("eventType") != "default" or event.get("status") != "confirmed":
+        return False
+    if "dateTime" not in event.get("start", {}):
+        return False
+    return not any(
+        a.get("self") and a.get("responseStatus") == "declined"
+        for a in event.get("attendees", [])
+    )
+
+
+def describe(event, start, end, now):
+    title = event.get("summary", "(no title)")
+    running = start <= now
+    mins = int(((end if running else start) - now).total_seconds() // 60) + 1
+    short = title if len(title) <= MAX_TITLE else title[: MAX_TITLE - 1] + "…"
+    return {
+        "title": title,
+        "state": "now" if running else "upcoming",
+        "minutes": mins,
+        "start": event["start"]["dateTime"],
+        "end": event["end"]["dateTime"],
+        "url": event.get("hangoutLink") or event.get("htmlLink", ""),
+        "location": event.get("location", ""),
+        "text": f"{short} now ({mins}m left)" if running else f"{short} in {mins}m",
+    }
+
+
+def meetings():
+    now = datetime.now(timezone.utc)
+    found = []
+    for event in cached_events():
+        if not is_meeting(event):
+            continue
+        start = datetime.fromisoformat(event["start"]["dateTime"])
+        end = datetime.fromisoformat(event["end"]["dateTime"])
+        if end > now:
+            found.append((start, end, event))
+    found.sort(key=lambda item: item[0])
+    return [describe(event, start, end, now) for start, end, event in found]
+
+
+def main():
+    upcoming = meetings()
+
+    if "--list" in sys.argv:
+        print(json.dumps(upcoming))
+        return
+
+    current = {}
+    if upcoming and not (
+        upcoming[0]["state"] == "upcoming"
+        and upcoming[0]["minutes"] > LOOKAHEAD.total_seconds() / 60
+    ):
+        current = upcoming[0]
+
+    if "--json" in sys.argv:
+        print(json.dumps(current))
+    elif "--url" in sys.argv:
+        print(current.get("url", ""))
+    elif current:
+        print(current["text"])
+
+
+main()

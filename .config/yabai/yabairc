@@ -50,3 +50,7 @@ else
 fi
 
 yabai -m signal --add event=window_focused action="$HOME/.config/yabai/update_border_color.sh"
+
+# Corrects external_bar above when the main display is notched. Backgrounded
+# because the osascript call is slow and would otherwise delay yabai starting.
+( sleep 3; "$HOME/.config/sketchybar/plugins/notch.sh" ) >/dev/null 2>&1 &
