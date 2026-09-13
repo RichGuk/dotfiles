@@ -4,5 +4,6 @@ tags
 .rvmrc
 .vimrc.local
 *.ignore.md
+.stignore
 
 **/.claude/settings.local.json

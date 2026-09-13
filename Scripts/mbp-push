@@ -110,7 +110,19 @@ push() { "$RSYNC" -a --delete "$1" "$2" >>"$LOG" 2>&1 || rc=1; }
 
 push "$TMP/"                       "$DEST/manifests/"
 push "$HOME/.ssh/"                 "$DEST/ssh/"
-push "$HOME/Library/Preferences/"  "$DEST/macos/Preferences/"
+# TCC blocks these to anything without Full Disk Access, and a LaunchAgent does
+# not inherit the grant a terminal has. rsync only opens a file it needs to
+# send, so the push failed only on runs where one of them had changed. All are
+# Contacts/Messages/iMessage/HomeKit settings that resync from iCloud, so losing
+# them costs nothing; granting a backup script full read of the disk to keep
+# five files did not seem worth it.
+"$RSYNC" -a --delete \
+  --exclude 'com.apple.AddressBook.plist' \
+  --exclude 'com.apple.MobileSMS.plist' \
+  --exclude 'com.apple.madrid.plist' \
+  --exclude 'com.apple.homed.plist' \
+  --exclude 'com.apple.homed.notbackedup.plist' \
+  "$HOME/Library/Preferences/" "$DEST/macos/Preferences/" >>"$LOG" 2>&1 || rc=1
 push "$HOME/Library/Fonts/"        "$DEST/macos/Fonts/"
 
 # Single file, so no directory to mirror and no --delete. NOTE the real

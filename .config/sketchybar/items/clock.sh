@@ -4,7 +4,8 @@ calendar=(
   icon.drawing=off
   label.font="$FONT:Bold:15.0"
   padding_left=16
-  update_freq=10 # padding_right is set per-display by plugins/notch.sh
+  padding_right=2 # the bar adds 10 of its own
+  update_freq=10
   script="$PLUGIN_DIR/clock.sh"
 )
 

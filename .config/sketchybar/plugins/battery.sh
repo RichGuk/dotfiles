@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 source "$CONFIG_DIR/colors.sh"
 
@@ -9,24 +9,22 @@ if [ "$PERCENTAGE" = "" ]; then
   exit 0
 fi
 
-COLOR=$TEXT
+# Same ramps and thresholds as the Quickshell bar (theme/Theme.qml), so both
+# machines speak the same battery vocabulary. Index is floor(percent/10), so 62%
+# draws the 60% glyph and only a true 100% draws the full one.
+RAMP=(󰁺 󰁻 󰁼 󰁽 󰁾 󰁿 󰂀 󰂁 󰂂 󰁹)
+CHARGING_RAMP=(󰢜 󰂆 󰂇 󰂈 󰢝 󰂉 󰢞 󰂊 󰂋 󰂅)
 
-case "${PERCENTAGE}" in
-  9[0-9]|100) ICON="󰁹"
-  ;;
-  [6-8][0-9]) ICON="󰂁"
-  ;;
-  [3-5][0-9]) ICON="󰁾"
-  ;;
-  [1-2][0-9]) ICON="󰁻"; COLOR=$RED
-  ;;
-  *) ICON="󰂃"
-esac
+IDX=$((PERCENTAGE / 10))
+[ "$IDX" -gt 9 ] && IDX=9
 
-if [[ "$CHARGING" != "" ]]; then
-  ICON="󰚥"
+if [ -n "$CHARGING" ]; then
+  ICON="${CHARGING_RAMP[$IDX]}"
+else
+  ICON="${RAMP[$IDX]}"
 fi
 
-# Nerd Font battery family rather than SF Symbols, so it matches the rest of the
-# bar and the charging state can be a power plug.
+COLOR=$TEXT
+[ "$PERCENTAGE" -le 20 ] && COLOR=$RED # Theme.batteryWarnAt
+
 sketchybar --set "$NAME" icon="$ICON" label="${PERCENTAGE}%" label.color=$COLOR icon.color=$COLOR
