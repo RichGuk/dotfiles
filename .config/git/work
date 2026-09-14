@@ -1,9 +1,7 @@
 # vim: ft=gitconfig:
+# Only what differs from ~/.config/git/config. Signing key, name and
+# commit.gpgsign are inherited; add a signingkey here to sign work with a
+# separate key.
 
 [user]
-  name = Rich Grundy
   email = rich@zeneducate.com
-  signingkey = 3218AC7D
-
-[commit]
-  gpgsign = true

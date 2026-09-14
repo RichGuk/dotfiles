@@ -90,7 +90,18 @@
 [user]
   name = Rich Grundy
   email = rich@grundy.io
-  signingkey = 1C4A386A1ED649A6
+  signingkey = ~/.ssh/id_primary.pub
+
+# SSH signing, so no pinentry. The key must also be added to each host as a
+# *signing* key -- separate list from auth keys.
+[gpg]
+  format = ssh
+[gpg "ssh"]
+  allowedSignersFile = ~/.config/git/allowed_signers
+
+# Fails rather than falls back if the agent holds no key.
+[commit]
+  gpgsign = true
 [credential]
  helper = cache --timeout=3600
 [init]

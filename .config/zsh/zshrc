@@ -44,7 +44,8 @@ if [[ -z "$SSH_AUTH_SOCK" || ! -S "$SSH_AUTH_SOCK" ]]; then
 
   if [[ -z "$SSH_AUTH_SOCK" || ! -S "$SSH_AUTH_SOCK" ]]; then
     mkdir -p "$HOME/.cache"
-    ssh-agent -s -t 1h >| "$cache_file"
+    # No -t: one passphrase per boot, not per hour.
+    ssh-agent -s >| "$cache_file"
     source "$cache_file" >/dev/null 2>&1
   fi
 fi

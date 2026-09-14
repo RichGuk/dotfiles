@@ -1,0 +1,3 @@
+# identity -> key allowed to sign for it. Local verification only.
+rich@grundy.io ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICwpXywtneOT0ONRcpV/0lFmscV+g1Gfu6+4Uj56WRsp rich@grundy.io
+rich@zeneducate.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICwpXywtneOT0ONRcpV/0lFmscV+g1Gfu6+4Uj56WRsp rich@grundy.io
