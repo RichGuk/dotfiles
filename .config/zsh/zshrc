@@ -30,27 +30,12 @@ unset config_file
 eval "$(mise activate zsh)"
 eval "$(mise completion zsh)"
 
-if [[ -z "$SSH_AUTH_SOCK" || ! -S "$SSH_AUTH_SOCK" ]]; then
-  cache_file="$HOME/.cache/ssh-agent.env"
-
-  if [[ -f "$cache_file" ]]; then
-    source "$cache_file" >/dev/null 2>&1
-
-    if [[ -n "$SSH_AGENT_PID" ]] && ! kill -0 "$SSH_AGENT_PID" 2>/dev/null; then
-      rm -f "$cache_file"
-      unset SSH_AUTH_SOCK SSH_AGENT_PID
-    fi
-  fi
-
-  if [[ -z "$SSH_AUTH_SOCK" || ! -S "$SSH_AUTH_SOCK" ]]; then
-    mkdir -p "$HOME/.cache"
-    # No -t: one passphrase per boot, not per hour.
-    ssh-agent -s >| "$cache_file"
-    source "$cache_file" >/dev/null 2>&1
-  fi
-fi
-
-if [[ "$OSTYPE" != darwin* ]]; then
+# Which agent to talk to is decided in .zshenv, which runs first and is also
+# what uwsm's env preloader reads at login. All that is left here is keeping a
+# FORWARDED agent fresh: a long-lived shell (tmux) outlives the connection that
+# brought its socket, so ~/.ssh/rc re-points ~/.ssh/agent.sock at the current
+# one and this picks that up each prompt. Local sessions want none of it.
+if [[ "$OSTYPE" != darwin* && -n "$SSH_CONNECTION" ]]; then
   _agent_relink() {
     local s="$HOME/.ssh/agent.sock"
     if [[ -L $s && ! -S $s ]]; then
