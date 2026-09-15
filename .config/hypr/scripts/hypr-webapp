@@ -1,8 +1,0 @@
-#!/bin/bash
-
-url="$1"
-shift
-
-exec systemd-run --user --scope --description="WebApp: $url" \
-  brave --ozone-platform=x11 --app="$url" "$@"
-
