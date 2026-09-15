@@ -4,11 +4,19 @@
 # Format is XDG_xxx_DIR="$HOME/yyy", where yyy is a shell-escaped
 # homedir-relative path, or XDG_xxx_DIR="/yyy", where /yyy is an
 # absolute path. No other format is supported.
-# 
-XDG_DESKTOP_DIR="$HOME/Desktop"
+#
+# A directory named here that does not EXIST is rewritten to $HOME at the next
+# login, so the $HOME entries below are deliberate rather than neglected:
+# Hyprland draws no desktop icons, nothing here serves a Public share, and
+# Templates has never been used.
+#
+# XDG_PROJECTS_DIR is not a standard XDG directory. Arch's
+# /etc/xdg/user-dirs.defaults ships PROJECTS=Projects, which is the only reason
+# an empty ~/Projects kept reappearing; pointed at where the code actually is.
+XDG_DESKTOP_DIR="$HOME/"
 XDG_DOWNLOAD_DIR="$HOME/Downloads"
 XDG_TEMPLATES_DIR="$HOME/"
-XDG_PUBLICSHARE_DIR="$HOME/Public"
+XDG_PUBLICSHARE_DIR="$HOME/"
 XDG_DOCUMENTS_DIR="$HOME/Documents"
 XDG_MUSIC_DIR="$HOME/Music"
 XDG_PICTURES_DIR="$HOME/Pictures"
