@@ -22,4 +22,4 @@ alias ptemps='sensors k10temp-pci-00c3 it8665-isa-0290 nvme-pci-0100'
 # herdr-sessionizer scopes its picker to match HERDR_SESSION.
 alias hw='herdr --session work'
 alias hp='herdr --session personal'
-alias hwr='herdr --remote atlantis.work --session work'
+alias hwr='herdr --remote razorback.work --session work'
