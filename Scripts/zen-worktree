@@ -9,6 +9,11 @@
 
 set -euo pipefail
 
+# A herdr popup does not spawn a login shell, so PATH can be bare and
+# devbox-route, mise and herdr all silently go missing.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export PATH="$SCRIPT_DIR:$HOME/.local/bin:$PATH"
+
 REPO="${HOME}/Dev/Work/zeneducate"
 WORKTREE_ROOT="${HOME}/Dev/Work/zeneducate-worktrees"
 OVERRIDE_SRC="${HOME}/Scripts/setup/zeneducate/docker-compose.override.yml"
@@ -131,6 +136,17 @@ for dir in api web; do
     done
 done
 
+# --- agent config ---
+# Both files are gitignored, so `worktree add` leaves them out and a new tree
+# starts with no personal permissions and, worse, a CLAUDE.md whose
+# @AGENTS.local.md import resolves to nothing.
+for local_file in .claude/settings.local.json AGENTS.local.md; do
+    [[ -f $REPO/$local_file ]] || continue
+    mkdir -p "$(dirname "$WORKTREE/$local_file")"
+    cp -p "$REPO/$local_file" "$WORKTREE/$local_file"
+    echo "agent    : $local_file copied"
+done
+
 # --- api ---
 set_env_var "$WORKTREE/api/.env" API_PORT "$API_PORT"
 set_env_var "$WORKTREE/api/.env" COMPOSE_PROJECT_NAME "zen_${DB_SLUG}"
@@ -192,15 +208,22 @@ set_env_var "$WORKTREE/web/.env.local" API_HOST "http://localhost:${API_PORT}"
 set_env_var "$WORKTREE/web/.env.local" ALLOWED_HOSTS "$ALLOWED_HOSTS"
 
 # --- proxy ---
-if command -v devbox-route >/dev/null 2>&1; then
-    devbox-route add "$PROXY_SLUG" "$WEB_PORT" --host "$PROXY_HOST" --label "$BRANCH" >/dev/null &&
-        echo "proxy    : http://${PROXY_HOST}"
+# Registration failing is not fatal, but the URL must not be advertised as
+# working when it is not — that lands as a confusing 404 much later.
+PROXY_READY=false
+if ! command -v devbox-route >/dev/null 2>&1; then
+    echo "proxy    : devbox-route NOT ON PATH — no route registered" >&2
+elif devbox-route add "$PROXY_SLUG" "$WEB_PORT" --host "$PROXY_HOST" --label "$BRANCH" >/dev/null; then
+    PROXY_READY=true
+    echo "proxy    : http://${PROXY_HOST}"
 else
-    echo "proxy    : devbox-route not on PATH — skipped"
+    echo "proxy    : FAILED to register ${PROXY_HOST}" >&2
 fi
 
 echo
-echo "  http://${PROXY_HOST}"
+if [[ $PROXY_READY == true ]]; then
+    echo "  http://${PROXY_HOST}"
+fi
 echo "  http://${HOSTNAME_SHORT}:${WEB_PORT}"
 echo "  mise run dc up      (from $WORKTREE)"
 echo "  mise run web:dev"
