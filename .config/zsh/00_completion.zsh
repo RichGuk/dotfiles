@@ -7,6 +7,11 @@ if [[ -d /opt/homebrew/share/zsh/site-functions ]]; then
   fpath=(/opt/homebrew/share/zsh/site-functions $fpath)
 fi
 
+# Hand-written completions. Must join fpath before compinit, or compinit never
+# sees them. Note that `compinit -C` below trusts the cached dump, so a newly
+# added file here needs `rm $ZDOTDIR/.zcompdump` once to show up.
+fpath=($ZDOTDIR/completions $fpath)
+
 autoload -Uz compinit bashcompinit
 
 # Full security check at most once a day, otherwise trust the cached dump.

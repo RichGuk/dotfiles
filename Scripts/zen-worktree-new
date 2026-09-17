@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+# Pick an existing branch or type a new one, then hand off to zen-worktree.
+# Meant for a herdr popup binding, where there is no shell to type a branch into.
+#
+#   zen-worktree-new [--repo <path>] [zen-worktree args...]
+#
+# With arguments it skips the picker entirely. Whatever is typed at the picker
+# prompt is passed through verbatim, so "--from main mv/thing" works there too.
+
+set -eu
+
+# A herdr popup does not spawn a login shell, so PATH can be bare. Put this
+# script's own directory and ~/.local/bin in front, or zen-worktree and
+# devbox-route silently go missing.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export PATH="$SCRIPT_DIR:$HOME/.local/bin:$PATH"
+
+REPO="${HOME}/Dev/Work/zeneducate"
+passthrough=()
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --repo) REPO="$2"; shift 2 ;;
+        -h | --help)
+            sed -n '2,8p' "$0" | sed -e 's/^# //' -e 's/^#$//'
+            exit 0
+            ;;
+        *) passthrough+=("$1"); shift ;;
+    esac
+done
+
+[[ -d $REPO/.git ]] || { echo "not a git repo: $REPO" >&2; exit 1; }
+
+# A popup is not a pane, so the sessionizer would launch a nested client inside
+# it rather than focusing the new workspace.
+export HERDR_PANE_ID="${HERDR_PANE_ID:-popup}"
+
+if [[ ${#passthrough[@]} -gt 0 ]]; then
+    exec zen-worktree "${passthrough[@]}"
+fi
+
+branches=$(
+    {
+        git -C "$REPO" for-each-ref --format='%(refname:short)' refs/heads
+        git -C "$REPO" for-each-ref --format='%(refname:short)' refs/remotes/origin |
+            sed 's|^origin/||'
+    } 2>/dev/null | grep -vx HEAD | sort -u
+)
+
+# --print-query puts the typed text on line 1 and any selection on line 2. A
+# selection is one branch; a bare query may carry flags, so it is word-split.
+picked=()
+while IFS= read -r line; do picked+=("$line"); done < <(
+    printf '%s\n' "$branches" |
+        fzf --print-query --reverse --height 100% \
+            --prompt 'branch (or full args) > ' \
+            --header 'enter: use highlighted   alt-enter: use what you typed' \
+            --bind 'alt-enter:print-query' ||
+        true
+)
+
+query=${picked[0]:-}
+choice=${picked[1]:-}
+
+if [[ -n $choice ]]; then
+    exec zen-worktree "$choice"
+fi
+
+[[ -n $query ]] || exit 0
+
+# Deliberate word splitting: the query may be "--from main mv/thing".
+# shellcheck disable=SC2086
+exec zen-worktree $query

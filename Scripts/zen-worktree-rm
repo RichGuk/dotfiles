@@ -2,20 +2,26 @@
 # Tear down a zeneducate worktree: docker volumes, herdr workspace, checkout,
 # branch. The shared gem volume is external, so `down -v` leaves it alone.
 #
-#   zen-worktree-cleanup <branch|slug> [--force] [--repo <path>]
+#   zen-worktree-rm <branch|slug> [--force] [--repo <path>]
 #
 # Without --force this refuses to drop uncommitted changes or unmerged branches.
 
 set -euo pipefail
 
+# A herdr popup does not spawn a login shell, so PATH can be bare.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export PATH="$SCRIPT_DIR:$HOME/.local/bin:$PATH"
+
 REPO="${HOME}/Dev/Work/zeneducate"
 WORKTREE_ROOT="${HOME}/Dev/Work/zeneducate-worktrees"
 FORCE=false
+PAUSE=false
 TARGET=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --repo) REPO="$2"; shift 2 ;;
+        --pause) PAUSE=true; shift ;;
         --force | -f) FORCE=true; shift ;;
         -h | --help)
             sed -n '2,7p' "$0" | sed -e 's/^# //' -e 's/^#$//'
@@ -26,7 +32,22 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-[[ -n $TARGET ]] || { echo "usage: zen-worktree-cleanup <branch|slug> [--force]" >&2; exit 1; }
+# Keep whatever was printed on screen when this runs in a popup, which would
+# otherwise close the instant the script exits — including on an error.
+if [[ $PAUSE == true ]]; then
+    trap 'printf "\npress any key to close... "; read -rsn1 _ </dev/tty 2>/dev/null || true' EXIT
+fi
+
+if [[ -z $TARGET ]]; then
+    if [[ -t 0 ]] && command -v fzf >/dev/null 2>&1 && [[ -d $WORKTREE_ROOT ]]; then
+        TARGET=$(find "$WORKTREE_ROOT" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' 2>/dev/null |
+            sort | fzf --prompt 'remove worktree > ' --reverse --height 100% || true)
+        [[ -n $TARGET ]] || exit 0
+    else
+        echo "usage: zen-worktree-rm <branch|slug> [--force] [--pause]" >&2
+        exit 1
+    fi
+fi
 
 SLUG=$(printf '%s' "$TARGET" | tr '/' '-' | tr -cd '[:alnum:]-_' | tr '[:upper:]' '[:lower:]')
 WORKTREE="$WORKTREE_ROOT/$SLUG"
@@ -59,6 +80,16 @@ if [[ -f $WORKTREE/api/docker-compose.yml ]]; then
     echo "removed  : containers and volumes"
 fi
 
+if [[ -n $BRANCH ]] && command -v devbox-route >/dev/null 2>&1; then
+    if command -v sha1sum >/dev/null 2>&1; then
+        proxy_slug=$(printf '%s' "$BRANCH" | sha1sum | cut -c1-8)
+    else
+        proxy_slug=$(printf '%s' "$BRANCH" | shasum | cut -c1-8)
+    fi
+    devbox-route rm "$proxy_slug" >/dev/null 2>&1 &&
+        echo "removed  : proxy route ${proxy_slug}.zen.internal"
+fi
+
 if command -v herdr >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
     ws=$(herdr workspace list 2>/dev/null |
         jq -r --arg l "$SLUG" '.result.workspaces[]? | select(.label == $l) | .workspace_id' | head -1)
@@ -74,25 +105,66 @@ else
 fi
 echo "removed  : worktree"
 
-# The repo squash-merges, so a merged branch is never an ancestor of main and
-# `git branch -d` always refuses. gh knows the PR state; ancestry is the fallback.
-branch_merged() {
-    local b=$1 state
-    if command -v gh >/dev/null 2>&1; then
-        state=$(cd "$REPO" && gh pr view "$b" --json state --jq .state 2>/dev/null || true)
-        [[ $state == MERGED ]] && return 0
-        [[ -n $state ]] && return 1
-    fi
-    git -C "$REPO" merge-base --is-ancestor "$b" origin/main 2>/dev/null
-}
-
 DEFAULT_BRANCH=$(git -C "$REPO" symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null | sed 's|^origin/||')
+BASE="origin/${DEFAULT_BRANCH:-main}"
+
+# The repo squash-merges, so a landed branch is never an ancestor of the base and
+# `git branch -d` always refuses. Three signals, in increasing authority:
+#
+#   1. ancestor of the base  — an ordinary merge
+#   2. patch-id twin         — commit the branch's tree onto the merge base and
+#                              ask `git cherry` whether the base already carries
+#                              that patch. This is what catches a squash merge.
+#   3. PR state from gh      — MERGED deletes; OPEN keeps even if 2 matched,
+#                              since a rebased-onto-main PR can look squashed.
+#
+# gh is optional and is unauthenticated on a fresh machine, so 1 and 2 have to
+# stand on their own. Same logic as ~/Scripts/git-delmerged.
+MERGE_REASON=""
+
+branch_merged() {
+    local b=$1 state="" merge_base synthetic
+
+    if command -v gh >/dev/null 2>&1; then
+        state=$(cd "$REPO" && gh pr list --head "$b" --state all --json state,mergedAt \
+            --jq '.[0] | if . == null then "" elif .mergedAt then "MERGED" else .state end' \
+            2>/dev/null || true)
+        if [[ $state == OPEN ]]; then
+            MERGE_REASON="PR still open"
+            return 1
+        fi
+    fi
+
+    if git -C "$REPO" merge-base --is-ancestor "$b" "$BASE" 2>/dev/null; then
+        MERGE_REASON="merged into $BASE"
+        return 0
+    fi
+
+    merge_base=$(git -C "$REPO" merge-base "$BASE" "$b" 2>/dev/null || true)
+    if [[ -n $merge_base ]]; then
+        synthetic=$(git -C "$REPO" commit-tree "$b^{tree}" -p "$merge_base" -m _ 2>/dev/null || true)
+        if [[ -n $synthetic && $(git -C "$REPO" cherry "$BASE" "$synthetic" 2>/dev/null) == -* ]]; then
+            MERGE_REASON="squash-merged into $BASE"
+            return 0
+        fi
+    fi
+
+    if [[ $state == MERGED ]]; then
+        MERGE_REASON="PR merged"
+        return 0
+    fi
+
+    MERGE_REASON="no merge evidence"
+    return 1
+}
 
 if [[ -n $BRANCH && $BRANCH != "${DEFAULT_BRANCH:-main}" && $BRANCH != master ]]; then
     git -C "$REPO" fetch --prune -q origin 2>/dev/null || true
-    if [[ $FORCE == true ]] || branch_merged "$BRANCH"; then
-        git -C "$REPO" branch -D "$BRANCH" >/dev/null && echo "removed  : branch $BRANCH"
+    if [[ $FORCE == true ]]; then
+        git -C "$REPO" branch -D "$BRANCH" >/dev/null && echo "removed  : branch $BRANCH (--force)"
+    elif branch_merged "$BRANCH"; then
+        git -C "$REPO" branch -D "$BRANCH" >/dev/null && echo "removed  : branch $BRANCH ($MERGE_REASON)"
     else
-        echo "kept     : branch $BRANCH (not merged — delete with --force)"
+        echo "kept     : branch $BRANCH ($MERGE_REASON — delete with --force)"
     fi
 fi

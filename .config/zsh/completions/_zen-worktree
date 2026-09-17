@@ -1,0 +1,114 @@
+#compdef zen-worktree zen-worktree-rm
+# Completion for ~/Scripts/zen-worktree and ~/Scripts/zen-worktree-rm.
+#
+# The two take different things, so they complete differently: zen-worktree
+# wants a branch you could check out, zen-worktree-rm wants a worktree that
+# exists. Both honour a --repo already typed on the line.
+
+_zen_worktree_repo() {
+  local i
+  for (( i = 1; i < $#words; i++ )); do
+    [[ $words[i] == --repo ]] && { print -r -- ${~words[i+1]}; return }
+  done
+  print -r -- ${ZEN_WORKTREE_REPO:-$HOME/Dev/Work/zeneducate}
+}
+
+_zen_worktree_root() {
+  print -r -- ${ZEN_WORKTREE_ROOT:-$HOME/Dev/Work/zeneducate-worktrees}
+}
+
+# Branches to start a worktree from: local heads, then origin's that have no
+# local counterpart. Anything already checked out in a worktree is dropped --
+# git refuses a second checkout of the same branch, so offering it is a dead end.
+_zen_worktree_branches() {
+  local repo=$(_zen_worktree_repo)
+  [[ -d $repo ]] || return 1
+
+  # zeneducate carries >1000 remote refs, most of them long dead, so completing
+  # all of them buries the handful you want. Locals are few and always offered;
+  # remotes are capped to the most recently committed. Typing a name in full
+  # always works, cap or no cap, so this only ever costs discoverability --
+  # raise ZEN_WORKTREE_BRANCH_LIMIT to reach further back.
+  local limit=${ZEN_WORKTREE_BRANCH_LIMIT:-300}
+
+  local -a checked_out heads remotes
+  checked_out=( ${(f)"$(git -C $repo worktree list --porcelain 2>/dev/null |
+    sed -n 's|^branch refs/heads/||p')"} )
+  heads=( ${(f)"$(git -C $repo for-each-ref --sort=-committerdate \
+    --format='%(refname:short)' refs/heads/ 2>/dev/null)"} )
+
+  # %(refname:short) renders refs/remotes/origin/HEAD as a bare "origin", which
+  # is not a branch, so strip the full refname instead and drop HEAD by name.
+  remotes=( ${(f)"$(git -C $repo for-each-ref --sort=-committerdate --count=$limit \
+    --format='%(refname)' refs/remotes/origin/ 2>/dev/null)"} )
+  remotes=( ${remotes#refs/remotes/origin/} )
+  remotes=( ${remotes:#HEAD} )
+
+  heads=( ${heads:|checked_out} )
+  remotes=( ${${remotes:|checked_out}:|heads} )
+
+  # -V keeps the newest-first order rather than re-sorting alphabetically.
+  local ret=1
+  _describe -V -t branches 'local branch' heads && ret=0
+  _describe -V -t remote-branches 'remote branch' remotes && ret=0
+  return ret
+}
+
+# zen-worktree-rm slugifies its argument, so the directory names under the
+# worktree root are the only inputs guaranteed to resolve. Offer those, tagged
+# with the branch checked out there so the list still reads as branches.
+_zen_worktree_existing() {
+  local root=$(_zen_worktree_root) repo=$(_zen_worktree_repo)
+  [[ -d $root ]] || return 1
+
+  local -a slugs
+  slugs=( $root/*(/N:t) )
+  (( $#slugs )) || return 1
+
+  local -A branch_of
+  local line wt=""
+  for line in ${(f)"$(git -C $repo worktree list --porcelain 2>/dev/null)"}; do
+    case $line in
+      (worktree\ *)            wt=${${line#worktree }:t} ;;
+      (branch\ refs/heads/*)   branch_of[$wt]=${line#branch refs/heads/} ;;
+    esac
+  done
+
+  local -a display
+  local s
+  for s in $slugs; do
+    if [[ -n ${branch_of[$s]-} ]]; then
+      display+=( "${s}:${branch_of[$s]}" )
+    else
+      display+=( "$s" )
+    fi
+  done
+
+  _describe -t worktrees 'worktree' display
+}
+
+_zen_worktree() {
+  local ret=1
+
+  case ${service:-$words[1]} in
+    (zen-worktree-rm)
+      _arguments -s -S \
+        '(--force -f)'{--force,-f}'[skip the safety checks and the prompt]' \
+        '--repo[git repo the worktree belongs to]:repo:_directories' \
+        '(- *)'{-h,--help}'[show usage]' \
+        '1:worktree:_zen_worktree_existing' && ret=0
+      ;;
+    (*)
+      _arguments -s -S \
+        '--from[create the branch from this base ref]:base:_zen_worktree_branches' \
+        '--repo[git repo to add the worktree to]:repo:_directories' \
+        '--no-shared-gems[use a private gem volume instead of sharing main'\''s]' \
+        '(- *)'{-h,--help}'[show usage]' \
+        '1:branch:_zen_worktree_branches' && ret=0
+      ;;
+  esac
+
+  return ret
+}
+
+_zen_worktree "$@"

@@ -24,6 +24,23 @@ next_agent = "prefix+a"
 previous_agent = "prefix+shift+a"
 focus_agent = "prefix+alt+1..9"
 
+# Pick a branch and spin up a worktree without borrowing a pane from whatever
+# session happens to be in front.
+[[keys.command]]
+key = "prefix+f"
+type = "popup"
+command = "/home/rich/Scripts/zen-worktree-new"
+width = "70%"
+height = "60%"
+
+# Same, for teardown. No --force, so it still asks before removing anything.
+[[keys.command]]
+key = "prefix+shift+f"
+type = "popup"
+command = "/home/rich/Scripts/zen-worktree-rm --pause"
+width = "70%"
+height = "60%"
+
 [ui]
 # Sidebar is the whole point — keep it visible.
 sidebar_start_collapsed = false

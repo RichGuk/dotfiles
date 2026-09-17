@@ -38,7 +38,12 @@ SLUG=$(printf '%s' "$BRANCH" | tr '/' '-' | tr -cd '[:alnum:]-_' | tr '[:upper:]
 DB_SLUG=$(printf '%s' "$SLUG" | tr '-' '_')
 WORKTREE="$WORKTREE_ROOT/$SLUG"
 
-[[ -e $WORKTREE ]] && { echo "worktree already exists: $WORKTREE" >&2; exit 1; }
+# Switching to an existing worktree leaves it exactly as it was — no env rewrite,
+# no port reshuffle, no relaunching an editor over the one already running.
+if [[ -e $WORKTREE ]]; then
+    echo "worktree : $WORKTREE (existing — switching)"
+    exec herdr-sessionizer "$WORKTREE"
+fi
 
 # Offset is derived, not stored, so removing a worktree frees its number.
 # Sibling checkouts are scanned too — hand-made worktrees live beside the repo.
@@ -67,7 +72,17 @@ API_PORT=$((3000 + offset))
 WEB_PORT=$((8080 + offset))
 
 HOSTNAME_SHORT=$(hostname -s 2>/dev/null || hostname)
-ALLOWED_HOSTS="localhost,${HOSTNAME_SHORT},${HOSTNAME_SHORT}.lan"
+ALLOWED_HOSTS="localhost,${HOSTNAME_SHORT},${HOSTNAME_SHORT}.lan,.internal"
+hash_branch() {
+    if command -v sha1sum >/dev/null 2>&1; then
+        printf '%s' "$1" | sha1sum | cut -c1-8
+    else
+        printf '%s' "$1" | shasum | cut -c1-8
+    fi
+}
+
+PROXY_SLUG=$(hash_branch "$BRANCH")
+PROXY_HOST="${PROXY_SLUG}.zen.internal"
 
 set_env_var() {
     local file=$1 key=$2 value=$3
@@ -176,9 +191,93 @@ set_env_var "$WORKTREE/web/.env.local" PORT "$WEB_PORT"
 set_env_var "$WORKTREE/web/.env.local" API_HOST "http://localhost:${API_PORT}"
 set_env_var "$WORKTREE/web/.env.local" ALLOWED_HOSTS "$ALLOWED_HOSTS"
 
+# --- proxy ---
+if command -v devbox-route >/dev/null 2>&1; then
+    devbox-route add "$PROXY_SLUG" "$WEB_PORT" --host "$PROXY_HOST" --label "$BRANCH" >/dev/null &&
+        echo "proxy    : http://${PROXY_HOST}"
+else
+    echo "proxy    : devbox-route not on PATH — skipped"
+fi
+
 echo
+echo "  http://${PROXY_HOST}"
 echo "  http://${HOSTNAME_SHORT}:${WEB_PORT}"
-echo "  cd $WORKTREE/api && bin/dc up"
+echo "  mise run dc up      (from $WORKTREE)"
+echo "  mise run web:dev"
 echo
 
-exec herdr-sessionizer "$WORKTREE"
+herdr_workspace_id() {
+    herdr workspace list 2>/dev/null |
+        jq -r --arg l "$SLUG" '.result.workspaces[]? | select(.label == $l) | .workspace_id' | head -1
+}
+
+herdr_tab_id() {
+    herdr tab list 2>/dev/null |
+        jq -r --arg w "$1" --arg l "$2" \
+            '.result.tabs[]? | select(.workspace_id == $w and .label == $l) | .tab_id' | head -1
+}
+
+herdr_first_pane() {
+    herdr pane list 2>/dev/null |
+        jq -r --arg t "$1" '[.result.panes[]? | select(.tab_id == $t) | .pane_id] | first // empty'
+}
+
+# Lay out the workspace the sessionizer just created: the Servers tab gets a
+# small bottom pane with the URLs and commands while the top waits with `dc up`
+# typed but not run, and the editor and agent start in their own tabs.
+#
+# Only ever called for a freshly created workspace. Re-running it against a live
+# one would type `nvim .` into an already-running nvim as normal-mode keystrokes.
+herdr_layout() {
+    command -v herdr >/dev/null 2>&1 || return 0
+    command -v jq >/dev/null 2>&1 || return 0
+
+    local ws tab top bottom count pane pane_spec
+    ws=$(herdr_workspace_id)
+    [[ -n $ws ]] || return 0
+
+    for pane_spec in "NeoVim:nvim ." "Agent:claude"; do
+        tab=$(herdr_tab_id "$ws" "${pane_spec%%:*}")
+        [[ -n $tab ]] || continue
+        pane=$(herdr_first_pane "$tab")
+        [[ -n $pane ]] && herdr pane run "$pane" "${pane_spec#*:}" >/dev/null 2>&1
+    done
+
+    tab=$(herdr_tab_id "$ws" "Servers")
+    [[ -n $tab ]] || return 0
+
+    top=$(herdr_first_pane "$tab")
+    [[ -n $top ]] || return 0
+
+    count=$(herdr pane list 2>/dev/null |
+        jq -r --arg t "$tab" '[.result.panes[]? | select(.tab_id == $t)] | length')
+
+    if [[ ${count:-1} -lt 2 ]]; then
+        bottom=$(herdr pane split "$top" --direction down --ratio 0.6 --cwd "$WORKTREE" 2>/dev/null |
+            jq -r '.result.pane.pane_id // empty')
+    else
+        bottom=$(herdr pane list 2>/dev/null |
+            jq -r --arg t "$tab" '[.result.panes[]? | select(.tab_id == $t) | .pane_id] | .[1] // empty')
+    fi
+
+    if [[ -n $bottom ]]; then
+        herdr pane run "$bottom" "clear; printf '%s\n' '' \
+            '  http://${PROXY_HOST}' \
+            '  http://${HOSTNAME_SHORT}:${WEB_PORT}' \
+            '  api :${API_PORT}    web :${WEB_PORT}' \
+            '' \
+            '  mise run dc up' \
+            '  mise run web:dev' \
+            ''" >/dev/null 2>&1
+    fi
+
+    herdr pane send-text "$top" 'mise run dc up' >/dev/null 2>&1
+
+    return 0
+}
+
+ws_before=$(herdr_workspace_id 2>/dev/null || true)
+herdr-sessionizer "$WORKTREE"
+[[ -z $ws_before ]] && herdr_layout
+
+exit 0
