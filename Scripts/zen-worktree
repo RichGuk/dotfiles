@@ -43,10 +43,27 @@ SLUG=$(printf '%s' "$BRANCH" | tr '/' '-' | tr -cd '[:alnum:]-_' | tr '[:upper:]
 DB_SLUG=$(printf '%s' "$SLUG" | tr '-' '_')
 WORKTREE="$WORKTREE_ROOT/$SLUG"
 
-# Switching to an existing worktree leaves it exactly as it was — no env rewrite,
-# no port reshuffle, no relaunching an editor over the one already running.
+# Both files are gitignored, so `worktree add` leaves them out and a new tree
+# starts with no personal permissions and, worse, a CLAUDE.md whose
+# @AGENTS.local.md import resolves to nothing. Copied again on every switch
+# because the originals keep gaining rules, and a tree created weeks ago is
+# otherwise still working from whatever they said that day.
+copy_agent_config() {
+    local local_file
+    for local_file in .claude/settings.local.json AGENTS.local.md; do
+        [[ -f $REPO/$local_file ]] || continue
+        mkdir -p "$(dirname "$WORKTREE/$local_file")"
+        cp -p "$REPO/$local_file" "$WORKTREE/$local_file"
+        echo "agent    : $local_file copied"
+    done
+}
+
+# Switching to an existing worktree otherwise leaves it exactly as it was — no
+# env rewrite, no port reshuffle, no relaunching an editor over the one already
+# running.
 if [[ -e $WORKTREE ]]; then
     echo "worktree : $WORKTREE (existing — switching)"
+    copy_agent_config
     exec herdr-sessionizer "$WORKTREE"
 fi
 
@@ -137,15 +154,7 @@ for dir in api web; do
 done
 
 # --- agent config ---
-# Both files are gitignored, so `worktree add` leaves them out and a new tree
-# starts with no personal permissions and, worse, a CLAUDE.md whose
-# @AGENTS.local.md import resolves to nothing.
-for local_file in .claude/settings.local.json AGENTS.local.md; do
-    [[ -f $REPO/$local_file ]] || continue
-    mkdir -p "$(dirname "$WORKTREE/$local_file")"
-    cp -p "$REPO/$local_file" "$WORKTREE/$local_file"
-    echo "agent    : $local_file copied"
-done
+copy_agent_config
 
 # --- api ---
 set_env_var "$WORKTREE/api/.env" API_PORT "$API_PORT"
