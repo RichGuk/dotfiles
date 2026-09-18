@@ -50,6 +50,34 @@ if [[ "$OSTYPE" != darwin* && -n "$SSH_CONNECTION" ]]; then
   add-zsh-hook precmd _agent_relink
 fi
 
+# A herdr session outlives the connection that started it, so panes keep stale
+# SSH_* vars. They name a client and port, so ask sshd if it still exists.
+#
+# The WAYLAND_DISPLAY half is gated on that: a genuinely remote session would
+# otherwise get THIS machine's clipboard rather than the laptop's.
+#
+# On precmd as well as at startup, so walking to the machine and starting
+# something in a pane that is already open just works. The guard keeps it to
+# one `ss` call in the only state that needs fixing.
+_fix_session_env() {
+  [[ -n $SSH_CONNECTION ]] || return 0
+
+  local peer="${${(s: :)SSH_CONNECTION}[1]}:${${(s: :)SSH_CONNECTION}[2]}"
+  ss -tnH state established 'sport = :22' 2>/dev/null | grep -q "$peer" && return 0
+
+  unset SSH_CONNECTION SSH_CLIENT SSH_TTY
+
+  if [[ -z $WAYLAND_DISPLAY ]]; then
+    local wl=(${XDG_RUNTIME_DIR:-/run/user/$UID}/wayland-[0-9]*(N))
+    [[ -n ${wl[1]} ]] && export WAYLAND_DISPLAY=${wl[1]:t}
+  fi
+  return 0
+}
+
+_fix_session_env
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd _fix_session_env
+
 export GPG_TTY=$TTY
 
 (( $+commands[atuin] )) && eval "$(atuin init zsh)"
