@@ -8,20 +8,15 @@
 # Compose is tap-then-type: tap the compose key, release, then type the sequence.
 # The compose key is right ctrl (`compose:rctrl` in lua/input.lua), which the
 # Framework 13 has and the Air60 V2 does not — its 64-key layout spends the
-# bottom right on arrows and emits no right-hand modifier at all. So on the
-# Air60 there is no compose key, and £ comes from keyd's alt+3 below instead.
+# bottom right on arrows and emits no right-hand modifier at all.
+#
+# So NONE of this is reachable on the Air60, and nothing here is load-bearing:
+# £ is alt+3, a real keysym off the us(mac) variant, and does not touch compose.
+# Compose was tried first and abandoned because it is per-toolkit — kitty and
+# Firefox resolved the sequences, GTK4 and Chromium typed them literally.
 
 # Keep every default sequence ('e for é, --- for em dash, and so on).
 include "%L"
-
-# keyd emits a sequence for any UTF8 value in /etc/keyd/default.conf -- that is
-# how `3 = £` in its [alt] layer produces a character no us layout has. The
-# sequence is keyd's own, and is copied from line 36 of
-# /usr/share/keyd/keyd.compose rather than including that whole 34k-line file:
-# kitty resolved the include and Firefox did not, and one line needs no parser
-# feature beyond what every toolkit already does. Without it the keystroke
-# types a literal 00z, which is the symptom to recognise.
-<Cancel> <0> <0> <z>           : "£"   sterling
 
 # Memorable aliases, because "l -" for a pound sign is impossible to remember.
 # These need a compose key, so they are the Framework route, not the Air60 one.
