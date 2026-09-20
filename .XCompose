@@ -1,14 +1,25 @@
-# Custom compose sequences. Referenced by XCOMPOSEFILE in .config/hypr/envs.conf.
+# Custom compose sequences. Referenced by XCOMPOSEFILE in .config/hypr/lua/envs.lua,
+# which must give an ABSOLUTE path — env values are not tilde-expanded, and
+# "~/.XCompose" sent every toolkit looking for that name relative to its own cwd.
+#
 # Linux only — macOS has no compose key and ignores this file entirely
 # (there, £ is Option+3 and accents are Option dead keys).
 #
 # Compose is tap-then-type: tap the compose key, release, then type the sequence.
-# On the Framework that's the real right-ctrl; on the Air60 it's Fn + the HYPER
-# key, since the Air60 has no right-ctrl of its own. Both via `compose:rctrl`.
+# The compose key is right ctrl (`compose:rctrl` in lua/input.lua), which the
+# Framework 13 has and the Air60 V2 does not — its 64-key layout spends the
+# bottom right on arrows and emits no right-hand modifier at all. So on the
+# Air60 there is no compose key, and £ comes from keyd's alt+3 below instead.
 
-# Keep every default sequence (l- for £, 'e for é, --- for em dash, and so on).
+# Keep every default sequence ('e for é, --- for em dash, and so on).
 include "%L"
 
+# keyd emits its own sequences for any UTF8 value in /etc/keyd/default.conf --
+# that is how `alt-3 = £` produces a character no us layout has. Without this
+# include the keystroke resolves to nothing at all.
+include "/usr/share/keyd/keyd.compose"
+
 # Memorable aliases, because "l -" for a pound sign is impossible to remember.
+# These need a compose key, so they are the Framework route, not the Air60 one.
 <Multi_key> <p> <p>            : "£"   sterling
 <Multi_key> <g> <b> <p>        : "£"   sterling
