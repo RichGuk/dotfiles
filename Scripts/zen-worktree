@@ -229,6 +229,16 @@ else
     echo "proxy    : FAILED to register ${PROXY_HOST}" >&2
 fi
 
+# Active Storage builds direct-upload and redirect URLs from api/.env's API_HOST,
+# and the browser has to be able to reach them — so it must be the proxy host plus
+# Vite's /dev-api prefix, not the port the API happens to listen on. Rails passes
+# the value through untouched as long as it carries no port, hence no :$API_PORT.
+if [[ $PROXY_READY == true ]]; then
+    set_env_var "$WORKTREE/api/.env" API_HOST "${PROXY_HOST}/dev-api"
+else
+    set_env_var "$WORKTREE/api/.env" API_HOST "localhost:${API_PORT}"
+fi
+
 echo
 if [[ $PROXY_READY == true ]]; then
     echo "  http://${PROXY_HOST}"
