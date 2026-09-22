@@ -24,3 +24,4 @@ alias hw='herdr --session work'
 alias hp='herdr --session personal'
 # Server keybindings, or the popup commands in razorback's config.toml never bind.
 alias hwr='herdr --remote razorback.work --session work --remote-keybindings server'
+alias hpr='herdr --remote razorback.work --session personal --remote-keybindings server'

@@ -54,3 +54,10 @@ vim.opt.foldnestmax = 4
 vim.opt.foldenable = false
 
 vim.opt.backupcopy = "yes"
+
+-- Inside herdr, hand every yank to the client over OSC 52 rather than letting
+-- nvim pick wl-copy: the client is the MacBook when attached remotely, and this
+-- machine when it is not, so the clipboard follows whoever is looking at it.
+if vim.env.HERDR_PANE_ID then
+  vim.g.clipboard = "osc52"
+end
