@@ -30,25 +30,11 @@ unset config_file
 eval "$(mise activate zsh)"
 eval "$(mise completion zsh)"
 
-# Which agent to talk to is decided in .zshenv, which runs first and is also
-# what uwsm's env preloader reads at login. All that is left here is keeping a
-# FORWARDED agent fresh: a long-lived shell (tmux) outlives the connection that
-# brought its socket, so ~/.ssh/rc re-points ~/.ssh/agent.sock at the current
-# one and this picks that up each prompt. Local sessions want none of it.
-if [[ "$OSTYPE" != darwin* && -n "$SSH_CONNECTION" ]]; then
-  _agent_relink() {
-    local s="$HOME/.ssh/agent.sock"
-    if [[ -L $s && ! -S $s ]]; then
-      sh "$HOME/.ssh/rc" 2>/dev/null
-    fi
-    if [[ -S $s && $SSH_AUTH_SOCK != $s ]]; then
-      export SSH_AUTH_SOCK=$s
-    fi
-    return 0
-  }
-  autoload -Uz add-zsh-hook
-  add-zsh-hook precmd _agent_relink
-fi
+# Which agent to talk to is decided in .zshenv and nothing here revises it.
+# This machine holds its own key and runs its own socket-activated agent, so
+# there is no forwarded socket to chase and no symlink to keep fresh. Agent
+# forwarding OUT of here, to Roci and Atlantis, is unaffected: that forwards
+# whatever $SSH_AUTH_SOCK names, which is this machine's agent.
 
 # A herdr session outlives the connection that started it, so panes keep stale
 # SSH_* vars. They name a client and port, so ask sshd if it still exists.

@@ -21,8 +21,29 @@ services:
   sidekiq-shards:
     ports: !reset null
 
+  # A 2g heap per worktree is most of the memory on this box and search is
+  # rarely what a worktree is for. Still an env var, so a worktree that does
+  # care can put ES_JAVA_OPTS back up in api/.env.
   elasticsearch:
     ports: !reset null
+    environment:
+      ES_JAVA_OPTS: "${ES_JAVA_OPTS:--Xms512m -Xmx512m}"
+
+  # Reached through the proxy at http://<worktree host>/_devbox/mail rather than
+  # a published port, so there is no second offset to keep track of. MP_WEBROOT
+  # makes mailpit emit its own asset and websocket URLs under that prefix, which
+  # is why the Traefik route does not strip it. SMTP stays on the compose
+  # network, so the api container still sends to mailpit:1025 unchanged.
+  mailpit:
+    ports: !reset null
+    environment:
+      MP_WEBROOT: /_devbox/mail
+      MP_ENABLE_SPAMASSASSIN: ""
+    networks:
+      default: {}
+      devbox:
+        aliases:
+          - "mail-${PROXY_SLUG:-unrouted}"
 
   kibana:
     profiles: [search]
@@ -30,8 +51,12 @@ services:
   apm-server:
     profiles: [search]
 
-  mailpit:
-    profiles: [mail]
-
   spamassassin:
     profiles: [mail]
+
+# Created by DevBoxProxy, which Traefik is also attached to. `docker compose up`
+# fails here if the proxy has never been started on this machine.
+networks:
+  devbox:
+    external: true
+    name: devbox

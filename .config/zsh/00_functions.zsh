@@ -22,10 +22,11 @@ function brew() {
   fi
 }
 
-# Wraps ~/Scripts/refresh-agent so the export lands in the current shell.
-function refresh-agent() {
-  local assignment
-  assignment=$(command refresh-agent --export) || return 1
-  eval "$assignment"
-  echo "SSH_AUTH_SOCK -> $SSH_AUTH_SOCK"
+# Type this blind after a TUI dies without restoring the terminal. The first
+# escape pops the kitty keyboard protocol: until it does, every modified key
+# arrives as a literal CSI-u sequence, so ctrl+c prints `^[[99;5u` instead of
+# ever becoming a signal.
+function unwedge() {
+  printf '\033[<u\033[?1049l\033[?1000l\033[?1006l\033[?2004l\033[?25h'
+  stty sane
 }

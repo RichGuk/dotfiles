@@ -161,6 +161,11 @@ set_env_var "$WORKTREE/api/.env" API_PORT "$API_PORT"
 set_env_var "$WORKTREE/api/.env" COMPOSE_PROJECT_NAME "zen_${DB_SLUG}"
 set_env_var "$WORKTREE/api/.env" ALLOWED_HOSTS "$ALLOWED_HOSTS"
 
+# The override gives mailpit the network alias mail-$PROXY_SLUG, which is what
+# the proxy routes to. A compose project name is far past the 63-character DNS
+# label limit, so the container's own name is not addressable.
+set_env_var "$WORKTREE/api/.env" PROXY_SLUG "$PROXY_SLUG"
+
 cp "$OVERRIDE_SRC" "$WORKTREE/api/docker-compose.override.yml"
 
 if [[ $SHARED_GEMS == true ]]; then
@@ -222,11 +227,30 @@ set_env_var "$WORKTREE/web/.env.local" ALLOWED_HOSTS "$ALLOWED_HOSTS"
 PROXY_READY=false
 if ! command -v devbox-route >/dev/null 2>&1; then
     echo "proxy    : devbox-route NOT ON PATH — no route registered" >&2
-elif devbox-route add "$PROXY_SLUG" "$WEB_PORT" --host "$PROXY_HOST" --label "$BRANCH" >/dev/null; then
-    PROXY_READY=true
-    echo "proxy    : http://${PROXY_HOST}"
 else
-    echo "proxy    : FAILED to register ${PROXY_HOST}" >&2
+    # api/docker-compose.override.yml declares this network as external, so the
+    # worktree will not start at all until it exists. It normally does, since
+    # the proxy creates it, but a box where the proxy has never run would fail
+    # here with a message pointing at compose rather than at the proxy.
+    docker network inspect devbox >/dev/null 2>&1 ||
+        docker network create devbox >/dev/null 2>&1 ||
+        echo "proxy    : could not create the devbox network — mailpit will not route" >&2
+
+    # /monitoring goes straight to Rails rather than through Vite. Sidekiq Web
+    # writes root-absolute links (/monitoring/sidekiq/busy), so it only works at
+    # the path it is actually mounted on — Vite's /dev-api prefix would be lost
+    # from every link and asset on the page.
+    if devbox-route add "$PROXY_SLUG" "$WEB_PORT" \
+        --host "$PROXY_HOST" --label "$BRANCH" \
+        --path "/_devbox/mail=mail-${PROXY_SLUG}:8025" \
+        --path "/monitoring=host.docker.internal:${API_PORT}" >/dev/null; then
+        PROXY_READY=true
+        echo "proxy    : http://${PROXY_HOST}"
+        echo "mail     : http://${PROXY_HOST}/_devbox/mail"
+        echo "sidekiq  : http://${PROXY_HOST}/monitoring/sidekiq"
+    else
+        echo "proxy    : FAILED to register ${PROXY_HOST}" >&2
+    fi
 fi
 
 # Active Storage builds direct-upload and redirect URLs from api/.env's API_HOST,
@@ -242,6 +266,8 @@ fi
 echo
 if [[ $PROXY_READY == true ]]; then
     echo "  http://${PROXY_HOST}"
+    echo "  http://${PROXY_HOST}/_devbox/mail"
+    echo "  http://${PROXY_HOST}/monitoring/sidekiq"
 fi
 echo "  http://${HOSTNAME_SHORT}:${WEB_PORT}"
 echo "  mise run dc up      (from $WORKTREE)"
@@ -305,6 +331,8 @@ herdr_layout() {
     if [[ -n $bottom ]]; then
         herdr pane run "$bottom" "clear; printf '%s\n' '' \
             '  http://${PROXY_HOST}' \
+            '  http://${PROXY_HOST}/_devbox/mail' \
+            '  http://${PROXY_HOST}/monitoring/sidekiq' \
             '  http://${HOSTNAME_SHORT}:${WEB_PORT}' \
             '  api :${API_PORT}    web :${WEB_PORT}' \
             '' \

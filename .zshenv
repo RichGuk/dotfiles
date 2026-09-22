@@ -11,15 +11,21 @@ export PATH
 
 export LANG=${LANG:-en_GB.UTF-8}
 
-# Only when nothing has set it already: inside an SSH session sshd has pointed
-# it at the forwarded agent, and overriding that would use this machine's keys
-# instead of the ones from the far end.
+# Only when nothing usable is set already: inside an SSH session sshd has
+# pointed it at the forwarded agent, and overriding that would use this
+# machine's keys instead of the ones from the far end. A live forwarded socket
+# passes -S, so widening the test from "unset" to "not a socket" cannot steal
+# one -- it only catches a value inherited from a dead connection, which is
+# otherwise carried for the whole life of the shell.
 #
-# $XDG_RUNTIME_DIR rather than ~/.ssh/agent.sock because that path is on disk,
-# so the socket file outlives the agent across a reboot -- and `-S` tests that
-# a path is a socket, not that anything is listening. This file is also what
-# uwsm's env preloader reads at login, so a wrong value here becomes the whole
-# session's SSH_AUTH_SOCK.
-if [[ "$OSTYPE" != darwin* && -z "$SSH_AUTH_SOCK" ]]; then
+# This is the only place SSH_AUTH_SOCK is decided -- there is no precmd hook
+# revising it later, so the value has to be right on its own. It is, because
+# the socket is systemd-activated: the path always exists and connecting starts
+# the agent, so it needs no liveness check of its own. `-S` above is only there
+# to spot an inherited value that is NOT that socket and has since died.
+#
+# This file is also what uwsm's env preloader reads at login, so a wrong value
+# here becomes the whole graphical session's SSH_AUTH_SOCK.
+if [[ "$OSTYPE" != darwin* && ! -S "$SSH_AUTH_SOCK" ]]; then
   export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR:-/run/user/$UID}/ssh-agent.socket"
 fi
