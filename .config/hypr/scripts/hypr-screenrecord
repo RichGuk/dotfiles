@@ -1,0 +1,112 @@
+#!/bin/bash
+# Toggle a screen recording; running it again stops it, whatever the mode.
+#
+#   hypr-screenrecord            whole focused monitor
+#   hypr-screenrecord region     drag a box with slurp
+#   hypr-screenrecord window     the focused window's rectangle
+#   hypr-screenrecord menu       ask the shell, or fall back to the monitor
+#
+# Stop with SIGINT: anything else leaves an unplayable file with no moov atom.
+# `region` takes logical coordinates, so slurp's output needs no conversion.
+
+set -u
+
+OUT="${XDG_VIDEOS_DIR:-$HOME/Videos}/Screencasts"
+MODE="${1:-output}"
+
+# The bar watches this file.
+STATE="${XDG_STATE_HOME:-$HOME/.local/state}/hyprland-shell/recording.json"
+
+# comm is truncated to 15 characters, so the full name never matches pgrep -x.
+RECORDER=gpu-screen-reco
+
+if pgrep -x "$RECORDER" >/dev/null; then
+  pkill -SIGINT -x "$RECORDER"
+
+  # Give it a moment to write the trailer before saying it is done.
+  for _ in $(seq 1 50); do
+    pgrep -x "$RECORDER" >/dev/null || break
+    sleep 0.1
+  done
+
+  rm -f "$STATE"
+  notify-send -a Screenrecord "Recording stopped" "Saved to $OUT" -t 4000
+  exit 0
+fi
+
+# Fall back to recording the monitor if the shell is not running.
+if [[ $MODE == menu ]]; then
+  if qs ipc call capture open >/dev/null 2>&1; then
+    exit 0
+  fi
+  MODE=output
+fi
+
+mkdir -p "$OUT"
+
+monitor=$(hyprctl monitors -j 2>/dev/null | jq -r '.[] | select(.focused).name')
+if [[ -z ${monitor:-} || $monitor == "null" ]]; then
+  notify-send -a Screenrecord -u critical "Could not start recording" \
+    "No focused monitor reported by hyprctl" -t 5000
+  exit 1
+fi
+
+case "$MODE" in
+  region)
+    # slurp prints "X,Y WxH"; -region wants "WxH+X+Y".
+    geom=$(slurp -d 2>/dev/null) || exit 0     # cancelled with Escape
+    [[ -n $geom ]] || exit 0
+    pos=${geom%% *}
+    size=${geom##* }
+    target=(-w region -region "${size}+${pos/,/+}")
+    what="region $size"
+    RX=${pos%,*}; RY=${pos#*,}
+    RW=${size%x*}; RH=${size#*x}
+    ;;
+
+  window)
+    read -r wx wy ww wh < <(hyprctl activewindow -j 2>/dev/null |
+      jq -r '"\(.at[0]) \(.at[1]) \(.size[0]) \(.size[1])"')
+    if [[ -z ${wx:-} || $wx == "null" ]]; then
+      notify-send -a Screenrecord -u critical "Could not start recording" \
+        "No focused window" -t 5000
+      exit 1
+    fi
+    target=(-w region -region "${ww}x${wh}+${wx}+${wy}")
+    what="window ${ww}x${wh}"
+    RX=$wx; RY=$wy; RW=$ww; RH=$wh
+    ;;
+
+  output | screen | "")
+    target=(-w "$monitor")
+    what="$monitor"
+    # No rectangle: the whole output is recorded, so there is nothing to
+    # outline that would not itself be in the recording.
+    RX=0; RY=0; RW=0; RH=0
+    ;;
+
+  *)
+    echo "usage: $0 [output|region|window|menu]" >&2
+    exit 2
+    ;;
+esac
+
+file="$OUT/screencast-$(date +'%Y-%m-%d_%H-%M-%S').mp4"
+
+notify-send -a Screenrecord "Recording $what" "Super + Shift + 5 to stop" -t 3000
+
+mkdir -p "$(dirname "$STATE")"
+cat > "$STATE" <<JSON
+{ "mode": "$MODE", "what": "$what", "file": "$file",
+  "x": $RX, "y": $RY, "w": $RW, "h": $RH, "started": $(date +%s) }
+JSON
+
+# Not exec'd: the state file must be removed after this exits, even on a crash.
+gpu-screen-recorder \
+  "${target[@]}" \
+  -f 60 \
+  -k auto \
+  -fallback-cpu-encoding yes \
+  -o "$file"
+
+rm -f "$STATE"

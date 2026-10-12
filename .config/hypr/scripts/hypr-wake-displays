@@ -1,0 +1,19 @@
+#!/bin/bash
+# Bring DP-2 back after a DPMS wake or suspend. A modeset alone does not fix
+# it; only disabling and re-adding the output does. `disabled = false` must be
+# explicit on the way back, as the flag is sticky. Safe to run at any time.
+#
+# Must match the DP-2 block in lua/monitors.lua.
+
+set -u
+
+OUTPUT="DP-2"
+MODE="1920x1080@60"
+POSITION="320x1440"
+SCALE=1
+
+hyprctl eval "hl.monitor({ output = \"$OUTPUT\", disabled = true })" >/dev/null
+sleep 1
+hyprctl eval "hl.monitor({ output = \"$OUTPUT\", mode = \"$MODE\", \
+                           position = \"$POSITION\", scale = $SCALE, \
+                           disabled = false })" >/dev/null

@@ -1,0 +1,106 @@
+#!/bin/bash
+# Set the desktop wallpaper.
+#
+#   hypr-wallpaper                 print the current one
+#   hypr-wallpaper set PATH        use this image
+#   hypr-wallpaper next            next image in the wallpaper directory
+#   hypr-wallpaper random          a random one
+#   hypr-wallpaper mode fill|fit|stretch
+#   hypr-wallpaper list            what is available
+#
+# No daemon: the shell (components/WallpaperLayer.qml) watches the JSON file,
+# so writing it is the whole mechanism.
+
+set -u
+
+STATE="${XDG_STATE_HOME:-$HOME/.local/state}/hyprland-shell/wallpaper.json"
+
+# Not both: /usr/share/hypr also holds lockdead*.png, the lock-crash screens.
+WALL_DIR="$HOME/Pictures/Wallpapers"
+if [[ -d $WALL_DIR ]] && compgen -G "$WALL_DIR/*" >/dev/null; then
+  DIRS=("$WALL_DIR")
+else
+  DIRS=("/usr/share/hypr")
+fi
+
+current() {
+  [[ -f $STATE ]] && jq -r '.path // ""' "$STATE" 2>/dev/null
+}
+
+available() {
+  # -print, not -printf, which BSD find lacks.
+  for d in "${DIRS[@]}"; do
+    [[ -d $d ]] || continue
+    find "$d" -maxdepth 1 -type f \
+      \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.webp' \) \
+      ! -iname 'lockdead*' -print
+  done | sort
+}
+
+write_state() {
+  local key=$1 value=$2
+  mkdir -p "$(dirname "$STATE")"
+  local tmp
+  tmp=$(mktemp "$STATE.XXXXXX")
+  if [[ -f $STATE ]]; then
+    jq --arg v "$value" ".$key = \$v" "$STATE" > "$tmp" 2>/dev/null \
+      || jq -n --arg v "$value" "{$key: \$v}" > "$tmp"
+  else
+    jq -n --arg v "$value" "{$key: \$v}" > "$tmp"
+  fi
+  # Atomic: the shell is watching, and a half-written file blanks the wallpaper.
+  mv -f "$tmp" "$STATE"
+}
+
+case "${1:-current}" in
+  current)
+    cur=$(current)
+    # No apostrophe here: bash parses quotes inside ${x:-y} even within "...".
+    echo "${cur:-<unset, using the built-in fallback>}"
+    ;;
+
+  list)
+    available
+    ;;
+
+  set)
+    [[ $# -ge 2 ]] || { echo "usage: $0 set PATH" >&2; exit 2; }
+    target=$(realpath -e "$2" 2>/dev/null) || {
+      echo "no such file: $2" >&2; exit 1; }
+    write_state path "$target"
+    echo "$target"
+    ;;
+
+  next)
+    mapfile -t all < <(available)
+    ((${#all[@]})) || { echo "no images in ${DIRS[*]}" >&2; exit 1; }
+    cur=$(current)
+    idx=-1
+    for i in "${!all[@]}"; do
+      [[ ${all[$i]} == "$cur" ]] && idx=$i && break
+    done
+    next=${all[$(((idx + 1) % ${#all[@]}))]}
+    write_state path "$next"
+    echo "$next"
+    ;;
+
+  random)
+    mapfile -t all < <(available)
+    ((${#all[@]})) || { echo "no images in ${DIRS[*]}" >&2; exit 1; }
+    pick=${all[$((RANDOM % ${#all[@]}))]}
+    write_state path "$pick"
+    echo "$pick"
+    ;;
+
+  mode)
+    case "${2:-}" in
+      fill | fit | stretch) write_state mode "$2"; echo "$2" ;;
+      *) echo "usage: $0 mode fill|fit|stretch" >&2; exit 2 ;;
+    esac
+    ;;
+
+  *)
+    echo "usage: $0 {current|list|set PATH|next|random|mode MODE}" >&2
+    exit 2
+    ;;
+esac

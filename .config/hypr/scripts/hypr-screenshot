@@ -1,0 +1,79 @@
+#!/bin/bash
+# Screenshot, annotate, save and copy.
+#
+#   hypr-screenshot            a region you drag out
+#   hypr-screenshot window     a window you click
+#   hypr-screenshot output     the focused monitor, no click
+#
+# grim and slurp directly, not hyprshot: its --raw writes nothing and its exit
+# status is meaningless, so it cannot be driven from a script.
+
+set -u
+
+OUTPUT_DIR="${XDG_SCREENSHOTS_DIR:-$HOME/Pictures/Screenshots}"
+mkdir -p "$OUTPUT_DIR"
+
+EDITOR_CMD="${HYPR_SCREENSHOT_EDITOR:-satty}"
+
+MODE="${1:-region}"
+
+# Pressing the bind again cancels rather than starting a second picker.
+if pkill -x slurp 2>/dev/null; then
+  pkill -x hyprpicker 2>/dev/null
+  exit 0
+fi
+
+TMP=$(mktemp -t "hypr-screenshot-XXXXXX.png")
+FROZEN=""
+cleanup() {
+  [[ -n $FROZEN ]] && kill "$FROZEN" 2>/dev/null
+  rm -f "$TMP"
+}
+trap cleanup EXIT
+
+freeze() {
+  hyprpicker -r -z >/dev/null 2>&1 &
+  FROZEN=$!
+  # Must be up before slurp draws, or the selection is made on live content.
+  sleep 0.2
+}
+
+case "$MODE" in
+  output)
+    # grim takes an output NAME, so no geometry maths and no picker.
+    monitor=$(hyprctl monitors -j | jq -r '.[] | select(.focused) | .name')
+    [[ -z ${monitor:-} || $monitor == "null" ]] && exit 1
+    grim -o "$monitor" "$TMP" || exit 1
+    ;;
+
+  window)
+    # Feed slurp the window boxes on the visible workspaces and let it snap to
+    # them, so a click picks a window rather than requiring a careful drag.
+    boxes=$(hyprctl clients -j | jq -r '
+      .[] | select(.workspace.id >= 0 and .hidden == false)
+          | "\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')
+    [[ -z $boxes ]] && exit 0
+    freeze
+    geometry=$(printf '%s\n' "$boxes" | slurp -r) || exit 0
+    grim -g "$geometry" "$TMP" || exit 1
+    ;;
+
+  region | *)
+    freeze
+    geometry=$(slurp) || exit 0
+    grim -g "$geometry" "$TMP" || exit 1
+    ;;
+esac
+
+# A cancelled picker or an empty capture should say nothing at all.
+[[ -s $TMP ]] || exit 0
+
+# Drop the freeze before satty opens, or it appears behind a still.
+[[ -n $FROZEN ]] && kill "$FROZEN" 2>/dev/null && FROZEN=""
+
+"$EDITOR_CMD" --filename "$TMP" \
+  --output-filename "$OUTPUT_DIR/screenshot-$(date +'%Y-%m-%d_%H-%M-%S').png" \
+  --early-exit \
+  --actions-on-enter save-to-clipboard \
+  --save-after-copy \
+  --copy-command 'wl-copy'

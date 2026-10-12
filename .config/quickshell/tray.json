@@ -1,0 +1,27 @@
+{
+  "_comment": [
+    "Tray filtering and icon overrides. Hand-edited; the shell watches this",
+    "file and re-reads it on save, so no restart is needed.",
+    "",
+    "Ids are matched case-insensitively as SUBSTRINGS, because an app's",
+    "StatusNotifierItem id is not always stable -- Steam's carries a pid, and",
+    "some apps append a number when a second instance starts. So 'steam'",
+    "matches 'steam_app_1234'.",
+    "",
+    "Every item's real id is shown in the tray drawer's tooltip and listed by",
+    "`qs log` on first sight, so there is no guessing about what to type here.",
+    "",
+    "  hidden  never shown at all",
+    "  pinned  shown directly in the bar rather than inside the drawer",
+    "  only    if non-empty, a WHITELIST: nothing outside it is shown",
+    "  icons   id -> freedesktop icon name, or a path, replacing the app's own"
+  ],
+
+  "hidden": [],
+
+  "pinned": [],
+
+  "only": [],
+
+  "icons": {}
+}
