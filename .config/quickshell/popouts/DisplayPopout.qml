@@ -14,7 +14,8 @@ Popout {
 
     readonly property var scaleTarget: Display.focusedMonitor
 
-    contentWidth: 340
+    // Grows to fit the scale row: a 4K panel offers seven scales.
+    contentWidth: Math.max(340, scaleRow.implicitWidth + Theme.popoutPadding * 2)
     // Summed: keep in step with the item heights below.
     contentHeight: Theme.popoutPadding * 2
                  + 26                                    // title
@@ -83,6 +84,8 @@ Popout {
             }
 
             Row {
+                id: scaleRow
+
                 anchors.left: parent.left
                 anchors.bottom: parent.bottom
                 spacing: 6
