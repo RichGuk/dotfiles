@@ -37,7 +37,7 @@ Popout {
             label: Idle.keepAwake ? "Keep awake — on" : "Keep awake"
             onTriggered: {
                 Idle.toggle();
-                root.dismiss();
+                root.dismissed();
             }
         }
 
@@ -46,7 +46,7 @@ Popout {
             label: "Lock"
             onTriggered: {
                 Lock.lock();
-                root.dismiss();
+                root.dismissed();
             }
         }
 
@@ -55,7 +55,7 @@ Popout {
             label: "Sleep"
             onTriggered: {
                 Power.suspend();
-                root.dismiss();
+                root.dismissed();
             }
         }
 
@@ -65,7 +65,7 @@ Popout {
             visible: Power.canHibernate
             onTriggered: {
                 Power.hibernate();
-                root.dismiss();
+                root.dismissed();
             }
         }
 
@@ -109,7 +109,7 @@ Popout {
     function arm(name, action) {
         if (root.armed === name) {
             root.armed = "";
-            root.dismiss();
+            root.dismissed();
             action();
             return;
         }

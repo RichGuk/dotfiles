@@ -120,7 +120,7 @@ Singleton {
     // Really closes it.
     function dismiss(n) {
         if (!n) return;
-        root.untoast(n.id);
+        root.toastIds = root.toastIds.filter(x => x !== n.id);
         n.dismiss();
     }
 
