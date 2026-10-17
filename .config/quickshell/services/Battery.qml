@@ -124,6 +124,36 @@ Singleton {
         return out;
     }
 
+    // The one the bar shows when there is no battery of our own, as on a desktop.
+    readonly property var lowestPeripheral: {
+        let low = null;
+        for (const d of root.peripherals) {
+            if (!low || d.percentage < low.percentage) low = d;
+        }
+        return low;
+    }
+
+    // Whether the bar module has anything to show at all.
+    readonly property bool anything: present || !!lowestPeripheral
+
+    // Just an icon; the percentage only matters when the machine itself is
+    // running on battery. Everything else is in the popout.
+    readonly property string barText: {
+        if (!present) return Theme.glyph("battery");
+        if (!onAc) return root.glyph + " " + root.percent + "%";
+        return root.glyph;
+    }
+
+    // Our own battery wins; otherwise a low peripheral still tints the icon.
+    readonly property color barColor: {
+        if (root.critical || root.low) return root.color;
+        if (!lowestPeripheral) return root.present ? root.color : Theme.barText;
+        const p = peripheralPercent(lowestPeripheral);
+        return p <= Theme.batteryCriticalAt ? Theme.attention
+             : p <= Theme.batteryWarnAt ? Theme.warning
+             : Theme.barText;
+    }
+
     function peripheralGlyph(type) {
         switch (type) {
         case UPowerDeviceType.Mouse:       return Theme.glyph("mouse");

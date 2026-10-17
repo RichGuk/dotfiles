@@ -24,9 +24,11 @@ Popout {
         spacing: Theme.popoutGap
 
         // ---- the reading ----
+        // This and the detail are about our own battery; a desktop has neither.
         Item {
             width: parent.width
             height: 46
+            visible: Battery.present
 
             Text {
                 id: batIcon
@@ -77,6 +79,7 @@ Popout {
         Column {
             width: parent.width
             spacing: 0
+            visible: Battery.present
 
             Text {
                 text: "DETAIL"

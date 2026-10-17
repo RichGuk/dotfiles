@@ -563,11 +563,12 @@ ShellRoot {
                             color: Bluetooth.powered ? Theme.barText : Theme.barDim
                         }
                     }
-                    // Hidden with no battery (UPower reports no device).
+                    // An icon, plus a percentage when running on battery; the
+                    // popout lists peripherals. Hidden with no battery at all.
                     BarModule {
                         id: batteryModule
 
-                        visible: Battery.present
+                        visible: Battery.anything
                         popout: "battery"
                         activePopout: root.openPopout
                         onActivated: root.togglePopout("battery")
@@ -575,8 +576,8 @@ ShellRoot {
                         // Negative wordSpacing: the font has no thin space,
                         // and a full space reads as a separate module.
                         BarText {
-                            text: Battery.glyph + " " + Battery.percent + "%"
-                            color: Battery.color
+                            text: Battery.barText
+                            color: Battery.barColor
                             font.wordSpacing: -3
                         }
                     }
