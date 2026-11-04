@@ -22,6 +22,8 @@ alias ptemps='sensors k10temp-pci-00c3 it8665-isa-0290 nvme-pci-0100'
 # herdr-sessionizer scopes its picker to match HERDR_SESSION.
 alias hw='herdr --session work'
 alias hp='herdr --session personal'
-# Server keybindings, or the popup commands in razorback's config.toml never bind.
-alias hwr='herdr --remote razorback.work --session work --remote-keybindings server'
-alias hpr='herdr --remote razorback.work --session personal --remote-keybindings server'
+# Server keybindings, or the popup commands in the remote's config.toml never bind.
+# atlantis while razorback is away; switch back to razorback.work when it returns.
+HERDR_REMOTE=atlantis.work
+alias hwr='herdr --remote $HERDR_REMOTE --session work --remote-keybindings server'
+alias hpr='herdr --remote $HERDR_REMOTE --session personal --remote-keybindings server'
