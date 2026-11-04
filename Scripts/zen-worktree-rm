@@ -98,6 +98,11 @@ if command -v herdr >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
     fi
 fi
 
+if [[ -n $(find "$WORKTREE" ! -user "$(id -u)" -print -quit 2>/dev/null) ]]; then
+    docker run --rm -v "$WORKTREE:/w" alpine chown -R "$(id -u):$(id -g)" /w >/dev/null 2>&1 &&
+        echo "reowned  : root-owned files left by containers"
+fi
+
 if [[ $FORCE == true ]]; then
     git -C "$REPO" worktree remove --force "$WORKTREE"
 else
