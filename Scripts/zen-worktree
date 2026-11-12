@@ -103,7 +103,29 @@ hash_branch() {
     fi
 }
 
-PROXY_SLUG=$(hash_branch "$BRANCH")
+proxy_slug_taken() {
+    local env_file
+    for env_file in "$WORKTREE_ROOT"/*/api/.env "$(dirname "$REPO")"/*/api/.env; do
+        [[ -f $env_file ]] && grep -qx "PROXY_SLUG=$1" "$env_file" && return 0
+    done
+    return 1
+}
+
+# A ticket can have several branches, so only the first worktree for it gets
+# the bare ticket; later ones keep it readable with a short hash on the end.
+proxy_slug_for() {
+    local ticket
+    ticket=$(printf '%s' "$1" | grep -oiE 'sc-[0-9]+' | head -1 | tr '[:upper:]' '[:lower:]')
+    if [[ -z $ticket ]]; then
+        hash_branch "$1"
+    elif proxy_slug_taken "$ticket"; then
+        printf '%s-%s' "$ticket" "$(hash_branch "$1" | cut -c1-4)"
+    else
+        printf '%s' "$ticket"
+    fi
+}
+
+PROXY_SLUG=$(proxy_slug_for "$BRANCH")
 PROXY_HOST="${PROXY_SLUG}.zen.internal"
 
 set_env_var() {
