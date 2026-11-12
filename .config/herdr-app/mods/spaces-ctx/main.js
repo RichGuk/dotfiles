@@ -7,7 +7,8 @@
 // be tagged with one (shared "space.context"); the header picks which context
 // shows (shared "space.context.active", "all" shows everything). Untagged spaces
 // show in every context. New spaces take the shown context's tag. Keys reach it
-// as spaces-ctx.<command>: work, personal, all, cycle, tag, select-1..9.
+// as spaces-ctx.<command>: work, personal, all, cycle, tag, select-1..9, and
+// tag-<work|personal|none>-<space id> for scripts.
 
 import { View, div, svg } from "gpui-kit";
 import { v_flex, h_flex } from "gpui-base";
@@ -114,6 +115,10 @@ export default class Spaces extends View {
     else if (c === "tag") {
       const s = spaces().find((s) => s.active);
       if (s) tag(s.id, [null, ...CONTEXTS][([null, ...CONTEXTS].indexOf(tags()[s.id] ?? null) + 1) % 3]);
+    } else if (/^tag-(work|personal|none)-.+$/.test(c)) {
+      // From scripts: herdr-app do spaces-ctx.tag-work-<space id>
+      const [, ctx, id] = c.match(/^tag-(work|personal|none)-(.+)$/);
+      if (spaces().some((s) => s.id === id)) tag(id, ctx === "none" ? null : ctx);
     } else if (/^select-\d$/.test(c)) {
       const s = listed()[Number(c.slice(7)) - 1];
       if (s) run("space.select", { id: s.id });
