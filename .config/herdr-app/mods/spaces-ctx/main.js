@@ -6,7 +6,8 @@
 // spaces-ctx: Herdr's spaces list plus contexts (Work / Personal). Each space can
 // be tagged with one (shared "space.context"); the header picks which context
 // shows (shared "space.context.active", "all" shows everything). Untagged spaces
-// show in every context. New spaces take the shown context's tag. Keys reach it
+// show in every context. New spaces take the shown context's tag, except ids
+// starting "zen" (zen-worktree's), which are always Work. Keys reach it
 // as spaces-ctx.<command>: work, personal, all, cycle, tag, select-1..9, and
 // tag-<work|personal|none>-<space id> for scripts.
 
@@ -132,8 +133,11 @@ export default class Spaces extends View {
     for (const s of sp) {
       if (this.known.has(s.id)) continue;
       this.known.add(s.id);
-      // Made while a context shows: it belongs there.
-      if (active() !== "all" && !tags()[s.id]) tag(s.id, active());
+      if (tags()[s.id]) continue;
+      // zen-worktree's spaces (ids zen…, from hc labels) are work; others made
+      // while a context shows belong there.
+      if (/(^|\/)zen/.test(s.id)) tag(s.id, "work");
+      else if (active() !== "all") tag(s.id, active());
     }
     const due = this.due(now, sp, panes());
     if (due.size) this.refreshGit(due, cx);
