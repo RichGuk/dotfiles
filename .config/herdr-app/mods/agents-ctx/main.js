@@ -80,6 +80,28 @@ function prChip(t, a, pr) {
     .child(`#${pr.number}`);
 }
 
+// Context size from the Claude hook's label (~/.claude/hooks/agent-ctx.sh):
+// agent.ctx = "model|tokens|ttl|at". Amber once the prompt cache has run out on a
+// resting agent: the next message writes the whole context again.
+function modelName(id) {
+  const m = /claude-(\w+)-(\d+)-(\d+)/.exec(id ?? "");
+  return m ? `${m[1][0].toUpperCase()}${m[1].slice(1)} ${m[2]}.${m[3]}` : id;
+}
+const kTokens = (n) => (n >= 1e6 ? `${(n / 1e6).toFixed(1)}M` : `${Math.round(n / 1000)}k`);
+function ctxChip(t, a, label, now) {
+  const [model, tokens, ttl, at] = (label ?? "").split("|");
+  if (!Number(tokens)) return null;
+  const left = Number(at) + Number(ttl) - now / 1000;
+  const resting = a.status !== "working";
+  const cold = resting && left <= 0;
+  const cache = !resting ? "" : cold ? " · cache expired: the next message writes it all again"
+    : ` · cache warm for ${Math.ceil(left / 60)} more min`;
+  return h_flex().id(`ctx-${a.address}`).flex_none().gap(5).items_center()
+    .tooltip(`${modelName(model)} · ${Number(tokens).toLocaleString("en-US")} tokens of context${cache}`)
+    .child(div().text_color(t.dim).child(modelName(model)))
+    .child(div().text_color(cold ? t.working : t.muted).child(kTokens(Number(tokens))));
+}
+
 // W / P on each agent while All shows, so a mixed list says whose is whose.
 function ctxMark(t, a) {
   const ctx = tagOf(a);
@@ -341,6 +363,7 @@ export default class Agents extends View {
     // otherwise read the same.
     // Read the pane snapshot once: every host read copies the whole list into JS.
     const ps = panes(), sp = spaces();
+    const ctxLabels = new Map(all.filter((k) => k.labels?.["agent.ctx"]).map((k) => [k.address, k.labels["agent.ctx"]]));
     const leads = leadPanes(ps);
     const tabs = new Map(sp.flatMap(s => s.tabs).map(tab => [tab.id, tab]));
     const labels = new Map(list.map(a => {
@@ -376,7 +399,7 @@ export default class Agents extends View {
       }
       const when = this.since(a);
       const idle = a.status === "idle" && !a.focused;
-      const pr = prOf(a, sp, ps), mark = ctxMark(t, a);
+      const pr = prOf(a, sp, ps), mark = ctxMark(t, a), size = ctxChip(t, a, ctxLabels.get(a.address), now);
       const isPinned = a.pinned;
       const pin = div()
         .id(`pin-${a.address}`)
@@ -399,23 +422,14 @@ export default class Agents extends View {
       // Without a space header above (priority, pinned) the row names its space.
       const full = byPriority || isPinned;
       const name = full ? a.space_name || label(a) : more ?? (/^\d+$/.test(label(a)) ? a.program?.name || label(a) : label(a));
-      return h_flex()
-        .id(`ag-${a.address}`)
-        .px(8)
+      // A second line under the name, as a card, when there's something to say:
+      // model and context, and the PR.
+      const facts = [size, pr && prChip(t, a, pr)].filter(Boolean);
+      const line = h_flex()
+        .w_full()
         .h(30)
-        .flex_none()
-        .rounded(8)
         .items_center()
         .gap(9)
-        .when(a.focused, (el) => el.bg(t.selected))
-        .cursor_pointer()
-        .hover((s) => s.bg(t.hover))
-        .on_hover((on, cx) => {
-          if (on) this.hovered = a.address;
-          else if (this.hovered === a.address) this.hovered = null;
-          cx.notify();
-        })
-        .on_click(() => run("pane.focus", { pane: a.pane }))
         .when(Boolean(pic), el => el.child(div().id(`agent-fold-${a.address}`)
           .when(subs.length > 0, el => el.on_click((_e, cx) => {
             cx.stop_propagation();
@@ -425,13 +439,29 @@ export default class Agents extends View {
         .child(h_flex().flex_1().min_w(0).gap(5).items_center()
           .child(div().min_w(0).max_w(full && more ? 120 : 200).truncate().text_color(idle ? t.muted : t.foreground).child(name))
           .when(full && Boolean(more), el => el.child(div().flex_1().min_w(0).truncate().text_color(t.dim).child(`\u00b7 ${more}`))))
-        .when(Boolean(pr), el => el.child(prChip(t, a, pr)))
         .when(Boolean(mark), el => el.child(mark))
         .when(Boolean(machine), el => el.child(div().text_size(10).text_color(t.dim).child(machine)))
         .when(subs.length > 0, el => el.child(fold(a, subs)))
         .when(this.hovered === a.address, el => el.child(pin))
         .when(this.hovered !== a.address && Boolean(when), el => el.child(div().flex_none().text_size(11).text_color(t.dim).child(duration(now - when))))
         .child(this.status(t, a, byPriority && !isPinned));
+      return v_flex()
+        .id(`ag-${a.address}`)
+        .px(8)
+        .flex_none()
+        .rounded(8)
+        .when(a.focused, (el) => el.bg(t.selected))
+        .cursor_pointer()
+        .hover((s) => s.bg(t.hover))
+        .on_hover((on, cx) => {
+          if (on) this.hovered = a.address;
+          else if (this.hovered === a.address) this.hovered = null;
+          cx.notify();
+        })
+        .on_click(() => run("pane.focus", { pane: a.pane }))
+        .child(line)
+        .when(facts.length > 0, (el) => el.child(h_flex().h(16).mt(-6).mb(6).pl(pic ? 25 : 0).gap(7).items_center()
+          .text_size(11).children(facts)));
     };
 
     // Groups in list order: spaces (grouped) or priority sections. Agents of a
