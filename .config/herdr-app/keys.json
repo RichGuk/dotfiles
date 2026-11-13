@@ -62,6 +62,18 @@
     "ctrl-s s": "pane.split:down",
     "ctrl-s x": "pane.close",
     "ctrl-s z": "pane.zoom",
+    "ctrl-s h": "pane.go:left",
+    "ctrl-s j": "pane.go:down",
+    "ctrl-s k": "pane.go:up",
+    "ctrl-s l": "pane.go:right",
+    "ctrl-s shift-h": "pane.swap:left",
+    "ctrl-s shift-j": "pane.swap:down",
+    "ctrl-s shift-k": "pane.swap:up",
+    "ctrl-s shift-l": "pane.swap:right",
+    "ctrl-h": "nav.left",
+    "ctrl-j": "nav.down",
+    "ctrl-k": "nav.up",
+    "ctrl-l": "nav.right",
     "ctrl-s shift-s": "app.settings",
     "ctrl-s ctrl-c": "tab.new",
     "ctrl-s {": "tab.prev",
@@ -98,7 +110,8 @@
     "ctrl-s t": "spaces-ctx.tag",
     "ctrl-s o": "tabs-ctx.todos",
     "ctrl-s g": "tabs-ctx.stack",
-    "ctrl-s ctrl-t": "tabs-ctx.todo-add"
+    "ctrl-s ctrl-t": "tabs-ctx.todo-add",
+    "ctrl-s y": "agents-ctx.reply"
   },
   "terminal": {
     "cmd-f": "terminal.search",

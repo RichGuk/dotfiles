@@ -74,6 +74,16 @@
           "size": {
             "px": 0
           }
+        },
+        {
+          "id": "nav",
+          "type": "block",
+          "content": {
+            "mod": "nav"
+          },
+          "size": {
+            "px": 0
+          }
         }
       ],
       "size": {

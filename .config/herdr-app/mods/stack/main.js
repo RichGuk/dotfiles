@@ -1,19 +1,57 @@
-// The PR stack (gh stack) of the focused space's branch: each PR's approval,
-// reviewers, unresolved review threads, comments and CI, plus notifications when
-// they change. Without a stack, the branch's own PR.
+// A GitHub overview in three parts:
+// - this space: the PR stack (gh stack) of the focused space's branch, each PR's
+//   approval, reviewers, unresolved review threads, comments and CI; without a
+//   stack, the branch's own PR; without a PR, a button to make one;
+// - your open PRs anywhere with comments from people you haven't answered;
+// - PRs waiting on your review, each of which an agent can review first.
+// The last two follow the work/personal context (owner zeneducate is work).
 //
 // Two kinds of copy. props { watch: true } (a 0px block in the sidebar, so it runs
 // from the start) is the only one that asks GitHub: every space's place, every
 // 60s while the window is in front, every 5 min behind it, at once when the
-// focused space changes or shared "stack.refresh" is bumped. It keeps results in
-// shared "stack.data" (place -> stack) and posts notifications. The panel copy
-// only draws "stack.data" for the focused space.
+// focused space changes or shared "stack.refresh" is bumped; and one search for
+// the other two parts every 2 min (10 behind). It keeps results in shared
+// "stack.data" (place -> stack) and "github.data", and posts notifications. The
+// panel copy only draws them.
 
 import { View, div, svg } from "gpui-kit";
 import { v_flex, h_flex } from "gpui-base";
 import { spaces, panes, focused, exec, run, theme, shared, setShared, notify, props, window } from "herdr";
 
 const FRONT = 60000, BEHIND = 300000, NO_REPO = 600000;
+const GH_FRONT = 120000, GH_BEHIND = 600000;
+// Your PRs untouched this long aren't waiting on you; review requests this old fold away.
+const STALE = 60 * 86400000, OLD = 30 * 86400000;
+const WORK_ORGS = ["zeneducate"];
+// Where a review agent runs: work repos on this machine, under ~/Dev/Work there.
+const WORK_MACHINE = "atlantis";
+
+const ctxOf = (repo) => (WORK_ORGS.includes(repo.split("/")[0].toLowerCase()) ? "work" : "personal");
+const shownCtx = (repo) => {
+  const a = shared("space.context.active") ?? "all";
+  return a === "all" || ctxOf(repo) === a;
+};
+
+const GITHUB = `query { viewer { login }
+  mine: search(query: "is:pr is:open author:@me archived:false", type: ISSUE, first: 40) { nodes { ... on PullRequest {
+    number title url isDraft updatedAt repository { nameWithOwner }
+    reviewThreads(first: 100) { nodes { isResolved path comments(last: 1) { nodes { author { login __typename } body createdAt url } } } }
+    comments(last: 10) { nodes { author { login __typename } body createdAt url } } } } }
+  asked: search(query: "is:pr is:open review-requested:@me archived:false", type: ISSUE, first: 40) { nodes { ... on PullRequest {
+    number title url isDraft updatedAt author { login } repository { nameWithOwner } } } } }`;
+
+// What a person (not a bot) said on your PR that you haven't answered: unresolved
+// threads they spoke last in, and conversation comments since your last one.
+function unanswered(p, viewer) {
+  const person = (c) => c?.author && c.author.__typename !== "Bot";
+  const said = (c, path) => ({ path, author: c.author.login, body: c.body, url: c.url, at: c.createdAt });
+  const threads = p.reviewThreads.nodes.filter((t) => !t.isResolved)
+    .map((t) => [t, t.comments.nodes[0]]).filter(([, c]) => person(c) && c.author.login !== viewer)
+    .map(([t, c]) => said(c, t.path));
+  const talk = p.comments.nodes.filter(person);
+  const since = talk.slice(talk.findLastIndex((c) => c.author.login === viewer) + 1).map((c) => said(c));
+  return [...threads, ...since];
+}
 
 // Where a space is now: its first terminal's live folder, else where it was made.
 function place(s, ps) {
@@ -79,8 +117,14 @@ function ago(iso) {
 export default class Stack extends View {
   init(_props, cx) {
     this.watch = Boolean(props()?.watch);
-    this.open = new Set(); // PR numbers expanded in the panel
+    this.open = new Set(); // PR numbers (and other PRs' urls) expanded in the panel
+    this.showOld = false;
     if (!this.watch) return;
+    this.ghLast = 0;
+    this.ghBusy = false;
+    this.seenGhRefresh = shared("stack.refresh") ?? 0;
+    // Review requests already told about (null: first run, tell nothing).
+    this.asked = JSON.parse(localStorage.getItem("asked") ?? "null");
     this.last = {}; // place -> when it was last asked
     this.busy = false;
     this.seenRefresh = shared("stack.refresh") ?? 0;
@@ -92,8 +136,11 @@ export default class Stack extends View {
   }
 
   tick(cx) {
-    if (this.busy) return;
     const now = Date.now();
+    const bumped = shared("stack.refresh") ?? 0;
+    if (bumped !== this.seenGhRefresh) { this.seenGhRefresh = bumped; this.ghLast = 0; }
+    if (!this.ghBusy && now - this.ghLast > (window()?.active ? GH_FRONT : GH_BEHIND)) this.github(cx);
+    if (this.busy) return;
     const fp = focusedPlace();
     const refresh = shared("stack.refresh") ?? 0;
     const urgent = new Set();
@@ -120,7 +167,7 @@ export default class Stack extends View {
           const next = { ...(shared("stack.data") ?? {}) };
           // Keep only places some space is at now.
           for (const old of Object.keys(next)) if (!places.has(old)) delete next[old];
-          next[k] = { ...result, at: Date.now() };
+          next[k] = { ...result, at: Date.now(), space: p.space };
           setShared("stack.data", next);
           if (result.prs) this.announce(result, p.space);
         }
@@ -176,6 +223,69 @@ export default class Stack extends View {
     } catch (e) {
       return { stacked, trunk, branches, prs: {}, error: String(e.message ?? e) };
     }
+  }
+
+  // Your PRs needing a reply and PRs waiting on your review, in one search.
+  github(cx) {
+    this.ghBusy = true;
+    this.ghLast = Date.now();
+    cx.spawn(async (cx) => {
+      try {
+        const r = await exec("gh", ["api", "graphql", "-f", `query=${GITHUB}`], { timeout: 30000 });
+        const d = JSON.parse(r.stdout || "{}").data;
+        if (!d) throw new Error(r.stderr.trim() || "GitHub search failed");
+        const viewer = d.viewer.login;
+        const base = (p) => ({ number: p.number, title: p.title, url: p.url, draft: p.isDraft, repo: p.repository.nameWithOwner, at: p.updatedAt });
+        const mine = d.mine.nodes.filter((p) => p?.number && Date.now() - Date.parse(p.updatedAt) < STALE)
+          .map((p) => ({ ...base(p), waiting: unanswered(p, viewer) })).filter((p) => p.waiting.length);
+        const asked = d.asked.nodes.filter((p) => p?.number).map((p) => ({ ...base(p), author: p.author?.login ?? "?" }));
+        this.announceAsked(asked);
+        setShared("github.data", { viewer, mine, asked, at: Date.now() });
+      } catch (e) {
+        setShared("github.data", { ...(shared("github.data") ?? {}), error: String(e.message ?? e), at: Date.now() });
+      } finally {
+        this.ghBusy = false;
+        cx.notify();
+      }
+    });
+  }
+
+  announceAsked(asked) {
+    const first = this.asked === null;
+    const known = new Set(this.asked ?? []);
+    for (const p of asked) {
+      if (first || known.has(p.url) || p.draft || !shownCtx(p.repo)) continue;
+      notify({ title: `Review requested · #${p.number}`, body: `${p.author}: ${short(p.title, 60)}`, level: "info",
+        action: { name: "layout.select", args: { stack: "panel-body", child: "stack" } } });
+    }
+    // Only open requests are kept, so one asked again later is told again.
+    this.asked = asked.map((p) => p.url);
+    localStorage.setItem("asked", JSON.stringify(this.asked));
+  }
+
+  // A new space where the repo lives (work: on WORK_MACHINE) with Claude reviewing the PR.
+  async reviewAgent(p) {
+    const work = ctxOf(p.repo) === "work";
+    const on = work ? WORK_MACHINE : undefined;
+    const name = p.repo.split("/")[1];
+    const r = await exec("sh", ["-c", 'cd "$HOME/Dev/$1/$2" 2>/dev/null && pwd', "sh", work ? "Work" : "Personal", name], { on }).catch(() => null);
+    const folder = r?.code === 0 ? r.stdout.trim() : "";
+    run("space.new", {
+      name: `review #${p.number}`, machine: on ?? "", argv: ["claude"], ...(folder ? { folder } : {}),
+      task: `Review PR #${p.number} in ${p.repo} (${p.url}) by ${p.author}: "${p.title}". `
+        + `Read it with gh (gh pr view ${p.number} -R ${p.repo} --comments, gh pr diff ${p.number} -R ${p.repo}); `
+        + `don't check it out or change files here, but read the surrounding code where it helps. `
+        + `Give me a short summary, then bugs and risks with file:line, then questions for the author. `
+        + `Don't post anything to GitHub unless I ask.`,
+    });
+  }
+
+  // The space whose stack has this PR, with where it is.
+  spaceWith(url) {
+    for (const [k, d] of Object.entries(shared("stack.data") ?? {})) {
+      if (d.space && Object.values(d.prs ?? {}).some((p) => p.url === url)) return { id: d.space, cwd: JSON.parse(k)[1], d };
+    }
+    return null;
   }
 
   // Compare each PR with what was known; tell the person what changed.
@@ -248,7 +358,7 @@ export default class Stack extends View {
   button(id, label, t, action) {
     return div().id(id).flex_none().px(7).h(22).rounded(5).flex().items_center().text_size(11)
       .text_color(t.muted).bg(t.surface).cursor_pointer().hover((s) => s.bg(t.hover).text_color(t.foreground))
-      .on_click((_e, cx) => { cx.stop_propagation(); action(); cx.notify(); })
+      .on_click((_e, cx) => { cx.stop_propagation(); action(cx); cx.notify(); })
       .child(label);
   }
 
@@ -294,40 +404,109 @@ export default class Stack extends View {
           .when(!b.current, (el) => el.child(this.button(`co-${b.pr}`, "Check out", t, () => this.inPane(["gh", "stack", "checkout", String(b.pr)]))))));
   }
 
+  section(t, id, title, extra) {
+    return h_flex().id(id).px(8).pt(14).pb(4).gap(6).items_center().text_size(11).text_color(t.dim)
+      .child(div().font_medium().text_color(t.muted).child(title))
+      .when(Boolean(extra), (el) => el.child(div().child(extra)));
+  }
+
+  // One PR not in this space: your PR with comments waiting, or one asking for your review.
+  other(p, t, kind) {
+    const key = `${kind}-${p.url}`;
+    const open = this.open.has(key);
+    const home = kind === "mine" ? this.spaceWith(p.url) : null;
+    const sub = kind === "mine"
+      ? `💬 ${p.waiting.length} from ${[...new Set(p.waiting.map((c) => c.author))].join(", ")}`
+      : `${p.author}${p.draft ? " · draft" : ""}`;
+    const head = h_flex().id(key).px(8).py(5).gap(7).items_start().rounded(7)
+      .hover((s) => s.bg(t.hover)).cursor_pointer()
+      .on_click((_e, cx) => { open ? this.open.delete(key) : this.open.add(key); cx.notify(); })
+      .child(v_flex().flex_1().min_w(0).gap(3)
+        .child(h_flex().gap(6).items_center()
+          .child(div().flex_none().text_size(12).text_color(t.dim).child(`#${p.number}`))
+          .child(div().flex_1().min_w(0).truncate().text_size(12.5).text_color(p.draft ? t.muted : t.foreground).child(p.title)))
+        .child(h_flex().gap(6).text_size(11).text_color(t.dim)
+          .child(div().flex_none().child(p.repo.split("/")[1]))
+          .child(div().flex_1().min_w(0).truncate().text_color(kind === "mine" ? t.ansi3 : t.dim).child(sub))
+          .child(div().flex_none().child(ago(p.at)))));
+    if (!open) return head;
+    const quote = (c, i) => v_flex().id(`${key}-${i}`).px(8).py(5).gap(2).rounded(6).bg(t.surface).cursor_pointer()
+      .hover((s) => s.bg(t.hover))
+      .on_click((_e, cx) => { cx.stop_propagation(); if (c.url) this.openUrl(c.url); })
+      .child(h_flex().gap(6).text_size(10.5).text_color(t.dim)
+        .child(div().text_color(t.muted).child(c.author))
+        .when(Boolean(c.path), (el) => el.child(div().min_w(0).truncate().child(c.path)))
+        .child(div().flex_1())
+        .child(ago(c.at)))
+      .child(div().text_size(11.5).text_color(t.foreground).child(short(c.body, 220)));
+    const branch = home && Object.values(home.d.branches ?? []).find((b) => home.d.prs[b.pr]?.url === p.url);
+    return v_flex().gap(4)
+      .child(head)
+      .child(v_flex().pl(8).pr(8).pb(6).gap(5)
+        .when(kind === "mine", (el) => el.children(p.waiting.map(quote)))
+        .child(h_flex().gap(5).flex_wrap()
+          .when(kind === "asked", (el) => el.child(this.button(`rv-${key}`, "↗ Review with agent", t, (cx) => cx.spawn(async () => this.reviewAgent(p)))))
+          .when(Boolean(home && branch), (el) => el.child(this.button(`ask-${key}`, "↗ Ask agent to address", t,
+            () => this.askAgent({ space: { id: home.id }, cwd: home.cwd }, branch, home.d.prs[branch.pr]))))
+          .when(Boolean(home), (el) => el.child(this.button(`go-${key}`, "Go to space", t, () => run("space.select", { id: home.id }))))
+          .child(this.button(`gh-${key}`, "Open on GitHub", t, () => this.openUrl(p.url)))));
+  }
+
+  // The focused space's stack, or its PR, or a way to make one.
+  here(fp, d, t, message) {
+    if (!fp) return [message("No space selected.")];
+    if (!d) return [message("Looking…")];
+    if (d.none === "repo") return [message("Not a git repository.")];
+    if (d.none === "pr") return [message(`No PR for ${d.branch || "this branch"} yet.`),
+      h_flex().px(8).pt(6).child(this.button("pr-create", "Create PR", t, () => this.inPane(["gh", "pr", "create"])))];
+    if (d.error && !d.branches) return [message(d.error)];
+    const rows = [];
+    if (d.error) rows.push(message(d.error));
+    // gh stack lists trunk-first; the top of the stack reads best at the top.
+    rows.push(...[...d.branches].reverse().map((b) => this.row(fp, b, d.prs[b.pr], t)));
+    if (d.stacked !== false) rows.push(h_flex().px(8).pt(10).gap(5)
+      .child(div().flex_1().text_size(11).text_color(t.ansi3).child(d.branches.some((b) => b.rebase) ? "⚠ needs rebase" : ""))
+      .child(this.button("st-sync", "Sync", t, () => this.inPane(["gh", "stack", "sync"])))
+      .child(this.button("st-rebase", "Rebase", t, () => this.inPane(["gh", "stack", "rebase"])))
+      .child(this.button("st-push", "Submit", t, () => this.inPane(["gh", "stack", "submit"]))));
+    return rows;
+  }
+
   render() {
     const t = theme();
     if (this.watch) return div();
     const fp = focusedPlace();
     const d = fp ? (shared("stack.data") ?? {})[fp.key] : null;
+    const g = shared("github.data") ?? {};
     const refresh = () => setShared("stack.refresh", Date.now());
     const header = h_flex().h(36).px(14).flex_none().items_center().gap(6).text_size(11.5).text_color(t.dim)
-      .child(div().font_medium().child(d?.stacked === false ? "Pull request" : "Stack"))
-      .when(Boolean(d?.trunk), (el) => el.child(div().child(`→ ${d.trunk}`)))
+      .child(div().font_medium().child("GitHub"))
       .child(div().flex_1())
-      .when(Boolean(d?.at), (el) => el.child(div().child(ago(new Date(d.at).toISOString()))))
+      .when(Boolean(d?.at ?? g.at), (el) => el.child(div().child(ago(new Date(d?.at ?? g.at).toISOString()))))
       .child(div().id("stack-refresh").px(4).rounded(4).cursor_pointer().hover((s) => s.bg(t.hover).text_color(t.foreground))
         .tooltip("Refresh").on_click(() => refresh()).child("⟳"));
     const message = (text) => div().px(14).pt(4).text_size(12).text_color(t.dim).child(text);
-    const body = v_flex().id("stack-list").flex_1().min_h(0).px(6).pb(10).gap(2).overflow_y_scrollbar();
-    let content;
-    if (!fp) content = body.child(message("No space selected."));
-    else if (!d) content = body.child(message("Looking…"));
-    else if (d.none === "repo") content = body.child(message("Not a git repository."));
-    else if (d.none === "pr") content = body.child(message(`No PR for ${d.branch || "this branch"} yet.`));
-    else if (d.error && !d.branches) content = body.child(message(d.error));
-    else {
-      // gh stack lists trunk-first; the top of the stack reads best at the top.
-      const rows = [...d.branches].reverse().map((b) => this.row(fp, b, d.prs[b.pr], t));
-      content = body
-        .when(Boolean(d.error), (el) => el.child(message(d.error)))
-        .children(rows)
-        .when(d.stacked !== false, (el) => el.child(h_flex().px(8).pt(10).gap(5)
-          .when(d.branches.some((b) => b.rebase), (el) => el.child(div().flex_1().text_size(11).text_color(t.ansi3).child("⚠ needs rebase")))
-          .when(!d.branches.some((b) => b.rebase), (el) => el.child(div().flex_1()))
-          .child(this.button("st-sync", "Sync", t, () => this.inPane(["gh", "stack", "sync"])))
-          .child(this.button("st-rebase", "Rebase", t, () => this.inPane(["gh", "stack", "rebase"])))
-          .child(this.button("st-push", "Submit", t, () => this.inPane(["gh", "stack", "submit"])))));
-    }
-    return v_flex().size_full().min_h(0).bg(t.chrome).text_color(t.foreground).text_size(13).child(header).child(content);
+    const mine = (g.mine ?? []).filter((p) => shownCtx(p.repo));
+    const asked = (g.asked ?? []).filter((p) => shownCtx(p.repo));
+    const fresh = asked.filter((p) => Date.now() - Date.parse(p.at) < OLD);
+    const old = asked.filter((p) => Date.now() - Date.parse(p.at) >= OLD);
+    const where = d?.stacked === false ? "Pull request" : d?.branches ? "Stack" : "This space";
+    const body = v_flex().id("stack-list").flex_1().min_h(0).px(6).pb(10).gap(2).overflow_y_scrollbar()
+      .child(this.section(t, "s-here", where, d?.trunk ? `→ ${d.trunk}` : null).pt(2))
+      .children(this.here(fp, d, t, message))
+      .when(Boolean(g.error), (el) => el.child(message(g.error)))
+      .child(this.section(t, "s-mine", "Needs your reply", mine.length ? String(mine.length) : null))
+      .when(!g.at, (el) => el.child(message("Looking…")))
+      .when(Boolean(g.at) && !mine.length, (el) => el.child(message("Nothing waiting.")))
+      .children(mine.map((p) => this.other(p, t, "mine")))
+      .child(this.section(t, "s-asked", "Waiting on your review", asked.length ? String(asked.length) : null))
+      .when(Boolean(g.at) && !asked.length, (el) => el.child(message("Nothing waiting.")))
+      .children(fresh.map((p) => this.other(p, t, "asked")))
+      .when(old.length > 0, (el) => el.child(div().id("s-old").px(8).py(4).text_size(11).text_color(t.dim).cursor_pointer()
+        .hover((s) => s.text_color(t.foreground))
+        .on_click((_e, cx) => { this.showOld = !this.showOld; cx.notify(); })
+        .child(`${this.showOld ? "▾" : "▸"} ${old.length} older than 30 days`)))
+      .when(this.showOld, (el) => el.children(old.map((p) => this.other(p, t, "asked"))));
+    return v_flex().size_full().min_h(0).bg(t.chrome).text_color(t.foreground).text_size(13).child(header).child(body);
   }
 }

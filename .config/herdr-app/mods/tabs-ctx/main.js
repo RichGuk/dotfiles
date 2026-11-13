@@ -131,7 +131,7 @@ export default class Tabs extends View {
       .child(button("tab-new", "+", () => openOverlay({ mod: "new-menu", kind: "popup", width: 250, height: 512 })))
       .when(enabled.includes("files"), el => el.child(panelButton("files", "Files", "mods/files/file.svg")))
       .when(enabled.includes("changes"), el => el.child(panelButton("changes", "Changes", "mods/changes/changes.svg")))
-      .child(panelButton("stack", "Stack", "mods/workspace-chrome/git-branch.svg"))
+      .child(panelButton("stack", "GitHub", "mods/workspace-chrome/git-branch.svg"))
       .child(panelButton("todos", "Todos", "mods/workspace-chrome/circle-check.svg"))
       .when(w?.buttons, el => el.child(button("minimize", w.platform === "windows" ? svg("mods/tabs-ctx/win-min.svg").size(16) : "−", () => run("window.minimize")))
         .child(button("maximize", w.platform === "windows" ? svg(`mods/tabs-ctx/${w.maximized ? "win-restore" : "win-max"}.svg`).size(16) : "□", () => run("window.maximize")))

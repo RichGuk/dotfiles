@@ -4,11 +4,14 @@
 // when its space is tagged with the shown context or not tagged at all. Agents
 // in hidden spaces that need you are counted in a line at the bottom; clicking it
 // shows All. Each row also shows its PR (from the stack mod) and, while All shows,
-// its context letter.
+// its context letter. ↩ on hover (or agents-ctx.reply) opens the reply dialog.
 
 import { View, div, image, svg } from "gpui-kit";
 import { v_flex, h_flex } from "gpui-base";
-import { agents, exec, terminals, panes, focused, spaces, run, theme, shared, setShared, setAgentOrder, openOverlay, closeOverlay, props, window, layout } from "herdr";
+import { agents, exec, terminals, panes, focused, spaces, run, theme, shared, setShared, setAgentOrder, openOverlay, closeOverlay, props, window, layout, nextCommand } from "herdr";
+
+// The reply dialog (mods/reply) for one agent.
+const reply = (a) => openOverlay({ mod: "reply", kind: "dialog", width: 460, height: 400, props: { terminal: a.address, name: [a.space_name, a.title].filter(Boolean).join(" · ") } });
 
 function find(node, id) {
   if (node?.id === id) return node;
@@ -170,6 +173,17 @@ export default class Agents extends View {
     if (!this.pendingPins.length) localStorage.removeItem("pins");
     this.migratingPins = new Set();
     cx.timer.every(30000, (cx) => cx.notify());
+    // agents-ctx.reply: the dialog for the most urgent agent shown (needs you, then
+    // done, else the top of the list).
+    this.order = [];
+    cx.spawn(async (cx) => {
+      for (;;) {
+        const c = await nextCommand();
+        const a = c === "reply" && (this.order.find((a) => a.status === "blocked") ?? this.order.find((a) => a.status === "done") ?? this.order[0]);
+        if (a) reply(a);
+        cx.notify();
+      }
+    });
   }
 
   // Stamps agents whose state changed. Done and idle count as one: looking at a
@@ -324,6 +338,7 @@ export default class Agents extends View {
     const rest = list.filter((a) => !a.pinned);
     list = [...pinned, ...rest];
     setAgentOrder(list.map((a) => a.address));
+    this.order = list;
 
     const withKids = (a, i) => {
       const subs = collapsed ? [] : this.tree(all, a.address);
@@ -418,6 +433,18 @@ export default class Agents extends View {
           cx.notify();
         })
         .child(svg(`mods/workspace-chrome/${isPinned ? "pin-off" : "pin"}.svg`).size(13));
+      const answer = div()
+        .id(`reply-${a.address}`)
+        .flex_none()
+        .px(4)
+        .rounded(4)
+        .text_size(13)
+        .text_color(a.status === "blocked" ? t.blocked : t.dim)
+        .cursor_pointer()
+        .hover((s) => s.bg(t.hover).text_color(t.foreground))
+        .tooltip("Reply without switching")
+        .on_click((_e, cx) => { cx.stop_propagation(); reply(a); })
+        .child("↩");
       // Under a space header the space goes without saying; an automatic tab number says nothing.
       // Without a space header above (priority, pinned) the row names its space.
       const full = byPriority || isPinned;
@@ -442,7 +469,7 @@ export default class Agents extends View {
         .when(Boolean(mark), el => el.child(mark))
         .when(Boolean(machine), el => el.child(div().text_size(10).text_color(t.dim).child(machine)))
         .when(subs.length > 0, el => el.child(fold(a, subs)))
-        .when(this.hovered === a.address, el => el.child(pin))
+        .when(this.hovered === a.address, el => el.child(answer).child(pin))
         .when(this.hovered !== a.address && Boolean(when), el => el.child(div().flex_none().text_size(11).text_color(t.dim).child(duration(now - when))))
         .child(this.status(t, a, byPriority && !isPinned));
       return v_flex()
