@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Tear down a zeneducate worktree: docker volumes, herdr workspace, checkout,
+# Tear down a zeneducate worktree: docker volumes, herdr space, checkout,
 # branch. The shared gem volume is external, so `down -v` leaves it alone.
 #
 #   zen-worktree-rm <branch|slug> [--force] [--repo <path>]
@@ -8,20 +8,18 @@
 
 set -euo pipefail
 
-# A herdr popup does not spawn a login shell, so PATH can be bare.
+# A non-login shell can have a bare PATH.
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export PATH="$SCRIPT_DIR:$HOME/.local/bin:$PATH"
 
 REPO="${HOME}/Dev/Work/zeneducate"
 WORKTREE_ROOT="${HOME}/Dev/Work/zeneducate-worktrees"
 FORCE=false
-PAUSE=false
 TARGET=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --repo) REPO="$2"; shift 2 ;;
-        --pause) PAUSE=true; shift ;;
         --force | -f) FORCE=true; shift ;;
         -h | --help)
             sed -n '2,7p' "$0" | sed -e 's/^# //' -e 's/^#$//'
@@ -32,19 +30,13 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Keep whatever was printed on screen when this runs in a popup, which would
-# otherwise close the instant the script exits — including on an error.
-if [[ $PAUSE == true ]]; then
-    trap 'printf "\npress any key to close... "; read -rsn1 _ </dev/tty 2>/dev/null || true' EXIT
-fi
-
 if [[ -z $TARGET ]]; then
     if [[ -t 0 ]] && command -v fzf >/dev/null 2>&1 && [[ -d $WORKTREE_ROOT ]]; then
         TARGET=$(find "$WORKTREE_ROOT" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' 2>/dev/null |
             sort | fzf --prompt 'remove worktree > ' --reverse --height 100% || true)
         [[ -n $TARGET ]] || exit 0
     else
-        echo "usage: zen-worktree-rm <branch|slug> [--force] [--pause]" >&2
+        echo "usage: zen-worktree-rm <branch|slug> [--force]" >&2
         exit 1
     fi
 fi
@@ -90,12 +82,16 @@ if [[ -n $BRANCH ]] && command -v devbox-route >/dev/null 2>&1; then
         echo "removed  : proxy route ${proxy_slug}.zen.internal"
 fi
 
-if command -v herdr >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
-    ws=$(herdr workspace list 2>/dev/null |
-        jq -r --arg l "$SLUG" '.result.workspaces[]? | select(.label == $l) | .workspace_id' | head -1)
-    if [[ -n ${ws:-} ]]; then
-        herdr workspace close "$ws" >/dev/null 2>&1 && echo "removed  : herdr workspace $ws"
-    fi
+# Same ID zen-worktree gives the space. The space closes once its last terminal
+# ends, but only on an explicit kill: with --keep, a program that is merely lost
+# is replaced by a fresh shell.
+SPACE_ID="zen$(printf '%s' "$SLUG" | tr -cd '[:alnum:]')"
+if command -v hc >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
+    killed=0
+    while read -r t; do
+        [[ -n $t ]] && hc kill "$t" >/dev/null 2>&1 && ((++killed))
+    done < <(hc ls --json --label "herdr.space=$SPACE_ID" 2>/dev/null | jq -r '.terminals[]?.address')
+    ((killed > 0)) && echo "removed  : herdr space $SPACE_ID ($killed terminals)"
 fi
 
 if [[ -n $(find "$WORKTREE" ! -user "$(id -u)" -print -quit 2>/dev/null) ]]; then

@@ -9,8 +9,8 @@
 
 set -euo pipefail
 
-# A herdr popup does not spawn a login shell, so PATH can be bare and
-# devbox-route, mise and herdr all silently go missing.
+# A non-login shell can have a bare PATH, and then devbox-route, mise and hc
+# all silently go missing.
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export PATH="$SCRIPT_DIR:$HOME/.local/bin:$PATH"
 
@@ -58,13 +58,104 @@ copy_agent_config() {
     done
 }
 
+# --- herdr ---
+# herdr-core has no spaces or tabs of its own. The Mac's herdr-app turns any
+# terminal labelled herdr.space=<id> / herdr.tab=<id> into a space on this
+# machine, tags a space whose ID starts with "zen" as Work, and closes a space
+# once its last terminal ends. IDs are [a-z0-9] only; dashes are untested there.
+# Tabs cannot be named or split from here, so each terminal also carries
+# zen.tab (its tab's name) and zen.pane (top/bottom) for the Mac side to apply.
+SPACE_ID="zen$(printf '%s' "$SLUG" | tr -cd '[:alnum:]')"
+SH="${SHELL:-zsh}"
+
+herdr_ok() { command -v hc >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; }
+
+space_open() {
+    [[ -n $(hc ls --json --label "herdr.space=$SPACE_ID" 2>/dev/null |
+        jq -r '.terminals[]?.address' | head -1) ]]
+}
+
+# --no-parent so the terminals neither die with this script nor type notes
+# into whatever terminal ran it.
+#   space_term <tab> <pane> [key=value ...] -- <cmd...>
+space_term() {
+    local tab=$1 pane=$2 extra=()
+    shift 2
+    while [[ $# -gt 0 && $1 != -- ]]; do
+        extra+=(--label "$1")
+        shift
+    done
+    shift
+    hc run --json --bg --no-parent --keep --cwd "$WORKTREE" \
+        --label "herdr.space=$SPACE_ID" --label "herdr.tab=${SPACE_ID}$(tr '[:upper:]' '[:lower:]' <<<"$tab")" \
+        --label "zen.tab=$tab" --label "zen.pane=$pane" "${extra[@]}" \
+        -- "$@" 2>/dev/null | jq -r '.address // empty'
+}
+# Run a command, then fall back to an interactive shell when it exits, rather
+# than closing the pane.
+then_shell() { printf '%s; exec %s -i' "$1" "$SH"; }
+
+# Type text at a shell's prompt without pressing enter, once the prompt is up.
+type_into() {
+    local t=$1 text=$2 keys=() i c
+    for _ in {1..25}; do
+        [[ -n $(hc read "$t" 2>/dev/null | tr -d '[:space:]') ]] && break
+        sleep 0.2
+    done
+    for ((i = 0; i < ${#text}; i++)); do
+        c=${text:i:1}
+        [[ $c == " " ]] && c=space
+        keys+=("$c")
+    done
+    hc keys "$t" "${keys[@]}" >/dev/null 2>&1
+}
+
+# Servers gets a shell with `dc up` typed but not run, plus a second pane with
+# the URLs. The editor and agent each start in their own tab.
+open_space() {
+    herdr_ok || { echo "herdr    : hc or jq missing — no space opened" >&2; return 0; }
+    if space_open; then
+        echo "herdr    : space $SPACE_ID already open"
+        return 0
+    fi
+
+    local lines=("") top
+    if [[ -n ${PROXY_HOST:-} ]]; then
+        lines+=("  http://${PROXY_HOST}" "  http://${PROXY_HOST}/_devbox/mail"
+            "  http://${PROXY_HOST}/monitoring/sidekiq")
+    fi
+    lines+=("  http://${HOSTNAME_SHORT}:${WEB_PORT}" "  api :${API_PORT}    web :${WEB_PORT}"
+        "" "  mise run dc up" "  mise run web:dev" "")
+
+    # The Mac's sidebar mod does the rest the first time it sees the space:
+    # renames tabs from zen.tab, orders them Servers, Editor, Terminal, Agent,
+    # and splits the Servers pane downward to run zen.below (with sh -c, in the
+    # worktree) in the new bottom pane. Starting a bottom terminal here instead
+    # would stop that split and leave the panes side by side.
+    top=$(space_term Servers top \
+        "zen.below=$(then_shell "clear; printf '%s\n' $(printf '%q ' "${lines[@]}")")" \
+        -- "$SH" -i)
+    space_term Editor main -- "$SH" -ic "$(then_shell 'nvim .')" >/dev/null
+    space_term Terminal main -- "$SH" -i >/dev/null
+    space_term Agent main -- "$SH" -ic "$(then_shell claude)" >/dev/null
+    [[ -n $top ]] && type_into "$top" 'mise run dc up'
+
+    echo "herdr    : space $SPACE_ID opened (tagged Work)"
+}
+
 # Switching to an existing worktree otherwise leaves it exactly as it was — no
 # env rewrite, no port reshuffle, no relaunching an editor over the one already
-# running.
+# running. Its space is reopened only if every terminal in it has gone.
 if [[ -e $WORKTREE ]]; then
     echo "worktree : $WORKTREE (existing — switching)"
     copy_agent_config
-    exec herdr-sessionizer "$WORKTREE"
+    API_PORT=$(sed -n 's/^API_PORT=//p' "$WORKTREE/api/.env" 2>/dev/null | head -1)
+    WEB_PORT=$(sed -n 's/^PORT=//p' "$WORKTREE/web/.env.local" 2>/dev/null | head -1)
+    PROXY_SLUG=$(sed -n 's/^PROXY_SLUG=//p' "$WORKTREE/api/.env" 2>/dev/null | head -1)
+    PROXY_HOST=${PROXY_SLUG:+${PROXY_SLUG}.zen.internal}
+    HOSTNAME_SHORT=$(hostname -s 2>/dev/null || hostname)
+    open_space
+    exit 0
 fi
 
 # Offset is derived, not stored, so removing a worktree frees its number.
@@ -296,80 +387,7 @@ echo "  mise run dc up      (from $WORKTREE)"
 echo "  mise run web:dev"
 echo
 
-herdr_workspace_id() {
-    herdr workspace list 2>/dev/null |
-        jq -r --arg l "$SLUG" '.result.workspaces[]? | select(.label == $l) | .workspace_id' | head -1
-}
-
-herdr_tab_id() {
-    herdr tab list 2>/dev/null |
-        jq -r --arg w "$1" --arg l "$2" \
-            '.result.tabs[]? | select(.workspace_id == $w and .label == $l) | .tab_id' | head -1
-}
-
-herdr_first_pane() {
-    herdr pane list 2>/dev/null |
-        jq -r --arg t "$1" '[.result.panes[]? | select(.tab_id == $t) | .pane_id] | first // empty'
-}
-
-# Lay out the workspace the sessionizer just created: the Servers tab gets a
-# small bottom pane with the URLs and commands while the top waits with `dc up`
-# typed but not run, and the editor and agent start in their own tabs.
-#
-# Only ever called for a freshly created workspace. Re-running it against a live
-# one would type `nvim .` into an already-running nvim as normal-mode keystrokes.
-herdr_layout() {
-    command -v herdr >/dev/null 2>&1 || return 0
-    command -v jq >/dev/null 2>&1 || return 0
-
-    local ws tab top bottom count pane pane_spec
-    ws=$(herdr_workspace_id)
-    [[ -n $ws ]] || return 0
-
-    for pane_spec in "NeoVim:nvim ." "Agent:claude"; do
-        tab=$(herdr_tab_id "$ws" "${pane_spec%%:*}")
-        [[ -n $tab ]] || continue
-        pane=$(herdr_first_pane "$tab")
-        [[ -n $pane ]] && herdr pane run "$pane" "${pane_spec#*:}" >/dev/null 2>&1
-    done
-
-    tab=$(herdr_tab_id "$ws" "Servers")
-    [[ -n $tab ]] || return 0
-
-    top=$(herdr_first_pane "$tab")
-    [[ -n $top ]] || return 0
-
-    count=$(herdr pane list 2>/dev/null |
-        jq -r --arg t "$tab" '[.result.panes[]? | select(.tab_id == $t)] | length')
-
-    if [[ ${count:-1} -lt 2 ]]; then
-        bottom=$(herdr pane split "$top" --direction down --ratio 0.6 --cwd "$WORKTREE" 2>/dev/null |
-            jq -r '.result.pane.pane_id // empty')
-    else
-        bottom=$(herdr pane list 2>/dev/null |
-            jq -r --arg t "$tab" '[.result.panes[]? | select(.tab_id == $t) | .pane_id] | .[1] // empty')
-    fi
-
-    if [[ -n $bottom ]]; then
-        herdr pane run "$bottom" "clear; printf '%s\n' '' \
-            '  http://${PROXY_HOST}' \
-            '  http://${PROXY_HOST}/_devbox/mail' \
-            '  http://${PROXY_HOST}/monitoring/sidekiq' \
-            '  http://${HOSTNAME_SHORT}:${WEB_PORT}' \
-            '  api :${API_PORT}    web :${WEB_PORT}' \
-            '' \
-            '  mise run dc up' \
-            '  mise run web:dev' \
-            ''" >/dev/null 2>&1
-    fi
-
-    herdr pane send-text "$top" 'mise run dc up' >/dev/null 2>&1
-
-    return 0
-}
-
-ws_before=$(herdr_workspace_id 2>/dev/null || true)
-herdr-sessionizer "$WORKTREE"
-[[ -z $ws_before ]] && herdr_layout
+[[ $PROXY_READY == true ]] || PROXY_HOST=""
+open_space
 
 exit 0
