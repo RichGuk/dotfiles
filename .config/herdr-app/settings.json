@@ -11,5 +11,6 @@
   },
   "font_ligatures": false,
   "minimum_contrast": 1,
-  "telemetry": false
+  "telemetry": false,
+  "option_as_alt": "off"
 }

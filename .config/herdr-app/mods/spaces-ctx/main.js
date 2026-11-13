@@ -7,16 +7,28 @@
 // be tagged with one (shared "space.context"); the header picks which context
 // shows (shared "space.context.active", "all" shows everything). Untagged spaces
 // show in every context. New spaces take the shown context's tag, except ids
-// starting "zen" (zen-worktree's), which are always Work. Keys reach it
+// starting "zen" (zen-worktree's), which are always Work. A space not tagged by
+// hand also takes its context from where it is (see `ruled`): under ~/Dev/Work or
+// ~/Dev/Personal, else a repo whose origin is owned by WORK_ORGS. Keys reach it
 // as spaces-ctx.<command>: work, personal, all, cycle, tag, select-1..9, and
 // tag-<work|personal|none>-<space id> for scripts.
 
 import { View, div, svg } from "gpui-kit";
 import { v_flex, h_flex } from "gpui-base";
-import { spaces, machines, panes, run, openOverlay, exec, hc, theme, shared, setShared, watchFolder, window, layout, nextCommand } from "herdr";
+import { spaces, machines, panes, terminals, run, openOverlay, exec, hc, theme, shared, setShared, watchFolder, window, layout, nextCommand } from "herdr";
 
 const CONTEXTS = ["work", "personal"];
+const ZEN_ORDER = ["Servers", "Editor", "Terminal", "Agent"];
 const LABEL = { all: "All", work: "Work", personal: "Personal" };
+const WORK_ORGS = ["zeneducate"];
+// Where a space is says its context: the Dev folders first, then the repo's owner.
+// null: can't tell (home, a scratch folder), so it keeps whatever tag it has.
+function ruled(path, remote) {
+  if (/\/Dev\/Work(\/|$)/i.test(path ?? "")) return "work";
+  if (/\/Dev\/Personal(\/|$)/i.test(path ?? "")) return "personal";
+  const owner = /([^/:]+)\/[^/:]+?\/?$/.exec(remote ?? "")?.[1]?.toLowerCase();
+  return WORK_ORGS.includes(owner) ? "work" : null;
+}
 const tags = () => shared("space.context") ?? {};
 const active = () => shared("space.context.active") ?? "all";
 const visible = (s) => active() === "all" || !tags()[s.id] || tags()[s.id] === active();
@@ -91,6 +103,11 @@ export default class Spaces extends View {
     // worktree appears under its repo instead of jumping there.
     this.shown = new Set(spaces().map((s) => s.id));
     this.known = new Set(this.shown); // spaces that were there before; later ones get tagged
+    this.zenDone = new Set(JSON.parse(localStorage.getItem("zen.done") ?? "[]")); // zen tabs arranged
+    this.zenSeen = {}; // zen tab -> first seen without its labels
+    // Spaces whose tag was chosen (by hand, zen, or the rule): the rule leaves them be.
+    // The first run counts every tag already there as chosen.
+    this.settled = new Set(JSON.parse(localStorage.getItem("ctx.settled") ?? "null") ?? Object.keys(tags()));
     this.born = {};
     this.pressed = null;
     this.over = null;
@@ -115,11 +132,11 @@ export default class Spaces extends View {
     else if (c === "cycle") show(["all", ...CONTEXTS][(["all", ...CONTEXTS].indexOf(active()) + 1) % 3]);
     else if (c === "tag") {
       const s = spaces().find((s) => s.active);
-      if (s) tag(s.id, [null, ...CONTEXTS][([null, ...CONTEXTS].indexOf(tags()[s.id] ?? null) + 1) % 3]);
+      if (s) this.choose(s.id, [null, ...CONTEXTS][([null, ...CONTEXTS].indexOf(tags()[s.id] ?? null) + 1) % 3]);
     } else if (/^tag-(work|personal|none)-.+$/.test(c)) {
       // From scripts: herdr-app do spaces-ctx.tag-work-<space id>
       const [, ctx, id] = c.match(/^tag-(work|personal|none)-(.+)$/);
-      if (spaces().some((s) => s.id === id)) tag(id, ctx === "none" ? null : ctx);
+      if (spaces().some((s) => s.id === id)) this.choose(id, ctx === "none" ? null : ctx);
     } else if (/^select-\d$/.test(c)) {
       const s = listed()[Number(c.slice(7)) - 1];
       if (s) run("space.select", { id: s.id });
@@ -136,12 +153,92 @@ export default class Spaces extends View {
       if (tags()[s.id]) continue;
       // zen-worktree's spaces (ids zen…, from hc labels) are work; others made
       // while a context shows belong there.
-      if (/(^|\/)zen/.test(s.id)) tag(s.id, "work");
+      if (/(^|\/)zen/.test(s.id)) this.choose(s.id, "work");
       else if (active() !== "all") tag(s.id, active());
     }
-    const due = this.due(now, sp, panes());
+    this.arrangeZen(sp);
+    const ps = panes();
+    this.autoTag(sp, ps);
+    const due = this.due(now, sp, ps);
     if (due.size) this.refreshGit(due, cx);
     if (sp.some((s) => !this.shown.has(s.id)) || this.orderingDue(now)) cx.notify();
+  }
+
+  // A tag set on purpose: the rule won't change it later.
+  choose(id, ctx) {
+    tag(id, ctx);
+    this.settle(id);
+  }
+
+  settle(id) {
+    const live = new Set(spaces().map((s) => s.id));
+    for (const x of this.settled) if (!live.has(x)) this.settled.delete(x);
+    this.settled.add(id);
+    localStorage.setItem("ctx.settled", JSON.stringify([...this.settled]));
+  }
+
+  // Unsettled spaces take the rule's context once it can tell (a space made in
+  // ~ is undecided until it cds somewhere that says); then they're settled.
+  autoTag(sp, ps) {
+    for (const s of sp) {
+      if (this.settled.has(s.id)) continue;
+      const ctx = ruled(place(s, ps), this.git[where(s, ps)]?.remote);
+      if (!ctx) continue;
+      if (tags()[s.id] !== ctx) tag(s.id, ctx);
+      this.settle(s.id);
+    }
+  }
+
+  // zen-worktree's spaces arrive as labelled terminals: zen.tab names the tab,
+  // zen.pane says top/bottom/main, and the Servers top terminal's zen.below is the
+  // command for the pane under it (no command moves an existing pane into a split,
+  // so the mod makes that pane). Each tab is arranged once, the first time it's seen:
+  // renamed, the space's tabs put in ZEN_ORDER (others after), Servers split down.
+  arrangeZen(sp) {
+    const zen = sp.filter((s) => /(^|\/)zen/.test(s.id));
+    const fresh = zen.flatMap((s) => s.tabs.filter((tb) => !this.zenDone.has(tb.id)));
+    if (!fresh.length) return;
+    const labels = new Map(terminals().map((x) => [x.address, x.labels ?? {}]));
+    const ps = panes();
+    const label = (tb) => ps.filter((p) => p.tab === tb.id && p.terminal).map((p) => ({ p, l: labels.get(p.terminal) ?? {} }));
+    const moved = new Set();
+    for (const tb of fresh) {
+      const ts = label(tb);
+      const name = ts.map((x) => x.l["zen.tab"]).find(Boolean);
+      if (!name) {
+        // Not one of zen-worktree's (or its labels aren't in yet): look again later,
+        // but never past a while, so a plain tab in a zen space isn't asked forever.
+        if (Date.now() - (this.zenSeen[tb.id] ??= Date.now()) > 10000) this.zenDone.add(tb.id);
+        continue;
+      }
+      this.zenDone.add(tb.id);
+      if (tb.name !== name) run("tab.rename", { id: tb.id, name });
+      const top = ts.find((x) => x.l["zen.pane"] === "top" && x.l["zen.below"]);
+      if (top && !ts.some((x) => x.l["zen.pane"] === "bottom")) {
+        run("pane.split", { pane: top.p.pane, direction: "down", argv: ["sh", "-c", top.l["zen.below"]] });
+      }
+      moved.add(sp.find((s) => s.tabs.includes(tb)));
+    }
+    for (const s of moved) {
+      const rank = (tb) => {
+        const n = label(tb).map((x) => x.l["zen.tab"]).find(Boolean);
+        const i = ZEN_ORDER.indexOf(n);
+        return i === -1 ? ZEN_ORDER.length : i;
+      };
+      const order = s.tabs.map((tb) => tb.id);
+      const target = [...s.tabs].sort((a, b) => rank(a) - rank(b)).map((tb) => tb.id);
+      // Simulate the moves so later indexes include earlier ones.
+      for (let i = 0; i < target.length; i++) {
+        const from = order.indexOf(target[i]);
+        if (from === i) continue;
+        run("tab.move", { id: target[i], index: i + 1 });
+        order.splice(i, 0, order.splice(from, 1)[0]);
+      }
+    }
+    // Forget tabs that are gone, so the list stays small.
+    const live = new Set(zen.flatMap((s) => s.tabs.map((tb) => tb.id)));
+    for (const id of this.zenDone) if (!live.has(id)) this.zenDone.delete(id);
+    localStorage.setItem("zen.done", JSON.stringify([...this.zenDone]));
   }
 
   // Places whose git could have changed: new ones (a new space, a cd), where a
@@ -276,13 +373,14 @@ export default class Spaces extends View {
       }
       // The repo's own .git folder names it; a worktree's top differs from it.
       const top = r.stdout.replace(/\n$/, ""), repo = common.stdout.replace(/\n$/, "");
-      const [branch, counts] = await Promise.all([
+      const [branch, counts, origin] = await Promise.all([
         exec("git", ["symbolic-ref", "-q", "HEAD"], { cwd, on }),
         exec("git", ["rev-list", "--left-right", "--count", "HEAD...@{upstream}"], { cwd, on }),
+        exec("git", ["remote", "get-url", "origin"], { cwd, on }),
       ]);
       const name = repo.endsWith("/.git") ? base(repo.slice(0, -5)) : base(repo).replace(/\.git$/, "");
       const [ahead, behind] = counts.code === 0 ? counts.stdout.trim().split(/\s+/).map(Number) : [0, 0];
-      const info = { name, branch: branch.code === 0 ? branch.stdout.trim().replace(/^refs\/heads\//, "") : "(detached)", ahead, behind, repo: JSON.stringify([on, repo]), linked: repo !== `${top}/.git` };
+      const info = { name, branch: branch.code === 0 ? branch.stdout.trim().replace(/^refs\/heads\//, "") : "(detached)", ahead, behind, repo: JSON.stringify([on, repo]), linked: repo !== `${top}/.git`, remote: origin.code === 0 ? origin.stdout.trim() : null };
       this.git[key] = info;
       if (!on) this.watch(repo, cx);
     } catch {
@@ -517,7 +615,7 @@ export default class Spaces extends View {
       .on_mouse_down("left", (_e, cx) => cx.stop_propagation())
       .on_mouse_up("left", (_e, cx) => {
         cx.stop_propagation();
-        tag(w.id, [null, ...CONTEXTS][([null, ...CONTEXTS].indexOf(ctx ?? null) + 1) % 3]);
+        this.choose(w.id, [null, ...CONTEXTS][([null, ...CONTEXTS].indexOf(ctx ?? null) + 1) % 3]);
         cx.notify();
       })
       .child(ctx ? ctx[0].toUpperCase() : "·");

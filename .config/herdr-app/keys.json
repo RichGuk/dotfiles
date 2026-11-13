@@ -95,7 +95,10 @@
     "ctrl-s p": "spaces-ctx.personal",
     "ctrl-s 0": "spaces-ctx.all",
     "ctrl-s tab": "spaces-ctx.cycle",
-    "ctrl-s t": "spaces-ctx.tag"
+    "ctrl-s t": "spaces-ctx.tag",
+    "ctrl-s o": "tabs-ctx.todos",
+    "ctrl-s g": "tabs-ctx.stack",
+    "ctrl-s ctrl-t": "tabs-ctx.todo-add"
   },
   "terminal": {
     "cmd-f": "terminal.search",

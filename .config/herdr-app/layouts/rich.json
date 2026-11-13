@@ -61,6 +61,19 @@
           "size": {
             "px": 69
           }
+        },
+        {
+          "id": "stack-watch",
+          "type": "block",
+          "content": {
+            "mod": "stack",
+            "props": {
+              "watch": true
+            }
+          },
+          "size": {
+            "px": 0
+          }
         }
       ],
       "size": {
@@ -79,7 +92,7 @@
           "id": "tabs",
           "type": "block",
           "content": {
-            "mod": "tabs"
+            "mod": "tabs-ctx"
           },
           "size": {
             "px": 42
@@ -140,6 +153,20 @@
                       "content": {
                         "mod": "changes"
                       }
+                    },
+                    {
+                      "id": "todos",
+                      "type": "block",
+                      "content": {
+                        "mod": "todos"
+                      }
+                    },
+                    {
+                      "id": "stack",
+                      "type": "block",
+                      "content": {
+                        "mod": "stack"
+                      }
                     }
                   ],
                   "active": "files"
@@ -183,5 +210,6 @@
   "traffic_lights": [
     12,
     16
-  ]
+  ],
+  "toast": "toast-ctx"
 }

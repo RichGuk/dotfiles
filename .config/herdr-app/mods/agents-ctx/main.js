@@ -3,11 +3,12 @@
 // agents-ctx: Herdr's agents list, following spaces-ctx's context. An agent shows
 // when its space is tagged with the shown context or not tagged at all. Agents
 // in hidden spaces that need you are counted in a line at the bottom; clicking it
-// shows All.
+// shows All. Each row also shows its PR (from the stack mod) and, while All shows,
+// its context letter.
 
 import { View, div, image, svg } from "gpui-kit";
 import { v_flex, h_flex } from "gpui-base";
-import { agents, terminals, panes, focused, spaces, run, theme, shared, setShared, setAgentOrder, openOverlay, closeOverlay, props, window, layout } from "herdr";
+import { agents, exec, terminals, panes, focused, spaces, run, theme, shared, setShared, setAgentOrder, openOverlay, closeOverlay, props, window, layout } from "herdr";
 
 function find(node, id) {
   if (node?.id === id) return node;
@@ -36,6 +37,56 @@ const inContext = (a) => {
   const ctx = shared("space.context.active") ?? "all";
   return ctx === "all" || !tagOf(a) || tagOf(a) === ctx;
 };
+
+// The agent's PR, from what the stack mod's watcher found (shared "stack.data",
+// keyed by [machine, folder]): its own folder, else its space's. The branch
+// checked out there is the agent's.
+const placeKey = (machine, cwd) => JSON.stringify([machine ?? null, cwd]);
+function prOf(a, sp, ps) {
+  const data = shared("stack.data");
+  if (!data) return null;
+  const s = sp.find((x) => x.id === a.space);
+  const tabs = new Set((s?.tabs ?? []).map((tb) => tb.id));
+  const own = ps.find((p) => p.pane === a.pane)?.cwd;
+  const first = ps.find((p) => tabs.has(p.tab) && p.cwd)?.cwd || s?.folder;
+  const d = (own && data[placeKey(s?.machine, own)]) || (first && data[placeKey(s?.machine, first)]);
+  const b = d?.branches?.find((x) => x.current);
+  return b?.pr ? d.prs?.[b.pr] ?? { number: b.pr, url: b.url } : null;
+}
+
+// "#6240" tinted by what it waits on: changes asked or CI failed (blocked), approved
+// (done), CI running (working), else dim. Merged PRs fade.
+function prChip(t, a, pr) {
+  const failed = pr.ci === "FAILURE" || pr.ci === "ERROR";
+  const color = pr.state === "MERGED" ? t.dim
+    : pr.decision === "CHANGES_REQUESTED" || failed ? t.blocked
+    : pr.decision === "APPROVED" ? t.done
+    : pr.ci === "PENDING" ? t.working : t.dim;
+  const tip = [
+    pr.title, pr.state === "MERGED" ? "Merged" : pr.draft ? "Draft" : null,
+    pr.decision === "APPROVED" ? "Approved" : pr.decision === "CHANGES_REQUESTED" ? "Changes requested" : pr.decision === "REVIEW_REQUIRED" ? "Review required" : null,
+    pr.ci ? `CI ${pr.ci.toLowerCase()}` : null,
+    pr.threads?.length ? `${pr.threads.length} unresolved` : null,
+    "click to open",
+  ].filter(Boolean).join(" · ");
+  return div().id(`pr-${a.address}`).flex_none().px(4).h(16).rounded(4).flex().items_center()
+    .text_size(10.5).font_medium().text_color(color).bg(color + "1f")
+    .hover((s) => s.bg(color + "40"))
+    .tooltip(tip)
+    .on_click((_e, cx) => {
+      cx.stop_propagation();
+      if (pr.url) cx.spawn(async () => { await exec(window()?.platform === "macos" ? "open" : "xdg-open", [pr.url]); });
+    })
+    .child(`#${pr.number}`);
+}
+
+// W / P on each agent while All shows, so a mixed list says whose is whose.
+function ctxMark(t, a) {
+  const ctx = tagOf(a);
+  if (!ctx || (shared("space.context.active") ?? "all") !== "all") return null;
+  return div().flex_none().text_size(10).font_bold().text_color(ctx === "work" ? t.ansi4 : t.ansi2)
+    .tooltip(LABEL[ctx]).child(ctx[0].toUpperCase());
+}
 
 const clean = (s) => (s ?? "").replace(/^[^\p{L}\p{N}]+/u, "").trim();
 
@@ -289,8 +340,9 @@ export default class Agents extends View {
     // agent's own title, never an automatic tab number unless two rows would
     // otherwise read the same.
     // Read the pane snapshot once: every host read copies the whole list into JS.
-    const leads = leadPanes(panes());
-    const tabs = new Map(spaces().flatMap(s => s.tabs).map(tab => [tab.id, tab]));
+    const ps = panes(), sp = spaces();
+    const leads = leadPanes(ps);
+    const tabs = new Map(sp.flatMap(s => s.tabs).map(tab => [tab.id, tab]));
     const labels = new Map(list.map(a => {
       const tab = tabs.get(a.tab);
       const many = tabCounts.get(a.tab) > 1;
@@ -324,6 +376,7 @@ export default class Agents extends View {
       }
       const when = this.since(a);
       const idle = a.status === "idle" && !a.focused;
+      const pr = prOf(a, sp, ps), mark = ctxMark(t, a);
       const isPinned = a.pinned;
       const pin = div()
         .id(`pin-${a.address}`)
@@ -372,6 +425,8 @@ export default class Agents extends View {
         .child(h_flex().flex_1().min_w(0).gap(5).items_center()
           .child(div().min_w(0).max_w(full && more ? 120 : 200).truncate().text_color(idle ? t.muted : t.foreground).child(name))
           .when(full && Boolean(more), el => el.child(div().flex_1().min_w(0).truncate().text_color(t.dim).child(`\u00b7 ${more}`))))
+        .when(Boolean(pr), el => el.child(prChip(t, a, pr)))
+        .when(Boolean(mark), el => el.child(mark))
         .when(Boolean(machine), el => el.child(div().text_size(10).text_color(t.dim).child(machine)))
         .when(subs.length > 0, el => el.child(fold(a, subs)))
         .when(this.hovered === a.address, el => el.child(pin))
