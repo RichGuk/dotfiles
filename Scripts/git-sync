@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# Bring the dotfiles up to date with GitHub and push this machine's commits.
+#
+#   dots sync
+#
+# Shows what's incoming and outgoing, rebases local commits on top of the
+# remote's (uncommitted changes are set aside and put back), then pushes.
+# Git runs this as `sync` because the dots alias calls git; it refuses to run
+# in any other repo, so `git sync` in a work repo never pushes by surprise.
+
+set -euo pipefail
+
+[[ ${GIT_DIR:-} -ef $HOME/.dotfiles ]] ||
+    { echo "git sync is only for the dotfiles: run it as dots sync" >&2; exit 1; }
+cd "$HOME"
+
+# These live in ~/.dotfiles/config, which isn't itself in the dotfiles, so each
+# machine gets them here. A bare clone has no fetch refspec: without one there's
+# no origin/main, and status can't say ahead or behind.
+want() { [[ $(git config --get "$1" || true) == "$2" ]] || git config "$1" "$2"; }
+want remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
+want pull.rebase true
+want rebase.autoStash true
+want submodule.recurse true
+git config branch.main.remote >/dev/null || git branch --quiet --set-upstream-to=origin/main main 2>/dev/null || true
+
+branch=$(git symbolic-ref --short -q HEAD || true)
+[[ $branch == main ]] || { echo "on ${branch:-a detached HEAD}, not main: sync skipped" >&2; exit 1; }
+[[ ! -d $GIT_DIR/rebase-merge && ! -d $GIT_DIR/rebase-apply ]] ||
+    { echo "a rebase is in progress: finish it (dots rebase --continue) or drop it (dots rebase --abort)" >&2; exit 1; }
+
+git fetch --quiet origin
+incoming=$(git rev-list --count HEAD..origin/main)
+outgoing=$(git rev-list --count origin/main..HEAD)
+
+if ((incoming)); then
+    echo "incoming:"
+    git --no-pager log --format='  %h %s (%cr)' HEAD..origin/main
+fi
+if ((outgoing)); then
+    echo "outgoing:"
+    git --no-pager log --format='  %h %s' origin/main..HEAD
+fi
+((incoming || outgoing)) || { echo "up to date"; exit 0; }
+
+if ((incoming)); then
+    if ! git rebase --quiet origin/main; then
+        echo >&2
+        echo "Both machines changed the same lines. Fix the files listed above, then:" >&2
+        echo "  dots add <file> && dots rebase --continue && dots sync" >&2
+        echo "or put everything back as it was: dots rebase --abort" >&2
+        exit 1
+    fi
+    git submodule --quiet update --init --recursive
+fi
+((outgoing)) && git push --quiet origin main
+echo "synced"
