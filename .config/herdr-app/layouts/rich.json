@@ -121,7 +121,7 @@
                 "pane": {
                   "header": {
                     "content": {
-                      "mod": "pane"
+                      "mod": "pane-ctx"
                     },
                     "reveal": "always",
                     "height": 30,
@@ -129,15 +129,15 @@
                   },
                   "background": "background",
                   "border": {
-                    "width": 1,
+                    "width": 0,
                     "color": "border"
                   },
                   "focus": {
-                    "width": 1,
+                    "width": 0,
                     "color": "accent"
                   },
-                  "radius": 10,
-                  "gap": 8,
+                  "radius": 0,
+                  "gap": 1,
                   "lone": true
                 }
               }
@@ -190,8 +190,12 @@
               "hidden": true
             }
           ],
-          "padding": 8,
-          "gap": 8
+          "padding": 0,
+          "gap": 0,
+          "divider": {
+            "width": 1,
+            "color": "border"
+          }
         },
         {
           "id": "status",

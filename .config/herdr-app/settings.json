@@ -1,16 +1,19 @@
 {
+  "zoom": 1.2000000476837158,
+  "sounds": {
+    "enabled": true
+  },
+  "font": "FiraCode Nerd Font Mono",
+  "font_ligatures": false,
+  "terminal_line_height": 1,
+  "terminal_cell_width": 1,
+  "terminal_scroll_speed": 1,
+  "ui_font": "Fira Sans",
+  "minimum_contrast": 1,
+  "option_as_alt": "off",
   "theme": {
     "light": "catppuccin-latte",
     "dark": "catppuccin-mocha"
   },
-  "font": "FiraCode Nerd Font Mono",
-  "ui_font": "Fira Sans",
-  "zoom": 1.2,
-  "sounds": {
-    "enabled": true
-  },
-  "font_ligatures": false,
-  "minimum_contrast": 1,
-  "telemetry": false,
-  "option_as_alt": "off"
+  "telemetry": false
 }

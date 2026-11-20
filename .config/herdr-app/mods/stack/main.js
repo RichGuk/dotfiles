@@ -272,11 +272,30 @@ export default class Stack extends View {
     const folder = r?.code === 0 ? r.stdout.trim() : "";
     run("space.new", {
       name: `review #${p.number}`, machine: on ?? "", argv: ["claude"], ...(folder ? { folder } : {}),
-      task: `Review PR #${p.number} in ${p.repo} (${p.url}) by ${p.author}: "${p.title}". `
+      task: await this.hasZenReview(folder, on) ? `/zen:code-review ${p.url}`
+        : `Review PR #${p.number} in ${p.repo} (${p.url}) by ${p.author}: "${p.title}". `
         + `Read it with gh (gh pr view ${p.number} -R ${p.repo} --comments, gh pr diff ${p.number} -R ${p.repo}); `
         + `don't check it out or change files here, but read the surrounding code where it helps. `
         + `Give me a short summary, then bugs and risks with file:line, then questions for the author. `
         + `Don't post anything to GitHub unless I ask.`,
+    });
+  }
+
+  // Whether the repo at folder has its own review command (zeneducate's /zen:code-review).
+  async hasZenReview(folder, on) {
+    if (!folder) return false;
+    const r = await exec("sh", ["-c", 'test -f "$(git rev-parse --show-toplevel)/.claude/commands/zen:code-review.md"'], { cwd: folder, on }).catch(() => null);
+    return r?.code === 0;
+  }
+
+  // A new tab in the focused space with Claude reviewing its branch: its PR when
+  // it has one, else the local changes against main.
+  async reviewHere(fp, d) {
+    const pr = d.prs?.[d.branches?.find((b) => b.current)?.pr];
+    const zen = await this.hasZenReview(fp.cwd, fp.machine ?? undefined);
+    run("tab.new", {
+      space: fp.space.id, folder: fp.cwd, name: pr ? `review #${pr.number}` : "review", argv: ["claude"],
+      task: zen ? `/zen:code-review${pr ? ` ${pr.number}` : ""}` : "/pr-review-toolkit:review-pr",
     });
   }
 
@@ -457,18 +476,21 @@ export default class Stack extends View {
     if (!fp) return [message("No space selected.")];
     if (!d) return [message("Looking…")];
     if (d.none === "repo") return [message("Not a git repository.")];
+    const review = this.button("review-here", "↗ Review", t, (cx) => cx.spawn(async () => this.reviewHere(fp, d)));
     if (d.none === "pr") return [message(`No PR for ${d.branch || "this branch"} yet.`),
-      h_flex().px(8).pt(6).child(this.button("pr-create", "Create PR", t, () => this.inPane(["gh", "pr", "create"])))];
+      h_flex().px(8).pt(6).gap(5).child(this.button("pr-create", "Create PR", t, () => this.inPane(["gh", "pr", "create"]))).child(review)];
     if (d.error && !d.branches) return [message(d.error)];
     const rows = [];
     if (d.error) rows.push(message(d.error));
     // gh stack lists trunk-first; the top of the stack reads best at the top.
     rows.push(...[...d.branches].reverse().map((b) => this.row(fp, b, d.prs[b.pr], t)));
-    if (d.stacked !== false) rows.push(h_flex().px(8).pt(10).gap(5)
+    rows.push(h_flex().px(8).pt(10).gap(5)
       .child(div().flex_1().text_size(11).text_color(t.ansi3).child(d.branches.some((b) => b.rebase) ? "⚠ needs rebase" : ""))
-      .child(this.button("st-sync", "Sync", t, () => this.inPane(["gh", "stack", "sync"])))
-      .child(this.button("st-rebase", "Rebase", t, () => this.inPane(["gh", "stack", "rebase"])))
-      .child(this.button("st-push", "Submit", t, () => this.inPane(["gh", "stack", "submit"]))));
+      .child(review)
+      .when(d.stacked !== false, (el) => el
+        .child(this.button("st-sync", "Sync", t, () => this.inPane(["gh", "stack", "sync"])))
+        .child(this.button("st-rebase", "Rebase", t, () => this.inPane(["gh", "stack", "rebase"])))
+        .child(this.button("st-push", "Submit", t, () => this.inPane(["gh", "stack", "submit"])))));
     return rows;
   }
 

@@ -72,9 +72,18 @@ const RAIL_CELL = 32;
 const railCell = (el) => h_flex().flex_none().justify_center().child(el);
 const where = (s, ps) => JSON.stringify([s.machine ?? null, place(s, ps)]);
 const base = (path) => path.replace(/\/+$/, "").split("/").pop();
+const ticketOf = (branch) => branch?.match(/sc-(\d+)/i);
+// "margin-caps/sc-70989-framework-margin-caps-tables" -> "Framework margin caps tables",
+// "rich/fix-login-redirect" -> "Fix login redirect"
+function branchTitle(branch) {
+  const m = ticketOf(branch);
+  const rest = (m ? branch.slice(m.index + m[0].length) : branch.split("/").pop()).replace(/[-_/]+/g, " ").trim();
+  return rest ? rest[0].toUpperCase() + rest.slice(1) : null;
+}
 // Changes made outside Herdr (an editor's save, a commit in another app): looked
 // for this often, in repos the list shows, while the window is in front.
 const FALLBACK = 60000;
+const UNSURE_RETRY = 10000;
 
 // What a stored color name looks like on an avatar (the same in every mod
 // that draws space avatars): one strong color per hue, light and dark alike.
@@ -105,6 +114,7 @@ export default class Spaces extends View {
     this.known = new Set(this.shown); // spaces that were there before; later ones get tagged
     this.zenDone = new Set(JSON.parse(localStorage.getItem("zen.done") ?? "[]")); // zen tabs arranged
     this.zenSeen = {}; // zen tab -> first seen without its labels
+    this.zenNamed = new Set(JSON.parse(localStorage.getItem("zen.named") ?? "[]")); // zen spaces given a title
     // Spaces whose tag was chosen (by hand, zen, or the rule): the rule leaves them be.
     // The first run counts every tag already there as chosen.
     this.settled = new Set(JSON.parse(localStorage.getItem("ctx.settled") ?? "null") ?? Object.keys(tags()));
@@ -158,6 +168,7 @@ export default class Spaces extends View {
     }
     this.arrangeZen(sp);
     const ps = panes();
+    this.nameZen(sp, ps);
     this.autoTag(sp, ps);
     const due = this.due(now, sp, ps);
     if (due.size) this.refreshGit(due, cx);
@@ -241,6 +252,26 @@ export default class Spaces extends View {
     localStorage.setItem("zen.done", JSON.stringify([...this.zenDone]));
   }
 
+  // A worktree space nobody named (zen-worktree's or any other) is called after
+  // its branch's words, once its git is known. Only once, so a rename back to ""
+  // by hand sticks. A repo's main checkout keeps Herdr's name: its branch changes.
+  nameZen(sp, ps) {
+    const before = this.zenNamed.size;
+    let changed = false;
+    for (const s of sp) {
+      if (s.named || this.zenNamed.has(s.id)) continue;
+      const g = this.git[where(s, ps)];
+      if (!g?.branch || !(g.linked || /(^|\/)zen/.test(s.id))) continue;
+      this.zenNamed.add(s.id);
+      changed = true;
+      const name = branchTitle(g.branch);
+      if (name) run("space.rename", { id: s.id, name });
+    }
+    const live = new Set(sp.map((s) => s.id));
+    for (const id of this.zenNamed) if (!live.has(id)) this.zenNamed.delete(id);
+    if (changed || this.zenNamed.size !== before) localStorage.setItem("zen.named", JSON.stringify([...this.zenNamed]));
+  }
+
   // Places whose git could have changed: new ones (a new space, a cd), where a
   // command or an agent's turn just ended (a checkout, a commit, edits), those on
   // a machine that is back, and repos in view whose fallback is due.
@@ -268,8 +299,11 @@ export default class Spaces extends View {
     }
     if (window().active) {
       for (const k of keys) {
+        // A look that failed (often one of many asked at once, on start) is tried
+        // again soon, not at the fallback: until then a worktree sits outside its repo.
         const asks = this.git[k] || this.unsure.has(k);
-        if (asks && !this.folded.has(JSON.parse(k)[0]) && now - (this.checked[k] ?? 0) > FALLBACK) due.add(k);
+        const wait = this.unsure.has(k) ? UNSURE_RETRY : FALLBACK;
+        if (asks && !this.folded.has(JSON.parse(k)[0]) && now - (this.checked[k] ?? 0) > wait) due.add(k);
       }
     }
     return due;
@@ -525,11 +559,12 @@ export default class Spaces extends View {
 
   // Only what's unusual, after the name: "herdr \u00b7 spike \u21912 \u21931". The repo or
   // branch goes when the name already says it (a worktree is named after its branch),
-  // and master/main go: nearly every space is on one.
-  gitTail(g, tree, name, t) {
+  // and master/main go: nearly every space is on one. A ticket branch shows as
+  // its ticket (sc-70989), the whole branch on hover.
+  gitTail(g, tree, name, t, id) {
     const raw = g.branch ?? "detached";
     const same = (a) => a.toLowerCase() === name.toLowerCase();
-    const branch = same(raw) || raw === "master" || raw === "main" ? "" : raw;
+    const branch = same(raw) || raw === "master" || raw === "main" ? "" : (ticketOf(raw)?.[0].toLowerCase() ?? raw);
     const repo = tree || same(g.name) ? "" : g.name;
     const where = [repo, branch].filter(Boolean).join(" \u00b7 ");
     return h_flex()
@@ -540,7 +575,7 @@ export default class Spaces extends View {
       .items_center()
       .text_size(11.5)
       .text_color(t.dim)
-      .when(Boolean(where), (el) => el.child(div().min_w(0).truncate().child(where)))
+      .when(Boolean(where), (el) => el.child(div().id(`space-branch-${id}`).min_w(0).truncate().tooltip(raw).child(where)))
       .when(g.ahead > 0, (el) => el.child(div().flex_none().text_color(t.ansi2).child(`\u2191${g.ahead}`)))
       .when(g.behind > 0, (el) => el.child(div().flex_none().text_color(t.ansi1).child(`\u2193${g.behind}`)));
   }
@@ -597,8 +632,8 @@ export default class Spaces extends View {
           .items_center()
           .when(Boolean(tree), el => el.pl(22).child(svg("mods/workspace-chrome/branch.svg").size(13).text_color(t.dim)))
           .when(!tree, el => el.child(h_flex().size(18).flex_none().rounded(5).bg(fill).items_center().justify_center().text_size(10.5).font_bold().text_color("#ffffff").child([...w.name][0]?.toUpperCase() ?? "?")))
-          .child(div().flex_shrink(0).max_w(150).truncate().text_color(t.foreground).child(w.name))
-          .child(g ? this.gitTail(g, tree, w.name, t) : div().flex_1())
+          .child(div().flex_shrink(0).max_w(220).truncate().text_color(t.foreground).child(w.name))
+          .child(g ? this.gitTail(g, tree, w.name, t, w.id) : div().flex_1())
           .child(this.tagPill(w, t)),
       );
   }
