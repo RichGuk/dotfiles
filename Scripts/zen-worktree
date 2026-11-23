@@ -121,8 +121,8 @@ open_space() {
 
     local lines=("") top
     if [[ -n ${PROXY_HOST:-} ]]; then
-        lines+=("  http://${PROXY_HOST}" "  http://${PROXY_HOST}/_devbox/mail"
-            "  http://${PROXY_HOST}/monitoring/sidekiq")
+        lines+=("  https://${PROXY_HOST}" "  https://${PROXY_HOST}/_devbox/mail"
+            "  https://${PROXY_HOST}/monitoring/sidekiq")
     fi
     lines+=("  http://${HOSTNAME_SHORT}:${WEB_PORT}" "  api :${API_PORT}    web :${WEB_PORT}"
         "" "  mise run dc up" "  mise run web:dev" "")
@@ -358,9 +358,9 @@ else
         --path "/_devbox/mail=mail-${PROXY_SLUG}:8025" \
         --path "/monitoring=host.docker.internal:${API_PORT}" >/dev/null; then
         PROXY_READY=true
-        echo "proxy    : http://${PROXY_HOST}"
-        echo "mail     : http://${PROXY_HOST}/_devbox/mail"
-        echo "sidekiq  : http://${PROXY_HOST}/monitoring/sidekiq"
+        echo "proxy    : https://${PROXY_HOST}"
+        echo "mail     : https://${PROXY_HOST}/_devbox/mail"
+        echo "sidekiq  : https://${PROXY_HOST}/monitoring/sidekiq"
     else
         echo "proxy    : FAILED to register ${PROXY_HOST}" >&2
     fi
@@ -371,16 +371,16 @@ fi
 # Vite's /dev-api prefix, not the port the API happens to listen on. Rails passes
 # the value through untouched as long as it carries no port, hence no :$API_PORT.
 if [[ $PROXY_READY == true ]]; then
-    set_env_var "$WORKTREE/api/.env" API_HOST "${PROXY_HOST}/dev-api"
+    set_env_var "$WORKTREE/api/.env" API_HOST "https://${PROXY_HOST}/dev-api"
 else
     set_env_var "$WORKTREE/api/.env" API_HOST "localhost:${API_PORT}"
 fi
 
 echo
 if [[ $PROXY_READY == true ]]; then
-    echo "  http://${PROXY_HOST}"
-    echo "  http://${PROXY_HOST}/_devbox/mail"
-    echo "  http://${PROXY_HOST}/monitoring/sidekiq"
+    echo "  https://${PROXY_HOST}"
+    echo "  https://${PROXY_HOST}/_devbox/mail"
+    echo "  https://${PROXY_HOST}/monitoring/sidekiq"
 fi
 echo "  http://${HOSTNAME_SHORT}:${WEB_PORT}"
 echo "  mise run dc up      (from $WORKTREE)"
